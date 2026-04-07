@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entity Comparison & Analysis — FTA</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#B8922A;--gold-hi:#D4A84B;--gold-lo:#8A6A1A;--gold-pale:#F0D98A;
+  --gold-grad:linear-gradient(135deg,#C9A84C,#E8C86A,#A87830);
+  --bg-grad:linear-gradient(145deg,#FBF8F0 0%,#F5EFE0 35%,#EDE4CF 70%,#F8F3E8 100%);
+  --nav-grad:linear-gradient(135deg,#1A1200 0%,#2E2100 40%,#1C1600 70%,#2A1E00 100%);
+  --text:#1A1400;--text-md:#5A4A20;--text-dim:#8A7A50;--text-faint:#AFA080;
+  --green:#1A7A45;--green-bg:rgba(26,122,69,0.1);--green-border:rgba(26,122,69,0.25);
+  --red:#C0392B;--red-bg:rgba(192,57,43,0.09);--red-border:rgba(192,57,43,0.22);
+  --amber:#B8620A;--amber-bg:rgba(184,98,10,0.1);--amber-border:rgba(184,98,10,0.25);
+  --blue:#1A5A9A;--blue-bg:rgba(26,90,154,0.09);--blue-border:rgba(26,90,154,0.2);
+  --glass:rgba(255,255,255,0.72);--glass-border:rgba(200,164,74,0.2);
+  --glass-shadow:0 4px 24px rgba(100,70,0,0.10),0 1px 3px rgba(100,70,0,0.08);
+  --glass-shadow-lg:0 8px 40px rgba(100,70,0,0.14),0 2px 8px rgba(100,70,0,0.08);
+  --r:10px;
+}
+html,body{width:100%;min-height:100%;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text)}
+body{background:var(--bg-grad);min-height:100vh}
+
+/* ambient blobs */
+body::before,body::after{content:'';position:fixed;border-radius:50%;pointer-events:none;z-index:0}
+body::before{width:800px;height:800px;top:-200px;right:-200px;background:radial-gradient(circle,rgba(210,168,75,0.12) 0%,transparent 70%)}
+body::after{width:600px;height:600px;bottom:-100px;left:-100px;background:radial-gradient(circle,rgba(180,140,50,0.09) 0%,transparent 70%)}
+
+/* canvas bg */
+#bg-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:rgba(180,140,50,0.08)}
+::-webkit-scrollbar-thumb{background:rgba(180,140,50,0.35);border-radius:4px}
+
+/* ══ NAV ══ */
+.nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+  padding: 0 44px;
+  height: 64px;
+  background: var(--nav-grad);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.35);
+  position: sticky; top: 0; z-index: 200;
+}
+.nav-left { display: flex; align-items: center; gap: 22px; justify-self: start; }
+.nav-right { display: flex; align-items: center; justify-self: end; }
+.nav-back{
+  display:flex;align-items:center;gap:7px;font-size:11px;font-weight:500;letter-spacing:0.06em;
+  color:rgba(220,180,80,0.7);cursor:pointer;padding:6px 14px;
+  border:1px solid rgba(200,164,74,0.25);border-radius:4px;
+  transition:all .18s;background:none;text-decoration:none;
+}
+.nav-back:hover{color:#E8C870;border-color:rgba(200,164,74,0.55);background:rgba(200,164,74,0.08)}
+.nav-divider{width:1px;height:22px;background:rgba(200,164,74,0.2)}
+.nav-title{font-size:12.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#E2BC68}
+.logo-img{height:28px;filter:brightness(0) invert(1) sepia(1) saturate(1.2) hue-rotate(5deg) brightness(0.9);opacity:.88}
+.emblem-img{height:32px;opacity:.82}
+
+/* --- NEW TAB STYLES --- */
+.nav-tabs {
+  display: flex; gap: 35px;
+}
+.tab {
+  text-decoration: none; color: rgba(255, 255, 255, 0.45);
+  font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 8px 0;
+  position: relative; transition: color 0.3s ease;
+}
+.tab:hover { color: rgba(255, 255, 255, 0.9); }
+.tab.active { color: var(--gold-hi); }
+.tab.active::after {
+  content: ''; position: absolute; bottom: -4px; left: 0;
+  width: 100%; height: 2px; background: var(--gold);
+  box-shadow: 0 0 10px rgba(200, 164, 74, 0.6); border-radius: 2px;
+}
+/* ---------------------- */
+
+/* ══ PAGE ══ */
+#view-company{display:none}
+.pw{max-width:1560px;margin:0 auto;padding:32px 44px 80px;position:relative;z-index:1}
+.ph{margin-bottom:28px}
+.ph h1{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.ph p{font-size:12.5px;color:var(--text-dim);margin-top:4px;font-weight:400}
+
+/* ══ GLASS CARD ══ */
+.gcard{
+  background:var(--glass);
+  backdrop-filter:blur(18px) saturate(160%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+  border:1px solid var(--glass-border);
+  border-radius:var(--r);
+  box-shadow:var(--glass-shadow);
+}
+
+/* ══ KPI STRIP ══ */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:28px}
+.kpi{
+  background:var(--glass);
+  backdrop-filter:blur(18px) saturate(160%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+  border:1px solid rgba(200,164,74,0.22);
+  border-radius:var(--r);
+  padding:20px 22px;
+  box-shadow:var(--glass-shadow);
+  position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;
+}
+.kpi::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--gold-grad);
+}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--glass-shadow-lg)}
+.kpi-lbl{font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--text-faint);margin-bottom:10px}
+.kpi-val{font-size:22px;font-weight:800;line-height:1;letter-spacing:-.025em;color:var(--text)}
+.kpi-val.gold{background:var(--gold-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.kpi-val.green{color:var(--green)}
+.kpi-val.red{color:var(--red)}
+.kpi-sub{font-size:10px;color:var(--text-faint);margin-top:6px}
+.kpi-tr{font-size:10px;margin-top:6px;font-weight:600;display:flex;align-items:center;gap:3px}
+.kpi-tr.up{color:var(--green)}.kpi-tr.dn{color:var(--red)}
+
+/* ══ FILTER BAR ══ */
+.fbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.fw{position:relative}
+.fw .ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-faint);width:13px;height:13px}
+.fi{
+  background:rgba(255,255,255,0.8);border:1px solid rgba(180,140,50,0.22);border-radius:6px;
+  padding:9px 14px 9px 34px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:var(--text);
+  outline:none;width:230px;transition:all .18s;box-shadow:0 1px 4px rgba(100,70,0,0.06);
+}
+.fi::placeholder{color:var(--text-faint)}
+.fi:focus{border-color:var(--gold-hi);box-shadow:0 0 0 3px rgba(200,164,74,0.12),0 1px 4px rgba(100,70,0,0.06)}
+.sw{position:relative}
+.sw::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:9px;pointer-events:none}
+.fs{
+  background:rgba(255,255,255,0.8);border:1px solid rgba(180,140,50,0.22);border-radius:6px;
+  padding:9px 30px 9px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:var(--text);
+  outline:none;cursor:pointer;appearance:none;transition:all .18s;
+  box-shadow:0 1px 4px rgba(100,70,0,0.06);
+}
+.fs:focus{border-color:var(--gold-hi);box-shadow:0 0 0 3px rgba(200,164,74,0.12)}
+.fs option{background:#fff;color:var(--text)}
+.rc{font-size:11px;color:var(--text-dim);margin-left:auto;font-weight:500}
+
+/* ══ TABLE ══ */
+.tw{background:var(--glass);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid var(--glass-border);border-radius:var(--r);box-shadow:var(--glass-shadow-lg);overflow:hidden}
+.dt{width:100%;border-collapse:collapse}
+.dt thead{background:var(--nav-grad)}
+.dt thead tr{border-bottom:1px solid rgba(200,164,74,0.25)}
+.dt thead th{
+  padding:13px 16px;text-align:left;font-size:8.5px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:rgba(220,190,100,0.65);
+  cursor:pointer;user-select:none;white-space:nowrap;transition:color .15s;
+}
+.dt thead th:hover{color:#E8C870}
+.dt tbody tr{border-bottom:1px solid rgba(180,140,50,0.08);cursor:pointer;transition:all .14s}
+.dt tbody tr:hover{background:linear-gradient(90deg,rgba(200,164,74,0.08),rgba(200,164,74,0.04))}
+.dt tbody tr:last-child{border-bottom:none}
+.dt td{padding:15px 16px;vertical-align:middle}
+.en strong{display:block;font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:2px}
+.en span{font-size:10px;color:var(--text-faint);font-family:monospace;letter-spacing:.04em}
+.sec{font-size:12px;color:var(--text-dim)}
+.num{font-size:13px;font-weight:600;color:var(--text)}
+.yp{color:var(--green);font-weight:700}.yn{color:var(--red);font-weight:700}
+.rb{display:inline-flex;align-items:center;justify-content:center;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.rl{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.rm{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.rh{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.cd{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+.dc{background:var(--green)}.dp{background:var(--amber)}
+.bi{
+  padding:6px 15px;background:linear-gradient(135deg,rgba(200,164,74,0.12),rgba(200,164,74,0.06));
+  border:1px solid rgba(180,140,50,0.3);border-radius:5px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--gold);cursor:pointer;transition:all .17s;white-space:nowrap;
+}
+.bi:hover{background:linear-gradient(135deg,rgba(200,164,74,0.22),rgba(200,164,74,0.12));border-color:var(--gold-hi);transform:translateY(-1px)}
+
+/* ══ PAGINATION ══ */
+.pag{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid rgba(180,140,50,0.12);background:rgba(255,255,255,0.5)}
+.pi{font-size:11.5px;color:var(--text-dim);font-weight:500}
+.pb-wrap{display:flex;gap:4px}
+.pb{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:12.5px;cursor:pointer;border-radius:6px;border:1px solid transparent;transition:all .15s;color:var(--text-dim);font-weight:500}
+.pb:hover{border-color:rgba(180,140,50,0.3);color:var(--gold);background:rgba(200,164,74,0.08)}
+.pb.act{background:var(--gold-grad);border-color:transparent;color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(180,140,50,0.35)}
+.pb.arr{font-size:15px;color:var(--text-faint)}
+
+/* ══════════════ COMPANY DETAIL ══════════════ */
+.co-hdr{
+  background:var(--glass);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
+  border:1px solid rgba(200,164,74,0.25);border-radius:var(--r);
+  padding:28px 34px;margin-bottom:24px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:20px;
+  box-shadow:var(--glass-shadow-lg);
+  position:relative;overflow:hidden;
+}
+.co-hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--gold-grad)}
+.co-nm{font-size:26px;font-weight:800;letter-spacing:-.025em;color:var(--text)}
+.co-meta{display:flex;gap:14px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.co-sec{font-size:12px;color:var(--text-dim);font-weight:500}
+.co-cid{font-size:10px;color:var(--text-faint);font-family:monospace;letter-spacing:.05em}
+.sp{padding:6px 15px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.sp-sub{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.sp-apr{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+
+.dg{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
+.dl{display:flex;flex-direction:column;gap:18px}
+.dr{display:flex;flex-direction:column;gap:18px;position:sticky;top:70px}
+
+/* ══ CARD ══ */
+.card{background:var(--glass);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid var(--glass-border);border-radius:var(--r);overflow:hidden;box-shadow:var(--glass-shadow)}
+.ch{
+  display:flex;align-items:center;gap:10px;padding:15px 20px;
+  background:linear-gradient(135deg,rgba(200,164,74,0.1),rgba(200,164,74,0.04));
+  border-bottom:1px solid rgba(180,140,50,0.14);
+}
+.ch h3{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.ch svg{width:15px;height:15px;color:var(--gold-hi)}
+.cb{padding:20px}
+
+/* ══ EXEC KPIs ══ */
+.ekpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ek{
+  background:linear-gradient(145deg,rgba(255,255,255,0.9),rgba(250,245,230,0.7));
+  border:1px solid rgba(200,164,74,0.18);border-radius:8px;padding:16px 18px;
+  text-align:center;box-shadow:0 2px 8px rgba(100,70,0,0.07);
+  transition:transform .18s;
+}
+.ek:hover{transform:translateY(-2px)}
+.ek-lbl{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text-faint);margin-bottom:8px}
+.ek-val{font-size:19px;font-weight:800;line-height:1;letter-spacing:-.02em}
+.ek-val.gr{color:var(--green)}.ek-val.bl{color:var(--blue)}.ek-val.nt{color:var(--text)}.ek-val.rd{color:var(--red)}
+.ek-ch{font-size:10px;margin-top:5px;font-weight:600}
+.ek-ch.up{color:var(--green)}.ek-ch.dn{color:var(--red)}.ek-ch.nu{color:var(--text-faint)}
+.sumtxt{font-size:12.5px;line-height:1.8;color:var(--text-dim);font-style:italic;padding:16px 20px;border-radius:8px;background:linear-gradient(135deg,rgba(200,164,74,0.07),rgba(200,164,74,0.03));border:1px solid rgba(200,164,74,0.15);margin-top:14px}
+
+/* ══ CHART ══ */
+.cc{padding:20px}
+.cw{position:relative;height:240px}
+.yd{margin-top:12px;font-size:11.5px;color:var(--text-faint);line-height:1.7;text-align:center}
+
+/* ══ FINANCIAL STATEMENTS ══ */
+.tabs{display:flex;border-bottom:1px solid rgba(180,140,50,0.15);padding:0 20px;background:rgba(255,255,255,0.4)}
+.tb{padding:11px 18px;font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--text-faint);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .16s}
+.tb:hover{color:var(--text-dim)}
+.tb.act{color:var(--gold);border-bottom-color:var(--gold)}
+.tc{display:none}.tc.act{display:block}
+.ft{width:100%;border-collapse:collapse}
+.ft tr{border-bottom:1px solid rgba(180,140,50,0.08)}
+.ft tr:last-child{border-bottom:none}
+.ft tr:hover td{background:rgba(200,164,74,0.04)}
+.ft td{padding:11px 20px;font-size:12.5px}
+.ft td:first-child{color:var(--text-md);font-weight:400}
+.ft td:nth-child(2){color:var(--text);font-weight:700;text-align:right}
+.ft td:nth-child(3){color:var(--text-faint);text-align:right}
+.ft tr:first-child td{font-size:8.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text-faint);padding-top:14px;padding-bottom:6px;background:linear-gradient(135deg,rgba(200,164,74,0.06),transparent)}
+.ft tr.div td{padding-top:12px;padding-bottom:3px;color:var(--gold)!important;font-size:8.5px!important;letter-spacing:.16em!important;text-transform:uppercase!important;font-weight:700!important;border-bottom:1px solid rgba(200,164,74,0.15)!important}
+
+/* ══ DOCUMENT SECTION ══ */
+.doc-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,0.5);border:1px solid rgba(180,140,50,0.15);border-radius:6px;margin-bottom:10px}
+.doc-info{display:flex;align-items:center;gap:12px}
+.doc-icon{width:32px;height:32px;background:var(--red-bg);color:var(--red);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.doc-name{font-size:12px;font-weight:600;color:var(--text)}
+.doc-meta{font-size:10px;color:var(--text-faint);margin-top:2px}
+.doc-btn{padding:6px 12px;background:transparent;border:1px solid rgba(180,140,50,0.3);border-radius:4px;font-size:10px;font-weight:600;color:var(--gold);cursor:pointer;transition:all 0.2s}
+.doc-btn:hover{background:rgba(200,164,74,0.1);border-color:var(--gold)}
+
+/* ══ PERF GRID (UPDATED WITH DELTAS) ══ */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px}
+.pi2{
+  background:linear-gradient(145deg,rgba(255,255,255,0.9),rgba(250,245,230,0.6));
+  border:1px solid rgba(200,164,74,0.16);border-radius:8px;padding:13px 16px;
+  box-shadow:0 1px 6px rgba(100,70,0,0.06);transition:transform .18s;
+  display: flex; flex-direction: column;
+}
+.pi2:hover{transform:translateY(-1px)}
+.pi2-lbl{font-size:9.5px;font-weight:600;color:var(--text-dim);margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em;}
+.pi2-val-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.pi2-val{font-size:18px;font-weight:800;background:var(--gold-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.01em; line-height: 1;}
+.pi2-delta { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.05em; }
+.pi2-delta.up { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.pi2-delta.dn { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+.pi2-desc{font-size:9px;color:var(--text-faint);margin-top:3px;line-height:1.4}
+
+/* ══ REVIEWER PANEL & AUDIT TRAIL ══ */
+.rvp{
+  background:linear-gradient(145deg,rgba(255,255,255,0.88),rgba(250,244,225,0.72));
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(200,164,74,0.28);border-radius:var(--r);overflow:hidden;
+  box-shadow:var(--glass-shadow);
+}
+.rvh{
+  padding:14px 18px;
+  background:linear-gradient(135deg,rgba(200,164,74,0.15),rgba(200,164,74,0.06));
+  border-bottom:1px solid rgba(200,164,74,0.18);
+  display:flex;align-items:center;gap:8px;
+}
+.rvh h4{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.rvb{padding:16px 18px}
+.rv-lbl{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);margin-bottom:8px}
+.rv-ta{
+  width:100%;background:rgba(255,255,255,0.8);border:1px solid rgba(180,140,50,0.22);border-radius:6px;
+  padding:11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:400;color:var(--text);
+  resize:vertical;min-height:88px;outline:none;transition:all .17s;
+}
+.rv-ta::placeholder{color:var(--text-faint)}
+.rv-ta:focus{border-color:var(--gold-hi);box-shadow:0 0 0 3px rgba(200,164,74,0.12)}
+.ra{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.ar{display:flex;gap:8px}
+.ba{flex:1;padding:9px 12px;border-radius:5px;font-family:'Plus Jakarta Sans',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:all .17s;border:1px solid transparent;display:flex;align-items:center;justify-content:center;gap:5px}
+.ba-inv{background:linear-gradient(135deg,rgba(200,164,74,0.12),rgba(200,164,74,0.06));border-color:rgba(180,140,50,0.3);color:var(--gold)}
+.ba-inv:hover{background:linear-gradient(135deg,rgba(200,164,74,0.22),rgba(200,164,74,0.12));border-color:var(--gold);transform:translateY(-1px);box-shadow:0 2px 8px rgba(180,140,50,0.2)}
+.ba-apr{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.ba-apr:hover{background:rgba(26,122,69,0.18);transform:translateY(-1px);box-shadow:0 2px 8px rgba(26,122,69,0.15)}
+.ba-rej{background:var(--red-bg);border-color:var(--red-border);color:var(--red)}
+.ba-rej:hover{background:rgba(192,57,43,0.16);transform:translateY(-1px);box-shadow:0 2px 8px rgba(192,57,43,0.14)}
+.ba-mod{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue)}
+.ba-mod:hover{background:rgba(26,90,154,0.14);transform:translateY(-1px);box-shadow:0 2px 8px rgba(26,90,154,0.12)}
+
+.audit-log{background:rgba(255,255,255,0.6);border:1px solid rgba(180,140,50,0.15);border-radius:6px;padding:12px;margin-top:16px}
+.log-entry{display:flex;gap:10px;font-size:10px;color:var(--text-dim);line-height:1.4;margin-bottom:8px;padding-bottom:8px;border-bottom:1px dashed rgba(180,140,50,0.1)}
+.log-entry:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.log-time{font-family:monospace;color:var(--text-faint);white-space:nowrap}
+.log-action{color:var(--text);font-weight:600}
+.log-highlight{background:var(--amber-bg);color:var(--amber);padding:1px 4px;border-radius:2px;font-weight:700}
+
+/* ══ ANOMALY ══ */
+.ai{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(180,140,50,0.08)}
+.ai:last-child{border-bottom:none}
+.aico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;margin-top:1px}
+.aico.w{background:var(--amber-bg);border:1px solid var(--amber-border)}
+.aico.a{background:var(--red-bg);border:1px solid var(--red-border)}
+.aico.i{background:var(--green-bg);border:1px solid var(--green-border)}
+.at2{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
+.ad2{font-size:10.5px;color:var(--text-dim);line-height:1.55}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:26px;right:26px;z-index:9999;background:linear-gradient(135deg,#2E2100,#1A1400);border:1px solid rgba(200,164,74,0.4);border-radius:8px;padding:12px 20px;font-size:12.5px;color:#E8CC80;box-shadow:0 8px 32px rgba(0,0,0,0.3);opacity:0;transform:translateY(10px);transition:all .24s;max-width:400px}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:1100px){.dg{grid-template-columns:1fr}.dr{position:static}.kpis{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="toast" id="toast"></div>
+
+<div id="view-dashboard">
+<nav class="nav">
+  <div class="nav-left">
+    <img class="logo-img" src="https://tax.gov.ae/en/images/header/logo-fta.png" alt="FTA">
+  </div>
+
+  <div class="nav-tabs">
+    <a href="http://localhost:8101/landing.html" class="tab">Landing Page</a>
+    <a href="http://localhost:8101/entity.html" class="tab active">Entity Comparison & Analysis</a>
+    <a href="http://localhost:8101/executive.html" class="tab">Executive Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <img class="emblem-img" src="https://upload.wikimedia.org/wikipedia/commons/e/eb/Emblem_of_the_United_Arab_Emirates.svg" alt="UAE">
+  </div>
+</nav>
+
+<div class="pw">
+  <div class="ph">
+    <h1>Entity Financial Overview</h1>
+    <p>Click any row to open the full company profile.</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-lbl">Total Entities</div><div class="kpi-val gold">78</div><div class="kpi-sub">Registered &amp; reporting</div></div>
+    <div class="kpi"><div class="kpi-lbl">Sectors</div><div class="kpi-val gold">10</div><div class="kpi-sub">Industry categories</div></div>
+    <div class="kpi"><div class="kpi-lbl">Total Revenue</div><div class="kpi-val" id="kv-rev">—</div><div class="kpi-tr up" id="kt-rev">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Total Net Profit</div><div class="kpi-val" id="kv-prof">—</div><div class="kpi-tr up" id="kt-prof">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">High Risk</div><div class="kpi-val red" id="kv-hr">—</div><div class="kpi-sub">Require immediate review</div></div>
+    <div class="kpi"><div class="kpi-lbl">Compliance Rate</div><div class="kpi-val green" id="kv-comp">—</div><div class="kpi-sub">Filings complete</div></div>
+  </div>
+
+  <div class="fbar">
+    <div class="fw"><svg class="ic" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input type="text" class="fi" id="s-search" placeholder="Search entity name..."></div>
+    <div class="sw"><select class="fs" id="s-sector"><option value="">All Sectors</option><option>Energy</option><option>Real Estate</option><option>Trade</option><option>Construction</option><option>Logistics</option><option>Retail</option><option>Technology</option><option>Healthcare</option><option>Finance</option><option>Tourism</option></select></div>
+    <div class="sw"><select class="fs" id="s-risk"><option value="">All Risk Levels</option><option>Low</option><option>Medium</option><option>High</option></select></div>
+    <div class="sw"><select class="fs" id="s-sort"><option value="rev-d">Sort: Revenue ↓</option><option value="rev-a">Revenue ↑</option><option value="np-d">Net Profit ↓</option><option value="np-a">Net Profit ↑</option><option value="yoy-d">YOY Growth ↓</option><option value="yoy-a">YOY Growth ↑</option><option value="name">Name A–Z</option></select></div>
+    <span class="rc" id="rc"></span>
+  </div>
+
+  <div class="tw">
+    <table class="dt">
+      <thead><tr>
+        <th>Entity</th><th>Sector</th><th>Revenue (AED)</th><th>Net Profit (AED)</th>
+        <th>YOY Growth</th><th>Risk</th><th>Compliance</th><th>Action</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="pag"><span class="pi" id="pi"></span><div class="pb-wrap" id="pbs"></div></div>
+  </div>
+</div>
+</div>
+
+<div id="view-company">
+<nav class="nav">
+  <div class="nav-left">
+    <button class="nav-back" onclick="showDash()">← Back to Dashboard</button>
+  </div>
+
+  <div class="nav-tabs">
+    <a href="#" class="tab">Landing Page</a>
+    <a href="#" class="tab active">Entity Comparison & Analysis</a>
+    <a href="#" class="tab">Executive Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <img class="emblem-img" src="https://upload.wikimedia.org/wikipedia/commons/e/eb/Emblem_of_the_United_Arab_Emirates.svg" alt="UAE">
+  </div>
+</nav>
+
+<div class="pw">
+  <div class="co-hdr">
+    <div>
+      <div class="co-nm" id="co-nm">—</div>
+      <div class="co-meta">
+        <span class="co-sec" id="co-sec">—</span>
+        <span style="color:rgba(180,140,50,0.35)">|</span>
+        <span class="co-cid" id="co-id">—</span>
+        <span style="color:rgba(180,140,50,0.35)">|</span>
+        <span class="co-cid">FY 2024</span>
+      </div>
+    </div>
+    <span class="sp sp-sub" id="co-stat">Submitted for Review</span>
+  </div>
+
+  <div class="dg">
+    <div class="dl">
+      <div class="card">
+        <div class="ch"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg><h3>Executive Summary</h3></div>
+        <div class="cb"><div class="ekpis" id="ekpis"></div><div class="sumtxt" id="sumtxt"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><h3>Revenue vs. Net Profit Margin (YoY)</h3></div>
+        <div class="cc"><div class="cw"><canvas id="yoy-chart"></canvas></div><div class="yd" id="yd"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><h3>Financial Performance Indicators</h3></div>
+        <div class="pg" id="pfgrid"></div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg><h3>Current Asset Composition (Working Capital)</h3></div>
+        <div class="cc"><div class="cw"><canvas id="asset-chart"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="dr">
+      <div class="rvp">
+        <div class="rvh"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><h4>Reviewer Actions & Audit</h4></div>
+        <div class="rvb">
+          <div class="rv-lbl">Reviewer Comments</div>
+          <textarea class="rv-ta" id="rv-ta" placeholder="Add assessment notes, observations, or recommendations..."></textarea>
+          <div class="ra">
+            <div class="ar"><button class="ba ba-inv" onclick="toast('🔍 Investigation request submitted.')">🔍 Investigate</button></div>
+            <div class="ar">
+              <button class="ba ba-apr" onclick="toast('✅ Entity filing approved and logged.')">✓ Approve</button>
+              <button class="ba ba-rej" onclick="toast('❌ Filing rejected and returned.')">✕ Reject</button>
+            </div>
+            <div class="ar"><button class="ba ba-mod" onclick="toast('⚠️ Approved with modifications noted.')">✎ Approve with Modifications</button></div>
+          </div>
+          
+          <div class="rv-lbl" style="margin-top:20px; border-top: 1px solid rgba(180,140,50,0.15); padding-top:14px;">Submission Audit Trail</div>
+          <div class="audit-log">
+            <div class="log-entry"><span class="log-time">10:14 AM</span> <span><span class="log-action">System:</span> Financial document uploaded and parsed.</span></div>
+            <div class="log-entry" id="log-manual-edit" style="display:none"><span class="log-time">10:18 AM</span> <span><span class="log-action">Taxpayer:</span> Manually modified 'Net Profit' value from <span class="log-highlight">2,472,283</span> (Parsed) to <span class="log-highlight">2.47B</span> via Validation Tab.</span></div>
+            <div class="log-entry"><span class="log-time">10:21 AM</span> <span><span class="log-action">Taxpayer:</span> Filing attested and formally submitted to FTA.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="docs-card" style="display:none">
+        <div class="ch"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg><h3>Source Documents</h3></div>
+        <div class="cb" style="padding:16px 20px">
+          <div class="doc-item">
+            <div class="doc-info">
+              <div class="doc-icon">📄</div>
+              <div>
+                <div class="doc-name">ADNOC-Distribution-Q4-FY-2024-FS-English.pdf</div>
+                <div class="doc-meta">Uploaded: Mar 16, 2026 • 2.4 MB</div>
+              </div>
+            </div>
+            <button class="doc-btn" onclick="toast('Opening PDF Viewer...')">View</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><h3>Financial Statements</h3></div>
+        <div class="tabs">
+          <div class="tb act" onclick="switchTab('income',this)">Income</div>
+          <div class="tb" onclick="switchTab('balance',this)">Balance Sheet</div>
+          <div class="tb" onclick="switchTab('cash',this)">Cash Position</div>
+        </div>
+        <div class="tc act" id="t-income"><table class="ft" id="ft-income"></table></div>
+        <div class="tc" id="t-balance"><table class="ft" id="ft-balance"></table></div>
+        <div class="tc" id="t-cash"><table class="ft" id="ft-cash"></table></div>
+      </div>
+
+      <div class="card">
+        <div class="ch"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg><h3>Risk &amp; Anomaly Signals</h3></div>
+        <div class="cb" style="padding:4px 20px 16px"><div id="anomlist"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════ DATA ══════════════
+const SECTORS=['Energy','Real Estate','Trade','Construction','Logistics','Retail','Technology','Healthcare','Finance','Tourism'];
+const RISKS=['Low','Low','Low','Medium','Medium','High'];
+
+function fmt(n){
+  const a=Math.abs(n);
+  if(a>=1000)return (n/1000).toFixed(2)+'T';
+  if(a>=1)   return n.toFixed(2)+'B';
+  return (n*1000).toFixed(0)+'M';
+}
+function fb(n){return 'AED '+fmt(n)}
+function sd(n){let x=Math.sin(n*7.3+1.2)*43758.5453;return x-Math.floor(x)}
+
+const NAMES=[
+  'ADNOC Distribution','Apex Petro Services','Emirates Trade Holdings','National Construction Group',
+  'Prime Tower Developments','Capital Infrastructure Works','Harbor Gate Shipping','Gulf Horizon Retail',
+  'Falcon Energy Partners','Al Noor Healthcare Group','Emirates Digital Solutions','Dubai Financial Hub',
+  'Masdar Renewables','Abu Dhabi Logistics','RAK Tourism Holdings','Sharjah Manufacturing Co.',
+  'Al Futtaim Group','Emaar Properties','DP World UAE','Etihad Airways Cargo',
+  'DEWA Energy Corp','Mubadala Ventures','First Abu Dhabi Capital','Emirates NBD Finance',
+  'Aldar Real Estate','Lulu Hypermarket Holdings','Majid Al Futtaim Retail','Mediclinic Middle East',
+  'Serco Middle East','Agthia Consumer Group','Abu Dhabi Health Services','Gulf Pharmaceuticals',
+  'Oman Oil UAE Branch','Emirates Steel','Al Ghurair Investments','Union Properties',
+  'Damac Real Estate','Nakheel Developments','Amlak Finance','Waha Capital',
+  'Tabreed Cooling','Abu Dhabi Aviation','Rotana Hotels','Jumeirah Group Hotels',
+  'Etihad Credit Insurance','Emirates Post Group','RTA Transit Solutions','Salik Tech',
+  'Taqa Energy','Gulf Medical Enterprises','Burjeel Healthcare','NMC Health',
+  'Landmark Retail Group','Al Ain Distribution','Injazat Cloud Services','G42 Cloudworks',
+  'Yahsat Satellite','Thuraya Telecom','du Telecom Services','Etisalat Enterprise',
+  'Dubai Airport Freezone','Jafza Industrial','Abu Dhabi Ports','Fujairah Oil Terminal',
+  'RAK Ceramics Manufacturing','Arkan Building Materials','Gulf Navigation Holding','Topaz Energy Marine',
+  'Commercial Bank Finance','Abu Dhabi Commercial Services','Dubai Islamic Ventures','Emirates Reit Fund',
+  'Dar Al Arkan UAE','National Bonds Corp','Emirates Investment Authority','Abu Dhabi Securities',
+  'Dubai World Trade Centre','Emaar Malls Group'
+];
+
+const COS = NAMES.map((name,i)=>{
+  // Exact data from the PDF for ADNOC Distribution
+  if(name==='ADNOC Distribution') return {
+    id:'FTA-2024-0001',name,sector:'Energy',
+    revenue:35.45,revenue23:34.63,grossProfit:6.22,grossProfit23:5.84,
+    opProfit:3.07,opProfit23:2.98,pbt:2.76,pbt23:2.65,
+    netProfit:2.47,netProfit23:2.63,cashFlow:-0.161,cashFlow23:0.385,
+    totalAssets:18.18,totalAssets23:18.87,totalEquity:3.18,totalEquity23:3.80,
+    totalLiab:14.99,totalLiab23:15.07,currentAssets:4.82,currentAssets23:5.02,
+    currentLiab:4.38,currentLiab23:4.25,netDebt:3.10,netDebt23:2.95,
+    inventories:1.72,inventories23:1.65,tradeRec:3.38,tradeRec23:2.62,
+    dueRelated:0.88,dueRelated23:0.80,cash:0.25,cash23:0.38,
+    roi:77.71,yoy:2.4,risk:'Medium',compliance:'Complete',
+    grossMargin:17.53,opMargin:8.66,npMargin:6.97,currentRatio:1.10,
+    leverageRatio:48.8,eps:0.194,roa:13.60,roe:77.71,
+    summary:`ADNOC Distribution's financial health in FY2024 shows stable performance, with revenue growing to AED 35.45 billion. Net profit slightly contracted to AED 2.47 billion. Operating cash flows generated AED 3.93 billion, but net cash decreased due to high dividend payments (AED 2.61B) and capital expenditures. Total assets remain strong at AED 18.18 billion with a balanced leverage ratio of 48.8%.`,
+    anomalies:[
+      {t:'i',title:'Manual Validation Override',desc:'Taxpayer manually modified Net Profit parsed value prior to final submission. Review Audit Trail.'},
+      {t:'w',title:'High Dividend Payout',desc:'Dividend payouts of AED 2.61B exceeded net profit of AED 2.47B, reducing retained earnings.'}
+    ]
+  };
+  const s1=sd(i),s2=sd(i+50),s3=sd(i+100);
+  const rev=+(4+s1*160).toFixed(2);
+  const rev23=+(rev*(0.87+s2*.18)).toFixed(2);
+  const gp=+(rev*(0.09+s2*.25)).toFixed(2);
+  const op=+(gp*(0.38+s3*.44)).toFixed(2);
+  const pbt=+(op*(0.74+s1*.22)).toFixed(2);
+  const np=+(pbt*(0.79+s2*.16)).toFixed(2);
+  const np23=+(np*(0.88+s3*.2)).toFixed(2);
+  const yoy=+((rev-rev23)/rev23*100).toFixed(1);
+  const cf=+(rev*(-0.04+s2*.11)).toFixed(3);
+  const cf23=+(cf*(-.6+s1*.9)).toFixed(3);
+  const ta=+(rev*(.38+s3*.82)).toFixed(2);
+  const te=+(ta*(.18+s1*.48)).toFixed(2);
+  const tl=+(ta-te).toFixed(2);
+  const ca=+(ta*(.23+s2*.3)).toFixed(2);
+  const cl=+(ca*(.58+s3*.36)).toFixed(2);
+  return {
+    id:`FTA-2024-${String(i+1).padStart(4,'0')}`,name,sector:SECTORS[i%10],
+    revenue:rev,revenue23:rev23,grossProfit:gp,grossProfit23:+(gp*.93).toFixed(2),
+    opProfit:op,opProfit23:+(op*.94).toFixed(2),pbt,pbt23:+(pbt*.95).toFixed(2),
+    netProfit:np,netProfit23:np23,cashFlow:cf,cashFlow23:cf23,
+    totalAssets:ta,totalAssets23:+(ta*1.05).toFixed(2),
+    totalEquity:te,totalEquity23:+(te*1.1).toFixed(2),
+    totalLiab:tl,totalLiab23:+(tl*1.02).toFixed(2),
+    currentAssets:ca,currentAssets23:+(ca*.95).toFixed(2),
+    currentLiab:cl,currentLiab23:+(cl*.91).toFixed(2),
+    netDebt:+(tl*.34).toFixed(2),netDebt23:+(tl*.31).toFixed(2),
+    inventories:+(ca*.34).toFixed(2),inventories23:+(ca*.31).toFixed(2),
+    tradeRec:+(ca*.44).toFixed(2),tradeRec23:+(ca*.41).toFixed(2),
+    dueRelated:+(ca*.12).toFixed(2),dueRelated23:+(ca*.14).toFixed(2),
+    cash:+(ca*.10).toFixed(2),cash23:+(ca*.14).toFixed(2),
+    roi:+(np/te*100).toFixed(2),yoy,
+    risk:RISKS[Math.floor(s1*RISKS.length)],
+    compliance:s2>.25?'Complete':'Pending',
+    grossMargin:+(gp/rev*100).toFixed(2),opMargin:+(op/rev*100).toFixed(2),
+    npMargin:+(np/rev*100).toFixed(2),currentRatio:+(ca/cl).toFixed(2),
+    leverageRatio:+(tl/(tl+te)*100).toFixed(1),eps:+(np/5e9).toFixed(3),
+    roa:+(np/ta*100).toFixed(2),roe:+(np/te*100).toFixed(2),
+    summary:`${name}'s FY2024 financials reflect ${yoy>=0?'growth':'contraction'} of ${Math.abs(yoy)}% in revenue, reaching AED ${rev}B. Net profit ${np>=np23?'improved to':'declined to'} AED ${np}B (margin: ${+(np/rev*100).toFixed(1)}%). ${cf<0?'Negative cash flow warrants review of liquidity management.':'Cash flow remains positive, supporting operational flexibility.'} The leverage ratio of ${+(tl/(tl+te)*100).toFixed(1)}% indicates ${tl/(tl+te)>.6?'elevated debt dependency.':'a balanced capital structure.'}`,
+    anomalies:[
+      yoy<-5?{t:'a',title:'Significant Revenue Decline',desc:`Revenue fell ${Math.abs(yoy)}% YOY. Review revenue recognition and market position.`}:
+      yoy<0 ?{t:'w',title:'Moderate Revenue Decline', desc:`Revenue contracted ${Math.abs(yoy)}% YOY. Monitor trends across reporting periods.`}:
+             {t:'i',title:'Revenue Growth',desc:`Positive growth of +${yoy}% YOY is consistent with sector performance.`},
+      cf<0  ?{t:'w',title:'Negative Cash Flow',desc:'Cash from operations turned negative. Assess receivables and capex commitments.'}:
+             {t:'i',title:'Positive Cash Generation',desc:'Healthy cash generation supports operational and debt obligations.'},
+      RISKS[Math.floor(s1*RISKS.length)]==='High'?{t:'a',title:'High Risk Classification',desc:'Immediate financial pattern review recommended for this entity.'}:
+      {t:'i',title:'Risk Within Tolerance',desc:'Risk profile is within acceptable regulatory limits for the sector.'},
+    ]
+  };
+});
+
+// Move ADNOC Distribution to index 0 so it's always at the top of the default table
+const adnocIndex = COS.findIndex(c => c.name === 'ADNOC Distribution');
+if (adnocIndex > 0) {
+  const adnocData = COS.splice(adnocIndex, 1)[0];
+  COS.unshift(adnocData);
+}
+
+// ══ KPIs ══
+(()=>{
+  const tr=COS.reduce((a,c)=>a+c.revenue,0);
+  const tr23=COS.reduce((a,c)=>a+c.revenue23,0);
+  const tp=COS.reduce((a,c)=>a+c.netProfit,0);
+  const tp23=COS.reduce((a,c)=>a+c.netProfit23,0);
+  const revChg=+((tr-tr23)/tr23*100).toFixed(1);
+  const profChg=+((tp-tp23)/tp23*100).toFixed(1);
+  const hr=COS.filter(c=>c.risk==='High').length;
+  const cp=COS.filter(c=>c.compliance==='Complete').length;
+  document.getElementById('kv-rev').textContent='AED '+fmt(tr);
+  document.getElementById('kt-rev').innerHTML=`${revChg>=0?'↑':'↓'} ${Math.abs(revChg)}% YoY`;
+  document.getElementById('kt-rev').className='kpi-tr '+(revChg>=0?'up':'dn');
+  document.getElementById('kv-prof').textContent='AED '+fmt(tp);
+  document.getElementById('kt-prof').innerHTML=`${profChg>=0?'↑':'↓'} ${Math.abs(profChg)}% YoY`;
+  document.getElementById('kt-prof').className='kpi-tr '+(profChg>=0?'up':'dn');
+  document.getElementById('kv-hr').textContent=hr;
+  document.getElementById('kv-comp').textContent=Math.round(cp/COS.length*100)+'%';
+})();
+
+// ══ TABLE ══
+let page=1,filtered=[...COS],sortKey='rev-d';
+const PER=10;
+
+function doSort(arr){
+  // Preserve ADNOC at top if sort is revenue descending (default)
+  if (sortKey === 'rev-d' && arr.length === COS.length) return arr;
+  
+  return [...arr].sort((a,b)=>({
+    'rev-d':b.revenue-a.revenue,'rev-a':a.revenue-b.revenue,
+    'np-d':b.netProfit-a.netProfit,'np-a':a.netProfit-b.netProfit,
+    'yoy-d':b.yoy-a.yoy,'yoy-a':a.yoy-b.yoy,
+    'name':a.name.localeCompare(b.name)
+  }[sortKey]||0));
+}
+function doFilter(){
+  const sv=document.getElementById('s-search').value.toLowerCase();
+  const sec=document.getElementById('s-sector').value;
+  const risk=document.getElementById('s-risk').value;
+  filtered=doSort(COS.filter(c=>{
+    if(sv&&!c.name.toLowerCase().includes(sv))return false;
+    if(sec&&c.sector!==sec)return false;
+    if(risk&&c.risk!==risk)return false;
+    return true;
+  }));
+  page=1;renderTable();
+}
+function renderTable(){
+  const sl=(page-1)*PER,pg=filtered.slice(sl,sl+PER);
+  document.getElementById('rc').textContent=filtered.length+' entities';
+  document.getElementById('tbody').innerHTML=pg.map(c=>{
+    const rc={Low:'rl',Medium:'rm',High:'rh'}[c.risk];
+    const yc=c.yoy>=0?'yp':'yn';
+    const ys=(c.yoy>=0?'+':'')+c.yoy+'%';
+    const dc=c.compliance==='Complete'?'dc':'dp';
+    return `<tr onclick="openCo('${c.id}')">
+      <td><div class="en"><strong>${c.name}</strong><span>${c.id}</span></div></td>
+      <td class="sec">${c.sector}</td>
+      <td class="num">${fb(c.revenue)}</td>
+      <td class="num ${c.netProfit<0?'yn':''}">${fb(c.netProfit)}</td>
+      <td class="${yc}">${ys}</td>
+      <td><span class="rb ${rc}">${c.risk}</span></td>
+      <td><span class="cd ${dc}"></span><span style="font-size:12px;color:var(--text-md)">${c.compliance}</span></td>
+      <td><button class="bi" onclick="event.stopPropagation();toast('🔍 Investigation initiated for ${c.name.replace(/'/g,"\\'")}')">Investigate</button></td>
+    </tr>`;
+  }).join('');
+  renderPag();
+}
+function renderPag(){
+  const tot=Math.ceil(filtered.length/PER);
+  const s=(page-1)*PER+1,e=Math.min(page*PER,filtered.length);
+  document.getElementById('pi').textContent=`Showing ${s}–${e} of ${filtered.length} entities`;
+  let h=`<div class="pb arr" onclick="chPage(${page-1})">‹</div>`;
+  for(let i=1;i<=Math.min(tot,8);i++) h+=`<div class="pb ${i===page?'act':''}" onclick="chPage(${i})">${i}</div>`;
+  if(tot>8)h+=`<div class="pb" style="pointer-events:none;color:var(--text-faint)">…</div>`;
+  h+=`<div class="pb arr" onclick="chPage(${page+1})">›</div>`;
+  document.getElementById('pbs').innerHTML=h;
+}
+function chPage(p){
+  const tot=Math.ceil(filtered.length/PER);
+  if(p<1||p>tot)return;
+  if(p>1){toast('📄 Page '+p+' loads from live data in production.');return;}
+  page=p;renderTable();
+  document.querySelector('.tw').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ════ HELPERS FOR DELTAS ════
+function getDeltaHtml(val24, val23, inverse=false) {
+  const diff = (val24 - val23).toFixed(2);
+  if(diff == 0) return `<span class="pi2-delta" style="background:rgba(255,255,255,0.1);color:var(--text-dim)">—</span>`;
+  const isUp = diff > 0;
+  const isGood = inverse ? !isUp : isUp; 
+  const cls = isGood ? 'up' : 'dn';
+  const sym = isUp ? '↑' : '↓';
+  return `<span class="pi2-delta ${cls}">${sym} ${Math.abs(diff)}</span>`;
+}
+
+// ══ COMPANY DETAIL ══
+let yoyC=null,astC=null;
+function openCo(id){
+  const co=COS.find(c=>c.id===id);if(!co)return;
+  
+  // 1. SHOW THE VIEW FIRST so Chart.js can calculate dimensions
+  document.getElementById('view-dashboard').style.display='none';
+  document.getElementById('view-company').style.display='block';
+  window.scrollTo(0,0);
+
+  // 2. Populating text and data...
+  document.getElementById('co-nm').textContent=co.name;
+  document.getElementById('co-sec').textContent=co.sector;
+  document.getElementById('co-id').textContent=co.id;
+  document.getElementById('rv-ta').value='';
+
+  // Toggle specific visibility for ADNOC Demo
+  if(co.name === 'ADNOC Distribution') {
+      document.getElementById('docs-card').style.display = 'flex';
+      document.getElementById('docs-card').style.flexDirection = 'column';
+      document.getElementById('log-manual-edit').style.display = 'flex';
+  } else {
+      document.getElementById('docs-card').style.display = 'none';
+      document.getElementById('log-manual-edit').style.display = 'none';
+  }
+
+  const cfAbs=(Math.abs(co.cashFlow)*1000).toFixed(2);
+  const cfStr=(co.cashFlow<0?'−':'')+'AED '+cfAbs+'M';
+  const npChg=+((co.netProfit-co.netProfit23)/co.netProfit23*100).toFixed(1);
+  document.getElementById('ekpis').innerHTML=[
+    {l:'Total Revenue',v:`AED ${co.revenue}B`,vc:'gr',ch:`${co.yoy>=0?'↑':'↓'} ${Math.abs(co.yoy)}% YoY`,cc:co.yoy>=0?'up':'dn'},
+    {l:'Net Profit',v:`AED ${co.netProfit}B`,vc:'bl',ch:`${npChg>=0?'↑':'↓'} ${Math.abs(npChg)}%`,cc:npChg>=0?'up':'dn'},
+    {l:'ROI',v:co.roi+'%',vc:'nt',ch:'Return on Investment',cc:'nu'},
+    {l:'Cash Flow',v:cfStr,vc:co.cashFlow>=0?'gr':'rd',ch:co.cashFlow>=0?'↑ Positive':'↓ Negative',cc:co.cashFlow>=0?'up':'dn'},
+  ].map(k=>`<div class="ek"><div class="ek-lbl">${k.l}</div><div class="ek-val ${k.vc}" style="font-size:${k.v.length>12?'14px':'19px'}">${k.v}</div><div class="ek-ch ${k.cc}">${k.ch}</div></div>`).join('');
+
+  document.getElementById('sumtxt').textContent=`"${co.summary}"`;
+
+  document.getElementById('ft-income').innerHTML=`
+    <tr><td>Line Item</td><td>FY2024</td><td>FY2023</td></tr>
+    <tr><td>Revenue</td><td>${fb(co.revenue)}</td><td>${fb(co.revenue23)}</td></tr>
+    <tr><td>Gross Profit</td><td>${fb(co.grossProfit)}</td><td>${fb(co.grossProfit23)}</td></tr>
+    <tr><td>Operating Profit</td><td>${fb(co.opProfit)}</td><td>${fb(co.opProfit23)}</td></tr>
+    <tr><td>Profit Before Tax</td><td>${fb(co.pbt)}</td><td>${fb(co.pbt23)}</td></tr>
+    <tr><td>Profit for the Year</td><td>${fb(co.netProfit)}</td><td>${fb(co.netProfit23)}</td></tr>`;
+
+  document.getElementById('ft-balance').innerHTML=`
+    <tr><td>Line Item</td><td>FY2024</td><td>FY2023</td></tr>
+    <tr class="div"><td colspan="3">Assets</td></tr>
+    <tr><td>Total Assets</td><td>${fb(co.totalAssets)}</td><td>${fb(co.totalAssets23)}</td></tr>
+    <tr><td>Current Assets</td><td>${fb(co.currentAssets)}</td><td>${fb(co.currentAssets23)}</td></tr>
+    <tr class="div"><td colspan="3">Liabilities &amp; Equity</td></tr>
+    <tr><td>Total Liabilities</td><td>${fb(co.totalLiab)}</td><td>${fb(co.totalLiab23)}</td></tr>
+    <tr><td>Current Liabilities</td><td>${fb(co.currentLiab)}</td><td>${fb(co.currentLiab23)}</td></tr>
+    <tr><td>Total Equity</td><td>${fb(co.totalEquity)}</td><td>${fb(co.totalEquity23)}</td></tr>
+    <tr><td>Net Debt</td><td>${fb(co.netDebt)}</td><td>${fb(co.netDebt23)}</td></tr>`;
+
+  const cf24s=(co.cashFlow<0?'−':'+')+'AED '+(Math.abs(co.cashFlow)*1000).toFixed(0)+'M';
+  const cf23s=(co.cashFlow23<0?'−':'+')+'AED '+(Math.abs(co.cashFlow23)*1000).toFixed(0)+'M';
+  document.getElementById('ft-cash').innerHTML=`
+    <tr><td>Line Item</td><td>FY2024</td><td>FY2023</td></tr>
+    <tr><td>Net Change in Cash</td><td style="color:${co.cashFlow<0?'var(--red)':'var(--green)'}">${cf24s}</td><td style="color:${co.cashFlow23<0?'var(--red)':'var(--green)'}">${cf23s}</td></tr>
+    <tr><td>Cash &amp; Equivalents</td><td>${fb(co.cash)}</td><td>${fb(co.cash23)}</td></tr>
+    <tr><td>Inventories</td><td>${fb(co.inventories)}</td><td>${fb(co.inventories23)}</td></tr>
+    <tr><td>Trade Receivables</td><td>${fb(co.tradeRec)}</td><td>${fb(co.tradeRec23)}</td></tr>
+    <tr><td>Due from Related Parties</td><td>${fb(co.dueRelated)}</td><td>${fb(co.dueRelated23)}</td></tr>`;
+
+  const gm23 = +(co.grossProfit23/co.revenue23*100).toFixed(2);
+  const om23 = +(co.opProfit23/co.revenue23*100).toFixed(2);
+  const npm23 = +(co.netProfit23/co.revenue23*100).toFixed(2);
+  const cr23 = +(co.currentAssets23/co.currentLiab23).toFixed(2);
+  const lev23 = +(co.netDebt23/(co.netDebt23+co.totalEquity23)*100).toFixed(1);
+  const roa23 = +(co.netProfit23/co.totalAssets23*100).toFixed(2);
+  const roe23 = +(co.netProfit23/co.totalEquity23*100).toFixed(2);
+  const eps23 = +(co.netProfit23/5e9).toFixed(3); 
+
+  document.getElementById('pfgrid').innerHTML=[
+    ['Gross Margin', co.grossMargin+'%', 'Gross Profit as % of Revenue', getDeltaHtml(co.grossMargin, gm23)],
+    ['Operating Margin', co.opMargin+'%', 'Operating Profit as % of Revenue', getDeltaHtml(co.opMargin, om23)],
+    ['Net Profit Margin', co.npMargin+'%', 'Net Profit as % of Revenue', getDeltaHtml(co.npMargin, npm23)],
+    ['Current Ratio', co.currentRatio, 'Current Assets / Current Liabilities', getDeltaHtml(co.currentRatio, cr23)],
+    ['Leverage Ratio', co.leverageRatio+'%', 'Net Debt / (Net Debt + Equity)', getDeltaHtml(co.leverageRatio, lev23, true)],
+    ['EPS', co.eps+' AED', 'Earnings per share outstanding', getDeltaHtml(co.eps, eps23)],
+    ['Return on Assets (ROA)', co.roa+'%', 'Net Profit / Total Assets', getDeltaHtml(co.roa, roa23)],
+    ['Return on Equity (ROE)', co.roe+'%', 'Net Profit / Total Equity', getDeltaHtml(co.roe, roe23)],
+  ].map(([l,v,d, delta])=>`<div class="pi2"><div class="pi2-lbl">${l}</div><div class="pi2-val-row"><div class="pi2-val">${v}</div>${delta}</div><div class="pi2-desc">${d}</div></div>`).join('');
+
+  const ico={a:'🔴',w:'⚠️',i:'✅'};
+  document.getElementById('anomlist').innerHTML=co.anomalies.map(a=>`
+    <div class="ai">
+      <div class="aico ${a.t}">${ico[a.t]}</div>
+      <div><div class="at2">${a.title}</div><div class="ad2">${a.desc}</div></div>
+    </div>`).join('');
+
+  // 3. Destroy old charts BEFORE creating new ones
+  if(yoyC){yoyC.destroy();yoyC=null;}
+  if(astC){astC.destroy();astC=null;}
+
+  const gc='rgba(180,140,50,0.12)',tc='rgba(80,60,20,0.55)',fn={family:"'Plus Jakarta Sans',sans-serif",size:10.5};
+  const tip={
+    backgroundColor:'rgba(255,252,240,0.98)',borderColor:'rgba(180,140,50,0.3)',borderWidth:1,
+    titleColor:'#8A6A1A',bodyColor:'rgba(50,35,5,0.8)',
+    callbacks: {
+      label: c => {
+        if (c.dataset.type === 'line') return ' ' + c.raw.toFixed(2) + '% Margin';
+        return ' AED ' + c.raw.toFixed(2) + 'B';
+      }
+    }
+  };
+
+  // 4. Initialize charts
+  yoyC=new Chart(document.getElementById('yoy-chart'),{
+    data:{
+      labels:['FY 2023', 'FY 2024'],
+      datasets:[
+        {
+          type: 'bar',
+          label: 'Total Revenue (Billion AED)',
+          data: [co.revenue23, co.revenue],
+          backgroundColor: ['rgba(180, 140, 50, 0.25)', 'rgba(180, 140, 50, 0.8)'],
+          borderColor: ['rgba(180, 140, 50, 0.5)', 'rgba(180, 140, 50, 1)'],
+          borderWidth: 1, borderRadius: 4, yAxisID: 'y',
+          order: 2 
+        },
+        {
+          type: 'line', 
+          label: 'Net Profit Margin (%)',
+          data: [npm23, co.npMargin],
+          borderColor: '#1A1200', 
+          backgroundColor: '#1A1200',
+          borderWidth: 4, 
+          pointRadius: 8, 
+          pointHoverRadius: 10,
+          yAxisID: 'y1', tension: 0.3,
+          order: 1 
+        }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{labels:{color:tc,font:fn,boxWidth:10}}, tooltip:tip },
+      scales:{
+        x:{grid:{display:false}, ticks:{color:tc,font:fn}},
+        y:{type:'linear', display:true, position:'left', grid:{color:gc}, ticks:{color:tc,font:fn,callback:v=>v+'B'}, min:0},
+        y1:{type:'linear', display:true, position:'right', grid:{drawOnChartArea:false}, ticks:{color:tc,font:fn,callback:v=>v+'%'}, min:0}
+      }
+    }
+  });
+
+  document.getElementById('yd').textContent=`In FY2024, ${co.name} reported revenue of AED ${co.revenue}B (${co.yoy>=0?'+':''}${co.yoy}% vs FY2023). Net profit margin ${co.npMargin>=npm23?'improved to':'shifted to'} ${co.npMargin}%. Operating cash flow moved from ${co.cashFlow23>=0?'+':'−'}AED ${Math.abs(co.cashFlow23*1000).toFixed(0)}M to ${co.cashFlow>=0?'+':'−'}AED ${Math.abs(co.cashFlow*1000).toFixed(0)}M.`;
+
+  astC=new Chart(document.getElementById('asset-chart'),{
+    type:'bar',
+    data:{
+      labels:['FY 2023', 'FY 2024'],
+      datasets:[
+        {label:'Cash', data:[co.cash23, co.cash], backgroundColor:'rgba(26, 122, 69, 0.8)', borderRadius:{topLeft:0, topRight:0, bottomLeft:4, bottomRight:4}},
+        {label:'Due from Related', data:[co.dueRelated23, co.dueRelated], backgroundColor:'rgba(26, 90, 154, 0.8)'},
+        {label:'Trade Receivables', data:[co.tradeRec23, co.tradeRec], backgroundColor:'rgba(184, 98, 10, 0.8)'},
+        {label:'Inventories', data:[co.inventories23, co.inventories], backgroundColor:'rgba(180, 140, 50, 0.8)', borderRadius:{topLeft:4, topRight:4, bottomLeft:0, bottomRight:0}}
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{labels:{color:tc,font:fn,boxWidth:10}}, tooltip:tip },
+      scales:{
+        x:{stacked:true, grid:{display:false}, ticks:{color:tc,font:fn}},
+        y:{stacked:true, grid:{color:gc}, ticks:{color:tc,font:fn,callback:v=>v+'B'}, min:0}
+      }
+    }
+  });
+
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('act'));
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('act'));
+  document.querySelector('.tb').classList.add('act');
+  document.getElementById('t-income').classList.add('act');
+}
+
+function showDash(){
+  document.getElementById('view-dashboard').style.display='block';
+  document.getElementById('view-company').style.display='none';
+  window.scrollTo(0,0);
+}
+function switchTab(n,el){
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('act'));
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('act'));
+  el.classList.add('act');
+  document.getElementById('t-'+n).classList.add('act');
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+document.getElementById('s-search').addEventListener('input',doFilter);
+document.getElementById('s-sector').addEventListener('change',doFilter);
+document.getElementById('s-risk').addEventListener('change',doFilter);
+document.getElementById('s-sort').addEventListener('change',e=>{sortKey=e.target.value;doFilter()});
+doFilter();
+</script>
+
+<script>
+// ══ BACKGROUND — PRISMATIC AURORA ══
+(()=>{
+  const cv=document.getElementById('bg-canvas');
+  const cx=cv.getContext('2d');
+  let W,H;
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  const SOURCES=[
+    {ox:-.18,oy:-.22,spd:.00018,phase:0,    rays:60,spread:1.05,r1:'180,138,48',r2:'220,175,75'},
+    {ox:1.22,oy:-.15,spd:.00013,phase:2.09,  rays:50,spread:.90, r1:'155,118,38',r2:'200,158,58'},
+    {ox:.55,  oy:1.28,spd:.00021,phase:4.19, rays:45,spread:.80, r1:'168,130,45',r2:'210,168,64'},
+  ];
+  const BLOBS=[
+    {xF:.15,yF:.25,rx:.55,ry:.40,rot:-.3,spd:{x:.00006,y:.00005,r:.00008},phase:{x:0,y:1.2,r:2.1},al:.055,col:'200,155,55'},
+    {xF:.82,yF:.18,rx:.50,ry:.35,rot:.5, spd:{x:.00005,y:.00007,r:.00006},phase:{x:3.1,y:0.8,r:1.4},al:.045,col:'175,135,45'},
+    {xF:.65,yF:.75,rx:.60,ry:.38,rot:.2, spd:{x:.00007,y:.00004,r:.00009},phase:{x:1.5,y:3.7,r:0.6},al:.050,col:'190,148,52'},
+    {xF:.08,yF:.80,rx:.45,ry:.32,rot:-.6,spd:{x:.00004,y:.00006,r:.00007},phase:{x:2.4,y:1.9,r:3.8},al:.040,col:'165,125,42'},
+  ];
+  const MOTES=Array.from({length:70},()=>({
+    x:Math.random(),y:Math.random(),
+    vx:(Math.random()-.5)*.00012,vy:-(Math.random()*.00015+.00004),
+    r:.7+Math.random()*2.0,
+    al:.015+Math.random()*.04,
+    ph:Math.random()*Math.PI*2,
+    col:Math.random()>.5?'200,160,55':'175,140,48'
+  }));
+
+  let t=0;
+
+  function drawBlobs(){
+    for(const b of BLOBS){
+      const x=(b.xF+Math.sin(t*b.spd.x+b.phase.x)*.12)*W;
+      const y=(b.yF+Math.sin(t*b.spd.y+b.phase.y)*.10)*H;
+      const rx=b.rx*W*(1+Math.sin(t*b.spd.r+b.phase.r)*.08);
+      const ry=b.ry*H*(1+Math.cos(t*b.spd.r+b.phase.r)*.08);
+      const rot=b.rot+Math.sin(t*b.spd.r*.7)*.15;
+      cx.save();
+      cx.translate(x,y);cx.rotate(rot);
+      const g=cx.createRadialGradient(0,0,0,0,0,Math.max(rx,ry));
+      g.addColorStop(0,`rgba(${b.col},${b.al})`);
+      g.addColorStop(.45,`rgba(${b.col},${b.al*.5})`);
+      g.addColorStop(1,`rgba(${b.col},0)`);
+      cx.scale(1,ry/rx);
+      cx.beginPath();cx.arc(0,0,rx,0,Math.PI*2);
+      cx.fillStyle=g;cx.fill();
+      cx.restore();
+    }
+  }
+
+  function drawRays(){
+    for(const src of SOURCES){
+      const ang=t*src.spd+src.phase;
+      const sx=(src.ox+Math.cos(ang)*.06)*W;
+      const sy=(src.oy+Math.sin(ang)*.06)*H;
+      const fanCenter=Math.atan2(H*.5-sy,W*.5-sx);
+      const half=src.spread*.5;
+      for(let i=0;i<src.rays;i++){
+        const frac=i/(src.rays-1);
+        const rayAng=fanCenter-half+frac*src.spread;
+        const wobble=Math.sin(t*.00025*src.spd*800+frac*7.3+src.phase)*.012;
+        const finalAng=rayAng+wobble;
+        const len=Math.hypot(W,H)*1.4;
+        const ex=sx+Math.cos(finalAng)*len;
+        const ey=sy+Math.sin(finalAng)*len;
+        const edgeFade=Math.pow(Math.sin(frac*Math.PI),1.4);
+        const pulse=.7+.3*Math.sin(t*.00031*src.spd*800+frac*3.1);
+        const alpha=(0.022+frac*.008)*edgeFade*pulse;
+        const bright= i%4===0;
+        const col=bright?src.r2:src.r1;
+        const lw=bright?1.1:.45;
+        cx.beginPath();cx.moveTo(sx,sy);cx.lineTo(ex,ey);
+        cx.strokeStyle=`rgba(${col},${alpha*(bright?1.6:1)})`;
+        cx.lineWidth=lw;cx.stroke();
+      }
+      const glow=cx.createRadialGradient(sx,sy,0,sx,sy,W*.18);
+      glow.addColorStop(0,`rgba(${src.r2},0.06)`);
+      glow.addColorStop(1,`rgba(${src.r2},0)`);
+      cx.beginPath();cx.arc(sx,sy,W*.18,0,Math.PI*2);
+      cx.fillStyle=glow;cx.fill();
+    }
+  }
+
+  function drawMotes(){
+    for(const m of MOTES){
+      m.x+=m.vx;m.y+=m.vy;
+      if(m.y<-.01)m.y=1.01;
+      if(m.x<0)m.x=1;if(m.x>1)m.x=0;
+      const twinkle=.5+.5*Math.sin(t*.0015+m.ph);
+      cx.beginPath();cx.arc(m.x*W,m.y*H,m.r,0,Math.PI*2);
+      cx.fillStyle=`rgba(${m.col},${m.al*twinkle})`;cx.fill();
+    }
+  }
+
+  function drawVignette(){
+    const gx=cx.createRadialGradient(W*.5,H*.45,H*.1,W*.5,H*.45,H*.95);
+    gx.addColorStop(0,'rgba(248,243,232,0)');
+    gx.addColorStop(.7,'rgba(240,234,218,0)');
+    gx.addColorStop(1,'rgba(228,220,200,0.18)');
+    cx.fillStyle=gx;cx.fillRect(0,0,W,H);
+  }
+
+  function draw(){
+    cx.clearRect(0,0,W,H);
+    drawBlobs();
+    drawRays();
+    drawMotes();
+    drawVignette();
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+
+</body>
+</html>

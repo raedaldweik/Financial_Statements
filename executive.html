@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Intelligence Dashboard — FTA</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#B8922A;--gold-hi:#D4A84B;--gold-lo:#8A6A1A;
+  --gold-grad:linear-gradient(135deg,#C9A84C,#E8C86A,#A87830);
+  --nav-grad:linear-gradient(135deg,#1A1200 0%,#2E2100 40%,#1C1600 70%,#2A1E00 100%);
+  --text:#1A1400;--text-md:#5A4A20;--text-dim:#8A7A50;--text-faint:#AFA080;
+  --green:#1A7A45;--green-bg:rgba(26,122,69,0.10);--green-border:rgba(26,122,69,0.25);
+  --red:#C0392B;--red-bg:rgba(192,57,43,0.09);--red-border:rgba(192,57,43,0.22);
+  --amber:#B8620A;--amber-bg:rgba(184,98,10,0.10);--amber-border:rgba(184,98,10,0.25);
+  --blue:#1A5A9A;--blue-bg:rgba(26,90,154,0.09);--blue-border:rgba(26,90,154,0.20);
+  --glass:rgba(255,255,255,0.72);--glass-border:rgba(200,164,74,0.20);
+  --glass-shadow:0 4px 24px rgba(100,70,0,0.10),0 1px 3px rgba(100,70,0,0.08);
+  --glass-shadow-lg:0 8px 40px rgba(100,70,0,0.14),0 2px 8px rgba(100,70,0,0.08);
+  --r:10px;
+}
+html,body{width:100%;min-height:100%;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:linear-gradient(145deg,#FBF8F0 0%,#F5EFE0 35%,#EDE4CF 70%,#F8F3E8 100%);overflow-x:hidden}
+
+#bg-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:rgba(180,140,50,0.05)}
+::-webkit-scrollbar-thumb{background:rgba(180,140,50,0.3);border-radius:4px}
+
+/* ══ NAV ══ */
+.nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; padding: 0 32px; height: 54px; background: var(--nav-grad); box-shadow: 0 2px 20px rgba(0,0,0,0.35); position: sticky; top: 0; z-index: 200; }
+.nav-left { display: flex; align-items: center; gap: 20px; justify-self: start; }
+.nav-right { display: flex; align-items: center; justify-self: end; }
+.logo-img{height:24px;filter:brightness(0) invert(1) sepia(1) saturate(1.2) hue-rotate(5deg) brightness(.9);opacity:.88}
+.emblem-img{height:28px;opacity:.82}
+.nav-tabs { display: flex; gap: 35px; }
+.tab { text-decoration: none; color: rgba(255, 255, 255, 0.45); font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 0; position: relative; transition: color 0.3s ease; }
+.tab:hover { color: rgba(255, 255, 255, 0.9); }
+.tab.active { color: var(--gold-hi); }
+.tab.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: var(--gold); box-shadow: 0 0 10px rgba(200, 164, 74, 0.6); border-radius: 2px; }
+
+/* ══ PAGE ══ */
+.pw{max-width:1700px;margin:0 auto;padding:20px 32px 40px;position:relative;z-index:1}
+.ph{margin-bottom:12px;display:flex;align-items:flex-end;justify-content:space-between}
+.ph-left h1{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.ph-left p{font-size:11.5px;color:var(--text-dim);margin-top:2px}
+
+/* ══ KPI STRIP ══ */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:var(--glass);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(200,164,74,0.22);border-radius:var(--r);padding:14px 18px;box-shadow:var(--glass-shadow);position:relative;overflow:hidden;}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold-grad)}
+.kpi-lbl{font-size:8.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text-faint);margin-bottom:6px}
+.kpi-val{font-size:20px;font-weight:800;line-height:1;letter-spacing:-.025em}
+.kpi-val.gold{background:var(--gold-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.kpi-val.green{color:var(--green)}.kpi-val.red{color:var(--red)}.kpi-val.blue{color:var(--blue)}
+.kpi-tr{font-size:9.5px;margin-top:6px;font-weight:600;display:flex;align-items:center;gap:3px}
+.kpi-tr.up{color:var(--green)}.kpi-tr.dn{color:var(--red)}.kpi-tr.nu{color:var(--text-faint)}
+
+/* ══ CLEAN FILTERS ══ */
+.filter-row { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
+.filter-search { background: #FFFFFF; border: 1px solid rgba(180,140,50,0.15); border-radius: 6px; padding: 10px 14px 10px 36px; font-size: 13px; font-family: inherit; font-weight: 500; color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,0.02); outline: none; width: 260px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23AFA080'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 12px center; background-size: 16px; }
+.filter-search::placeholder { color: var(--text-faint); }
+.filter-select { background: #FFFFFF; border: 1px solid rgba(180,140,50,0.15); border-radius: 6px; padding: 10px 32px 10px 14px; font-size: 13px; font-family: inherit; font-weight: 500; color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,0.02); outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23AFA080'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px; }
+
+/* ══ GRID LAYOUTS & CARDS ══ */
+.g2-split{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+.g3-eq{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+.card{background:var(--glass);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid var(--glass-border);border-radius:var(--r);overflow:hidden;box-shadow:var(--glass-shadow);display:flex;flex-direction:column}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:linear-gradient(135deg,rgba(200,164,74,0.09),rgba(200,164,74,0.03));border-bottom:1px solid rgba(180,140,50,0.12);flex-shrink:0}
+.ch-left{display:flex;align-items:center;gap:8px}
+.ch h3{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.ch svg{width:14px;height:14px;color:var(--gold-hi);flex-shrink:0}
+.ch-badge{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:20px}
+.ch-badge.green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.ch-badge.red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.ch-badge.amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.cb{padding:14px 18px;flex:1;display:flex;flex-direction:column}
+.cw210{position:relative;height:210px;width:100%}
+
+/* ══ AI SUMMARY ══ */
+.ai-card{background:linear-gradient(135deg,rgba(255,255,255,0.85) 0%,rgba(252,247,232,0.78) 100%);backdrop-filter:blur(20px) saturate(160%);border:1px solid rgba(200,164,74,0.28);border-radius:var(--r);box-shadow:var(--glass-shadow-lg);position:relative;display:flex;align-items:stretch;height:160px}
+.ai-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold-grad)}
+.ai-label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 16px;min-width:80px;background:linear-gradient(180deg,rgba(200,164,74,0.12),rgba(200,164,74,0.06));border-right:1px solid rgba(200,164,74,0.15)}
+.ai-icon{font-size:18px}
+.ai-tag{font-size:7px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);text-align:center;line-height:1.3}
+.ai-body{padding:14px 22px;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.ai-body h3{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.ai-text{font-size:12.5px;line-height:1.6;color:var(--text-md);font-style:italic}
+.ai-text strong{color:var(--text);font-style:normal;font-weight:700}
+
+/* ══ ALERT FEED ══ */
+#alert-feed{overflow-y:auto;flex:1;padding:0;margin:0}
+.alert-item{display:flex;gap:12px;padding:10px 18px;border-bottom:1px solid rgba(180,140,50,0.07)}
+.alert-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.alert-dot.red{background:var(--red);box-shadow:0 0 6px rgba(192,57,43,0.4)}
+.alert-dot.amber{background:var(--amber);box-shadow:0 0 6px rgba(184,98,10,0.4)}
+.alert-dot.green{background:var(--green);box-shadow:0 0 6px rgba(26,122,69,0.4)}
+.alert-title{font-size:11.5px;font-weight:600;color:var(--text);margin-bottom:2px}
+.alert-desc{font-size:10px;color:var(--text-dim);line-height:1.4}
+
+/* Combined Doughnut Wrapper */
+.doughnut-duo{display:flex;align-items:center;justify-content:space-around;height:140px;margin-top:10px}
+.dd-item{position:relative;width:45%;height:100%}
+.dd-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.dd-val{font-size:16px;font-weight:800;color:var(--text);line-height:1}
+.dd-lbl{font-size:8px;font-weight:600;color:var(--text-faint);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;text-align:center;}
+.dd-leg{display:flex;justify-content:space-around;margin-top:16px;padding-top:12px;border-top:1px solid rgba(180,140,50,0.1)}
+.dd-leg-item{display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:600;color:var(--text-dim)}
+.dd-dot{width:8px;height:8px;border-radius:2px}
+
+@media(max-width:1200px){.g3-eq{grid-template-columns:1fr 1fr}.g2-split{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav class="nav">
+  <div class="nav-left">
+    <img class="logo-img" src="https://tax.gov.ae/en/images/header/logo-fta.png" alt="FTA">
+  </div>
+  <div class="nav-tabs">
+    <a href="http://localhost:8101/landing.html" class="tab">Landing Page</a>
+    <a href="http://localhost:8101/entity.html" class="tab">Entity Comparison & Analysis</a>
+    <a href="http://localhost:8101/executive.html" class="tab active">Executive Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <img class="emblem-img" src="https://upload.wikimedia.org/wikipedia/commons/e/eb/Emblem_of_the_United_Arab_Emirates.svg" alt="UAE">
+  </div>
+</nav>
+
+<div class="pw">
+  <div class="ph">
+    <div class="ph-left">
+      <h1>Financial Intelligence Overview</h1>
+      <p>Automated market profiling, sector solvency & recovery forecasting · Federal Tax Authority</p>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpi-strip"></div>
+
+  <div class="filter-row">
+    <input type="text" class="filter-search" id="nameFilter" placeholder="Search entity name...">
+    <select class="filter-select" id="sectorFilter">
+      <option value="All">All Sectors</option>
+      <option value="Energy">Energy</option>
+      <option value="Real Estate">Real Estate</option>
+      <option value="Trade">Trade</option>
+      <option value="Construction">Construction</option>
+      <option value="Logistics">Logistics</option>
+      <option value="Retail">Retail</option>
+      <option value="Technology">Technology</option>
+      <option value="Healthcare">Healthcare</option>
+      <option value="Finance">Finance</option>
+      <option value="Tourism">Tourism</option>
+    </select>
+    <select class="filter-select" id="emirateFilter">
+      <option value="All">All Emirates</option>
+      <option value="Abu Dhabi">Abu Dhabi</option>
+      <option value="Dubai">Dubai</option>
+      <option value="Sharjah">Sharjah</option>
+    </select>
+    <select class="filter-select" id="riskFilter">
+      <option value="All">All Risk Levels</option>
+      <option value="High">High Risk</option>
+      <option value="Medium">Medium Risk</option>
+      <option value="Low">Low Risk</option>
+    </select>
+  </div>
+
+  <div class="g2-split">
+    <div class="ai-card">
+      <div class="ai-label">
+        <div class="ai-icon">✦</div>
+        <div class="ai-tag">Macro<br>Brief</div>
+      </div>
+      <div class="ai-body">
+        <h3>Strategic Sector Assessment — FY 2024</h3>
+        <div class="ai-text" id="ai-text">Loading intelligence summary…</div>
+      </div>
+    </div>
+    
+    <div class="card" style="height: 160px;">
+      <div class="ch" style="padding: 10px 18px;"><div class="ch-left"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg><h3>Macro Policy Alerts</h3></div><span class="ch-badge amber">Live</span></div>
+      <div id="alert-feed"></div>
+    </div>
+  </div>
+
+  <div class="g3-eq">
+    <div class="card">
+      <div class="ch"><div class="ch-left"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><h3>Revenue Forecast (Q1 2026+)</h3></div></div>
+      <div class="cb"><div class="cw210"><canvas id="chart-forecast"></canvas></div></div>
+    </div>
+    
+    <div class="card">
+      <div class="ch"><div class="ch-left"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><h3>Sector Revenue vs. Avg Margin</h3></div></div>
+      <div class="cb"><div class="cw210"><canvas id="chart-sector-combo"></canvas></div></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ch-left"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg><h3>Compliance & Risk Profiling</h3></div></div>
+      <div class="cb">
+        <div class="doughnut-duo">
+          <div class="dd-item"><canvas id="chart-risk"></canvas><div class="dd-center"><div class="dd-val" id="val-risk"></div><div class="dd-lbl">High Risk</div></div></div>
+          <div class="dd-item"><canvas id="chart-comp"></canvas><div class="dd-center"><div class="dd-val" id="val-comp"></div><div class="dd-lbl">Filing</div></div></div>
+        </div>
+        <div class="dd-leg">
+          <div class="dd-leg-item"><div class="dd-dot" style="background:rgba(192,57,43,0.8)"></div>High</div>
+          <div class="dd-leg-item"><div class="dd-dot" style="background:rgba(184,98,10,0.7)"></div>Medium</div>
+          <div class="dd-leg-item"><div class="dd-dot" style="background:rgba(26,122,69,0.7)"></div>Low</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g3-eq">
+    <div class="card">
+      <div class="ch"><div class="ch-left"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg><h3>Macroeconomic Correlation: Sector Yield vs. UAE PMI</h3></div></div>
+      <div class="cb"><div class="cw210"><canvas id="chart-pmi"></canvas></div></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ch-left"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg><h3>Aggregate Sector Solvency Profiling</h3></div></div>
+      <div class="cb"><div class="cw210"><canvas id="chart-solvency"></canvas></div></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ch-left"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg><h3>Corporate Tax Compliance: ETR vs. Statutory Rate</h3></div></div>
+      <div class="cb"><div class="cw210"><canvas id="chart-etr"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════ DATA & UTILS (EXECUTIVE FRIENDLY) ══════════
+const SECTORS=['Energy','Real Estate','Trade','Construction','Logistics','Retail','Technology','Healthcare','Finance','Tourism'];
+const EMIRATES=['Abu Dhabi', 'Dubai', 'Sharjah'];
+const RISKS=['Low','Low','Low','Medium','Medium','High'];
+
+function fmt(n){
+  if(n === 0) return '0';
+  const a=Math.abs(n);
+  if(a>=1000) return (n/1000).toFixed(2)+'T';
+  if(a>=1) return n.toFixed(2)+'B';
+  return (n*1000).toFixed(0)+'M';
+}
+function fb(n){return 'AED '+fmt(n)}
+function sd(n){let x=Math.sin(n*7.3+1.2)*43758.5453;return x-Math.floor(x)}
+
+const NAMES=['ADNOC Distribution','Apex Petro Services','Emirates Trade Holdings','National Construction Group','Prime Tower Developments','Capital Infrastructure Works','Harbor Gate Shipping','Gulf Horizon Retail','Falcon Energy Partners','Al Noor Healthcare Group','Emirates Digital Solutions','Dubai Financial Hub','Masdar Renewables','Abu Dhabi Logistics','RAK Tourism Holdings','Sharjah Manufacturing Co.','Al Futtaim Group','Emaar Properties','DP World UAE','Etihad Airways Cargo','DEWA Energy Corp','Mubadala Ventures','First Abu Dhabi Capital','Emirates NBD Finance','Aldar Real Estate','Lulu Hypermarket Holdings','Majid Al Futtaim Retail','Mediclinic Middle East','Serco Middle East','Agthia Consumer Group','Abu Dhabi Health Services','Gulf Pharmaceuticals','Oman Oil UAE Branch','Emirates Steel','Al Ghurair Investments','Union Properties','Damac Real Estate','Nakheel Developments','Amlak Finance','Waha Capital','Tabreed Cooling','Abu Dhabi Aviation','Rotana Hotels','Jumeirah Group Hotels','Etihad Credit Insurance','Emirates Post Group','RTA Transit Solutions','Salik Tech','Taqa Energy','Gulf Medical Enterprises','Burjeel Healthcare','NMC Health','Landmark Retail Group','Al Ain Distribution','Injazat Cloud Services','G42 Cloudworks','Yahsat Satellite','Thuraya Telecom','du Telecom Services','Etisalat Enterprise','Dubai Airport Freezone','Jafza Industrial','Abu Dhabi Ports','Fujairah Oil Terminal','RAK Ceramics Manufacturing','Arkan Building Materials','Gulf Navigation Holding','Topaz Energy Marine','Commercial Bank Finance','Abu Dhabi Commercial Services','Dubai Islamic Ventures','Emirates Reit Fund','Dar Al Arkan UAE','National Bonds Corp','Emirates Investment Authority','Abu Dhabi Securities','Dubai World Trade Centre','Emaar Malls Group'];
+
+// Generate Base Database
+const MASTER_DATA = NAMES.map((name,i)=>{
+  const s1=sd(i), s2=sd(i+50), s3=sd(i+100);
+  
+  let rev=+(4+s1*160).toFixed(2);
+  let rev23=+(rev*(0.87+s2*.18)).toFixed(2);
+  let gp=+(rev*(0.09+s2*.25)).toFixed(2); 
+  let op=+(gp*(0.38+s3*.44)).toFixed(2);
+  let pbt=+(op*(0.74+s1*.22)).toFixed(2);
+  let np=+(pbt*(0.79+s2*.16)).toFixed(2);
+  let np23=+(np*(0.88+s3*.2)).toFixed(2);
+  let yoy=+((rev-rev23)/rev23*100).toFixed(1);
+  
+  const riskRaw = RISKS[Math.floor(s1*RISKS.length)];
+  const emirate = EMIRATES[Math.floor((s2 * 3) % 3)];
+
+  if(name==='ADNOC Distribution') { rev=35.45; rev23=34.63; np=2.47; yoy=2.4; }
+
+  const margin = rev > 0 ? +(np/rev*100).toFixed(1) : 0;
+  let cluster = 'Standard Profile';
+  let auditYieldM = +(rev * (0.002 + s3*0.005) * 1000).toFixed(1); 
+  const risk = name==='ADNOC Distribution' ? 'Medium' : riskRaw;
+
+  if(risk === 'High') {
+      cluster = s1 > 0.5 ? 'Profit Shifting Risk' : 'Debt Evasion Risk';
+      auditYieldM = +(rev * (0.015 + s3*0.04) * 1000).toFixed(1); 
+  } else if (risk === 'Medium') {
+      cluster = s2 > 0.7 ? 'Solvency Warning' : 'Standard Profile';
+      auditYieldM = +(rev * (0.005 + s3*0.01) * 1000).toFixed(1); 
+  }
+
+  return {
+    name, sector:SECTORS[i%10], emirate: emirate,
+    revenue:rev, revenue23:rev23, netProfit:np, yoy, margin,
+    risk, compliance:s2>.25?'Complete':'Pending',
+    cluster, auditYieldM
+  };
+});
+
+// ══════════ GLOBAL CHART INSTANCES & CONFIG ══════════
+const gc='rgba(180,140,50,0.08)';
+const tc='rgba(80,60,20,0.5)';
+const fn={family:"'Plus Jakarta Sans',sans-serif",size:9.5};
+const tip={backgroundColor:'rgba(255,252,240,0.97)',borderColor:'rgba(180,140,50,0.28)',borderWidth:1,titleColor:'#8A6A1A',bodyColor:'rgba(50,35,5,0.75)',padding:8,titleFont:{size:11},bodyFont:{size:10}};
+Chart.defaults.font=fn; Chart.defaults.color=tc;
+
+let forecastChart, comboChart, riskChart, compChart, pmiChart, solChart, etrChart;
+const trendLabels = ['Q3 24','Q4 24','Q1 25','Q2 25','Q3 25','Q4 25','Q1 26','Q2 26','Q3 26','Q4 26'];
+
+// ══════════ CORE DASHBOARD UPDATE FUNCTION ══════════
+function renderDashboard(data, sectorFilterStr) {
+  
+  // -- AGGREGATE MATH --
+  const totRev = data.reduce((a,c)=>a+c.revenue,0);
+  const totNP = data.reduce((a,c)=>a+c.netProfit,0);
+  const aggMargin = totRev > 0 ? +(totNP / totRev * 100).toFixed(1) : 0;
+  
+  const hrCount = data.filter(c=>c.risk==='High').length;
+  const mrCount = data.filter(c=>c.risk==='Medium').length;
+  const lrCount = data.filter(c=>c.risk==='Low').length;
+  const compCount = data.filter(c=>c.compliance==='Complete').length;
+  const compRate = data.length > 0 ? Math.round(compCount/data.length*100) : 0;
+  
+  const totalExposure = data.filter(c=>c.risk==='High').reduce((a,c)=>a+c.revenue, 0);
+  const totalPredictedYieldB = +(data.reduce((a,c)=>a+c.auditYieldM, 0) / 1000).toFixed(2);
+
+  // Sector Level Data Setup
+  const activeSectors = sectorFilterStr === 'All' ? SECTORS : [sectorFilterStr];
+  let sectorData = activeSectors.map((s, index) => {
+    const cos = data.filter(c => c.sector === s);
+    const sRev = cos.reduce((a,c) => a + c.revenue, 0);
+    const sNP = cos.reduce((a,c) => a + c.netProfit, 0);
+    const sMargin = sRev > 0 ? +(sNP / sRev * 100).toFixed(1) : 0;
+    let etr = (8.5 - ((s.length%5) * 0.7)).toFixed(1); 
+    if (etr < 2) etr = 2.4; 
+    const solvency = (0.7 + (Math.sin(s.length)*0.5 + 0.8)).toFixed(2);
+    return { sector: s, rev: sRev, margin: sMargin, etr: etr, solvency: solvency };
+  }).filter(s => s.rev > 0).sort((a,b)=>b.rev - a.rev);
+
+  // -- UPDATE KPIs --
+  document.getElementById('kpi-strip').innerHTML=[
+    {l:'Total Revenue',v:'AED '+fmt(totRev),cls:'gold',tr:`Filtered Portfolio`},
+    {l:'Total Net Profit',v:'AED '+fmt(totNP),cls:'',tr:`Filtered Portfolio`},
+    {l:'Agg. Profit Margin',v:aggMargin+'%',cls:'blue',tr:`Operational Baseline`},
+    {l:'Compliance Rate',v:compRate+'%',cls:'green',tr:`${compCount} / ${data.length} submitted`},
+    {l:'Systemic Default Risk',v:'AED '+fmt(totalExposure),cls:'red',tr:'Gross rev in High Risk'},
+    {l:'Tax Yield Gap',v:'AED '+totalPredictedYieldB+'B',cls:'gold',tr:`Identified evasion potential`},
+  ].map(k=>`<div class="kpi"><div class="kpi-lbl">${k.l}</div><div class="kpi-val ${k.cls}">${k.v}</div><div class="kpi-tr nu">${k.tr}</div></div>`).join('');
+
+  // -- UPDATE AI TEXT & ALERTS --
+  if(data.length === 0) {
+    document.getElementById('ai-text').innerHTML = "No entities match the current filter criteria.";
+    document.getElementById('alert-feed').innerHTML = "";
+  } else {
+    const topCluster = hrCount > 0 ? data.filter(c=>c.risk==='High').sort((a,b)=>b.auditYieldM - a.auditYieldM)[0].cluster : 'Standard Operations';
+    
+    const aiLines = `
+      Intelligence engine evaluated ${data.length} entities in this segment. We project an aggregate Corporate Tax (CT) yield gap of <strong>AED ${totalPredictedYieldB} Billion</strong> across the current fiscal year. 
+      <br><br>
+      <strong>${hrCount} entities</strong> currently present high systemic default risks, with the primary reporting anomaly classified as <strong>"${topCluster}"</strong>. Furthermore, macroeconomic cross-referencing reveals a concerning divergence: while reported sector revenues continue to scale upwards, underlying market health indicators (UAE PMI) are signaling contracting operational output. 
+      <br><br>
+      <em>Recommendation:</em> This structural disconnect strongly indicates aggressive tax optimization and potential margin manipulation. We advise immediate deployment of targeted Tier-1 audit protocols, specifically focusing on segments exhibiting an Effective Tax Rate (ETR) significantly below the 9% statutory baseline.
+    `;
+    
+    document.getElementById('ai-text').innerHTML = aiLines;
+    
+    document.getElementById('alert-feed').innerHTML=`
+      <div class="alert-item"><div class="alert-dot red"></div><div><div class="alert-title">PMI Divergence Alert</div><div class="alert-desc">Segment reported robust growth despite broader macro indicators contracting. Initiating review.</div></div></div>
+      <div class="alert-item"><div class="alert-dot amber"></div><div><div class="alert-title">Liquidity Stress</div><div class="alert-desc">Aggregate segment solvency ratio indicates elevated risk of CT defaults for FY26.</div></div></div>
+    `;
+  }
+
+  // -- UPDATE CHART 1 (Forecast) --
+  // Clean, single line matching the original requested design, scaling based on filtered data
+  let baseRev = totRev > 0 ? totRev / 4 : 0.1;
+  const forecastData = trendLabels.map((_,i) => {
+      let val = baseRev * (1 + i * 0.012 + Math.sin(i * 1.5) * 0.02);
+      if(i > 6) val *= (1 + (i - 6) * 0.015); // Q1 26 onwards
+      return +val.toFixed(1);
+  });
+
+  const chart1Title = sectorFilterStr === 'All' ? 'Aggregate Revenue Forecast' : `${sectorFilterStr} Revenue Forecast`;
+
+  if(!forecastChart) {
+    forecastChart = new Chart(document.getElementById('chart-forecast'), {
+      type:'line',
+      data:{
+        labels:trendLabels,
+        datasets:[{
+          label: chart1Title, data: forecastData,
+          borderColor:'#B8922A', backgroundColor:'rgba(180,138,48,0.07)',
+          pointBackgroundColor:ctx=>ctx.dataIndex>=6?'#fff':'#B8922A',
+          pointBorderColor:'#B8922A', pointRadius:3, tension:0.4, fill:true,
+          segment:{ borderDash:ctx=>ctx.p0DataIndex>=6?[4,4]:undefined, borderColor:ctx=>ctx.p0DataIndex>=6?'rgba(180,138,48,0.5)':undefined }
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}, tooltip:{...tip, callbacks:{label:c=>' AED '+c.raw+'B'}}},
+        scales:{x:{grid:{color:gc}}, y:{grid:{color:gc}, ticks:{callback:v=>v+'B'}, min:0}}
+      }
+    });
+  } else {
+    forecastChart.data.datasets[0].label = chart1Title;
+    forecastChart.data.datasets[0].data = forecastData;
+    forecastChart.update();
+  }
+
+  // -- UPDATE CHART 2 (Combo) --
+  if(!comboChart) {
+    comboChart = new Chart(document.getElementById('chart-sector-combo'), {
+      data:{
+        labels:sectorData.map(s=>s.sector.substring(0,6)+'.'),
+        datasets:[
+          { type: 'bar', label: 'Rev (Billion)', data: sectorData.map(s=>s.rev), backgroundColor: 'rgba(180, 138, 48, 0.7)', borderRadius: 3, yAxisID: 'y', order: 2 },
+          { type: 'line', label: 'Margin (%)', data: sectorData.map(s=>s.margin), borderColor: '#1A1200', backgroundColor: '#1A1200', borderWidth: 2, pointRadius: 3, yAxisID: 'y1', tension: 0.3, order: 1 }
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{labels:{boxWidth:10}}, tooltip:tip },
+        scales:{
+          x:{grid:{display:false}},
+          y:{type:'linear', position:'left', grid:{color:gc}, ticks:{callback:v=>v+'B'}, min:0},
+          y1:{type:'linear', position:'right', grid:{drawOnChartArea:false}, ticks:{callback:v=>v+'%'}, min:0}
+        }
+      }
+    });
+  } else {
+    comboChart.data.labels = sectorData.map(s=>s.sector.substring(0,6)+'.');
+    comboChart.data.datasets[0].data = sectorData.map(s=>s.rev);
+    comboChart.data.datasets[1].data = sectorData.map(s=>s.margin);
+    comboChart.update();
+  }
+
+  // -- UPDATE CHART 3 & 4 (Doughnuts) --
+  document.getElementById('val-risk').textContent=hrCount;
+  document.getElementById('val-comp').textContent=compRate+'%';
+
+  if(!riskChart) {
+    riskChart = new Chart(document.getElementById('chart-risk'),{
+      type:'doughnut', data:{labels:['High','Medium','Low'],datasets:[{data:[hrCount,mrCount,lrCount],backgroundColor:['rgba(192,57,43,0.8)','rgba(184,98,10,0.7)','rgba(26,122,69,0.7)'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'75%',plugins:{legend:{display:false},tooltip:tip}}
+    });
+    compChart = new Chart(document.getElementById('chart-comp'),{
+      type:'doughnut', data:{labels:['Complete','Pending'],datasets:[{data:[compCount, data.length-compCount],backgroundColor:['rgba(26,122,69,0.8)','rgba(184,98,10,0.6)'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'75%',plugins:{legend:{display:false},tooltip:tip}}
+    });
+  } else {
+    riskChart.data.datasets[0].data = [hrCount,mrCount,lrCount];
+    riskChart.update();
+    compChart.data.datasets[0].data = [compCount, data.length-compCount];
+    compChart.update();
+  }
+
+  // -- UPDATE MACRO CHARTS (A, B, C) --
+  const pmiData = trendLabels.map((_,i) => +(52 + Math.sin(i * 0.8) * 5 - (i > 6 ? 4 : 0)).toFixed(1)); 
+  const aggRevTrend = forecastData; // Re-use our dynamic forecast line
+
+  if(!pmiChart) {
+    pmiChart = new Chart(document.getElementById('chart-pmi'),{
+      type:'line',
+      data:{
+        labels:trendLabels,
+        datasets:[
+          { label:'Reported Rev (B)', data:aggRevTrend, borderColor:'#B8922A', backgroundColor:'rgba(180,138,48,0.2)', yAxisID:'y', tension:0.4, fill:true },
+          { label:'UAE PMI Index', data:pmiData, borderColor:'#C0392B', backgroundColor:'#C0392B', borderDash:[5,5], yAxisID:'y1', tension:0.3, pointRadius:0 }
+        ]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{labels:{boxWidth:10}}, tooltip:tip, annotation: { annotations: { line1: { type: 'line', yMin: 50, yMax: 50, yScaleID: 'y1', borderColor: 'rgba(0,0,0,0.3)', borderWidth: 1, label: { content: '50 (Growth Baseline)', enabled: true, position: 'end', font: {size: 8} } } } } },
+        scales:{ x:{grid:{color:gc}}, y:{type:'linear', position:'left', grid:{color:gc}, min:0}, y1:{type:'linear', position:'right', min:40, max:60, grid:{drawOnChartArea:false}} }
+      }
+    });
+  } else {
+    pmiChart.data.datasets[0].data = aggRevTrend;
+    pmiChart.update();
+  }
+
+  const solData = [...sectorData].sort((a,b)=>a.solvency - b.solvency);
+  if(!solChart) {
+    solChart = new Chart(document.getElementById('chart-solvency'),{
+      type:'bar',
+      data:{
+        labels:solData.map(s=>s.sector),
+        datasets:[{ label:'Liquidity Ratio', data:solData.map(s=>s.solvency), backgroundColor: ctx => ctx.raw < 1.0 ? 'rgba(192,57,43,0.7)' : ctx.raw < 1.3 ? 'rgba(184,98,10,0.7)' : 'rgba(26,122,69,0.7)', borderRadius:3 }]
+      },
+      options:{
+        indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:tip, annotation: { annotations: { line1: { type: 'line', xMin: 1.0, xMax: 1.0, borderColor: '#C0392B', borderWidth: 2, borderDash: [4,4], label: { content: 'Default Risk Threshold', enabled: true, position: 'end', font: {size: 8} } } } } },
+        scales:{ x:{grid:{color:gc}, min:0, max:2.5}, y:{grid:{display:false}, ticks:{font:{size:8}}} }
+      }
+    });
+  } else {
+    solChart.data.labels = solData.map(s=>s.sector);
+    solChart.data.datasets[0].data = solData.map(s=>s.solvency);
+    solChart.update();
+  }
+
+  const etrData = [...sectorData].sort((a,b)=>a.etr - b.etr);
+  if(!etrChart) {
+    etrChart = new Chart(document.getElementById('chart-etr'),{
+      type:'bar',
+      data:{
+        labels:etrData.map(s=>s.sector.substring(0,6)+'.'),
+        datasets:[{ label:'Effective Tax Rate (%)', data:etrData.map(s=>s.etr), backgroundColor: ctx => ctx.raw < 4.5 ? 'rgba(192,57,43,0.8)' : ctx.raw < 7.5 ? 'rgba(184,98,10,0.8)' : 'rgba(26,122,69,0.8)', borderRadius:3 }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{...tip, callbacks:{label:c=>c.raw+'% ETR'}}, annotation: { annotations: { line1: { type: 'line', yMin: 9.0, yMax: 9.0, borderColor: '#B8922A', borderWidth: 2, label: { content: '9% UAE CT Rate', enabled: true, position: 'end', font: {size: 8}, backgroundColor: 'rgba(255,255,255,0.8)', color: '#1A1400' } } } } },
+        scales:{ x:{grid:{display:false}, ticks:{font:{size:8}}}, y:{grid:{color:gc}, min:0, max:12, ticks:{callback:v=>v+'%'}} }
+      }
+    });
+  } else {
+    etrChart.data.labels = etrData.map(s=>s.sector.substring(0,6)+'.');
+    etrChart.data.datasets[0].data = etrData.map(s=>s.etr);
+    etrChart.update();
+  }
+}
+
+// ══════════ FILTER WIRING ══════════
+function applyFilters() {
+  const nameSearch = document.getElementById('nameFilter').value.toLowerCase();
+  const sec = document.getElementById('sectorFilter').value;
+  const emi = document.getElementById('emirateFilter').value;
+  const rsk = document.getElementById('riskFilter').value;
+
+  const filteredData = MASTER_DATA.filter(c => {
+    if(nameSearch && !c.name.toLowerCase().includes(nameSearch)) return false;
+    if(sec !== 'All' && c.sector !== sec) return false;
+    if(emi !== 'All Emirates' && c.emirate !== emi) return false;
+    // Handle the "High Risk" format vs just "High" in the data array
+    if(rsk !== 'All Risk Levels' && c.risk !== rsk.replace(' Risk', '')) return false; 
+    return true;
+  });
+
+  renderDashboard(filteredData, sec);
+}
+
+// Attach event listeners
+document.querySelectorAll('.filter-select').forEach(el => el.addEventListener('change', applyFilters));
+document.getElementById('nameFilter').addEventListener('input', applyFilters);
+
+// Initial Render
+renderDashboard(MASTER_DATA, 'All');
+
+</script>
+
+<script>
+// ══ BACKGROUND — PRISMATIC AURORA ══
+(()=>{
+  const cv=document.getElementById('bg-canvas');
+  const cx=cv.getContext('2d');
+  let W,H;
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight}
+  resize();window.addEventListener('resize',resize);
+  const SOURCES=[
+    {ox:-.18,oy:-.22,spd:.00018,phase:0,    rays:60,spread:1.05,r1:'180,138,48',r2:'220,175,75'},
+    {ox:1.22,oy:-.15,spd:.00013,phase:2.09,  rays:50,spread:.90, r1:'155,118,38',r2:'200,158,58'},
+    {ox:.55,  oy:1.28,spd:.00021,phase:4.19, rays:45,spread:.80, r1:'168,130,45',r2:'210,168,64'},
+  ];
+  const BLOBS=[
+    {xF:.15,yF:.25,rx:.55,ry:.40,rot:-.3,spd:{x:.00006,y:.00005,r:.00008},phase:{x:0,y:1.2,r:2.1},al:.055,col:'200,155,55'},
+    {xF:.82,yF:.18,rx:.50,ry:.35,rot:.5, spd:{x:.00005,y:.00007,r:.00006},phase:{x:3.1,y:0.8,r:1.4},al:.045,col:'175,135,45'},
+    {xF:.65,yF:.75,rx:.60,ry:.38,rot:.2, spd:{x:.00007,y:.00004,r:.00009},phase:{x:1.5,y:3.7,r:0.6},al:.050,col:'190,148,52'},
+  ];
+  const MOTES=Array.from({length:50},()=>({x:Math.random(),y:Math.random(),vx:(Math.random()-.5)*.00012,vy:-(Math.random()*.00015+.00004),r:.7+Math.random()*2.0,al:.015+Math.random()*.04,ph:Math.random()*Math.PI*2,col:Math.random()>.5?'200,160,55':'175,140,48'}));
+  let t=0;
+  function draw(){
+    cx.clearRect(0,0,W,H);
+    for(const b of BLOBS){
+      const x=(b.xF+Math.sin(t*b.spd.x+b.phase.x)*.12)*W;const y=(b.yF+Math.sin(t*b.spd.y+b.phase.y)*.10)*H;
+      const rx=b.rx*W*(1+Math.sin(t*b.spd.r+b.phase.r)*.08);const ry=b.ry*H*(1+Math.cos(t*b.spd.r+b.phase.r)*.08);
+      cx.save();cx.translate(x,y);cx.rotate(b.rot+Math.sin(t*b.spd.r*.7)*.15);
+      const g=cx.createRadialGradient(0,0,0,0,0,Math.max(rx,ry));
+      g.addColorStop(0,`rgba(${b.col},${b.al})`);g.addColorStop(.45,`rgba(${b.col},${b.al*.5})`);g.addColorStop(1,`rgba(${b.col},0)`);
+      cx.scale(1,ry/rx);cx.beginPath();cx.arc(0,0,rx,0,Math.PI*2);cx.fillStyle=g;cx.fill();cx.restore();
+    }
+    for(const src of SOURCES){
+      const ang=t*src.spd+src.phase;const sx=(src.ox+Math.cos(ang)*.06)*W;const sy=(src.oy+Math.sin(ang)*.06)*H;
+      const fanCenter=Math.atan2(H*.5-sy,W*.5-sx);const half=src.spread*.5;
+      for(let i=0;i<src.rays;i++){
+        const frac=i/(src.rays-1);const rayAng=fanCenter-half+frac*src.spread+Math.sin(t*.00025*src.spd*800+frac*7.3+src.phase)*.012;
+        const len=Math.hypot(W,H)*1.4;const ex=sx+Math.cos(rayAng)*len;const ey=sy+Math.sin(rayAng)*len;
+        const edgeFade=Math.pow(Math.sin(frac*Math.PI),1.4);const pulse=.7+.3*Math.sin(t*.00031*src.spd*800+frac*3.1);
+        const alpha=(0.022+frac*.008)*edgeFade*pulse;const bright=i%4===0;
+        cx.beginPath();cx.moveTo(sx,sy);cx.lineTo(ex,ey);
+        cx.strokeStyle=`rgba(${bright?src.r2:src.r1},${alpha*(bright?1.6:1)})`;cx.lineWidth=bright?1.1:.45;cx.stroke();
+      }
+      const glow=cx.createRadialGradient(sx,sy,0,sx,sy,W*.18);
+      glow.addColorStop(0,`rgba(${src.r2},0.06)`);glow.addColorStop(1,`rgba(${src.r2},0)`);
+      cx.beginPath();cx.arc(sx,sy,W*.18,0,Math.PI*2);cx.fillStyle=glow;cx.fill();
+    }
+    for(const m of MOTES){
+      m.x+=m.vx;m.y+=m.vy;if(m.y<-.01)m.y=1.01;if(m.x<0)m.x=1;if(m.x>1)m.x=0;
+      cx.beginPath();cx.arc(m.x*W,m.y*H,m.r,0,Math.PI*2);
+      cx.fillStyle=`rgba(${m.col},${m.al*(.5+.5*Math.sin(t*.0015+m.ph))})`;cx.fill();
+    }
+    const vx=cx.createRadialGradient(W*.5,H*.45,H*.1,W*.5,H*.45,H*.95);
+    vx.addColorStop(0,'rgba(248,243,232,0)');vx.addColorStop(.7,'rgba(240,234,218,0)');vx.addColorStop(1,'rgba(228,220,200,0.18)');
+    cx.fillStyle=vx;cx.fillRect(0,0,W,H);
+    t++;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
