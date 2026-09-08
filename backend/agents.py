@@ -78,7 +78,7 @@ def _intake_user(case: Case, ctx: dict) -> list:
 
 
 INTAKE = AgentDef(
-    key="intake", name="Intake & Triage Agent", icon="📋",
+    key="intake", name="Intake & Triage Agent", icon="clipboard",
     role="Classifies the complaint, profiles the victim's claims, sets analysis priorities",
     system=(
         "You are the intake and triage agent of a police financial crime unit. "
@@ -115,7 +115,7 @@ def _conversation_user(case: Case, ctx: dict) -> list:
 
 
 CONVERSATION = AgentDef(
-    key="conversation", name="Conversation Forensics Agent", icon="💬",
+    key="conversation", name="Conversation Forensics Agent", icon="chat",
     role="Reconstructs the exchange, extracts identifiers, detects manipulation patterns",
     system=(
         "You are a conversation forensics specialist in a police financial crime unit. "
@@ -147,7 +147,7 @@ def _financial_user(case: Case, ctx: dict) -> list:
 
 
 FINANCIAL = AgentDef(
-    key="financial", name="Financial Analysis Agent", icon="🏦",
+    key="financial", name="Financial Analysis Agent", icon="bank",
     role="Parses the bank statement, isolates fraud transfers, quantifies the loss",
     system=(
         "You are a financial analysis specialist in a police financial crime unit. "
@@ -172,7 +172,7 @@ def _osint_user(case: Case, ctx: dict) -> list:
 
 
 OSINT_AGENT = AgentDef(
-    key="osint", name="OSINT Agent", icon="🌐",
+    key="osint", name="OSINT Agent", icon="globe",
     role="Queries registries, phone/domain intel, social profiles and scam databases",
     system=(
         "You are an OSINT specialist in a police financial crime unit with tool access to "
@@ -201,7 +201,7 @@ def _crossref_user(case: Case, ctx: dict) -> list:
 
 
 CROSSREF = AgentDef(
-    key="crossref", name="Intelligence Cross-Reference Agent", icon="🕸️",
+    key="crossref", name="Intelligence Cross-Reference Agent", icon="database",
     role="Searches prior complaints & the entity network — is this a first offence or a series?",
     system=(
         "You are the intelligence cross-reference specialist of a police financial crime "
@@ -238,11 +238,15 @@ def _lead_user(case: Case, ctx: dict) -> list:
              "- vi_case_summary: one short paragraph describing the consolidated case that "
              "should be opened in the unit's network-investigation platform in the next step "
              "(entities, links, prior complaints to merge).\n"
-             "- executive_summary: ~150 words, written for a unit commander."}]
+             "- executive_summary: at most 80 words for a unit commander, then a final "
+             "sentence starting exactly with 'Recommendation:'.\n"
+             "- Dashboard brevity: finding detail <= 25 words; timeline event <= 12 words; "
+             "action rationale <= 15 words; entity role <= 14 words; prior-case summary "
+             "<= 25 words. Numbers over narrative."}]
 
 
 LEAD = AgentDef(
-    key="lead", name="Lead Investigator Agent", icon="🎖️",
+    key="lead", name="Lead Investigator Agent", icon="shield",
     role="Synthesizes all findings into the case report, network map and action plan",
     system=(
         "You are the lead investigator of a police financial crime unit. You receive the "

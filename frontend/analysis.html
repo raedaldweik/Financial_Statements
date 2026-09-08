@@ -23,26 +23,40 @@
   <div class="nav-right"><span class="mode-pill" id="modePill">…</span></div>
 </nav>
 
-<div class="pw" style="max-width:1080px">
+<div class="pw">
   <div class="ph">
     <div class="ph-left">
       <h1>AI Investigation</h1>
       <p id="anaStatus">Waiting for a run…</p>
     </div>
     <div class="ph-actions" id="doneActions" style="display:none">
-      <a class="btn btn-primary" href="report.html">Open Investigation Report <span class="btn-arrow">›</span></a>
+      <a class="btn btn-primary" href="report.html">Open investigation report</a>
     </div>
   </div>
 
-  <div class="progress"><i id="progBar"></i></div>
+  <div class="kpis" style="grid-template-columns:repeat(5,1fr)">
+    <div class="kpi"><div class="kpi-lbl">Pipeline stage</div><div class="kpi-val gold" id="k_stage">0<small> / 6</small></div><div class="kpi-tr" id="k_stageName">idle</div></div>
+    <div class="kpi"><div class="kpi-lbl">Tool calls</div><div class="kpi-val" id="k_tools">0</div><div class="kpi-tr">registries · telecom · history</div></div>
+    <div class="kpi"><div class="kpi-lbl">Identifiers extracted</div><div class="kpi-val blue" id="k_ids">0</div><div class="kpi-tr">names · accounts · phones · handles</div></div>
+    <div class="kpi"><div class="kpi-lbl">Cross-case matches</div><div class="kpi-val red" id="k_matches">0</div><div class="kpi-tr">prior complaints &amp; known entities</div></div>
+    <div class="kpi"><div class="kpi-lbl">Elapsed</div><div class="kpi-val" id="k_elapsed">0<small>s</small></div><div class="kpi-tr" id="k_mode">—</div></div>
+  </div>
 
-  <div id="agentList"></div>
+  <div class="progress" style="margin-bottom:14px"><i id="progBar"></i></div>
+
+  <div class="pipe-grid" id="pipe" style="display:none">
+    <div class="card">
+      <div class="ch"><div class="ch-left" id="chPipe"><h3>Investigation Pipeline</h3></div><span class="ch-badge gold">6 agents</span></div>
+      <div class="stage-list" id="stageList"></div>
+    </div>
+    <div id="panels"></div>
+  </div>
 
   <div class="card" id="emptyState" style="display:none">
     <div class="empty-state">
       <div class="big">No analysis running</div>
       <p>Start from the complaint intake — register a complaint, attach evidence and run the AI analysis.</p>
-      <a class="btn btn-primary" href="intake.html">Go to Complaint Intake <span class="btn-arrow">›</span></a>
+      <a class="btn btn-primary" href="intake.html">Go to complaint intake</a>
     </div>
   </div>
 </div>
@@ -54,94 +68,112 @@
 "use strict";
 const runId = sessionStorage.getItem('fcuRun');
 const mode  = sessionStorage.getItem('fcuMode');
-let order = [], agents = {}, doneCount = 0;
+let order = [], agents = {}, doneCount = 0, tools = 0, ids = 0, matches = 0, t0 = Date.now(), timer = null;
+$('chPipe').insertAdjacentHTML('afterbegin', ic('cpu'));
 
 (async function boot(){
   await initModePill();
-  if(mode) setModePill(mode);
+  if(mode){ setModePill(mode); $('k_mode').textContent = mode==='live' ? 'live agentic run' : 'simulation'; }
   if(!runId){
     if(sessionStorage.getItem('fcuReport')){
       $('anaStatus').textContent='Analysis complete — report ready.';
-      $('progBar').style.width='100%';
-      $('doneActions').style.display='flex';
+      $('progBar').style.width='100%'; $('doneActions').style.display='flex';
     } else $('emptyState').style.display='block';
     return;
   }
   $('anaStatus').textContent='Connecting to the investigation stream…';
+  timer = setInterval(()=>{ $('k_elapsed').innerHTML = Math.round((Date.now()-t0)/1000)+'<small>s</small>'; }, 1000);
   const es=new EventSource('/api/stream/'+runId);
   es.onmessage=ev=>{ try{ handle(JSON.parse(ev.data),es); }catch(e){ console.error(e); } };
   es.onerror=()=>{};
 })();
 
-function agentCard(a){
-  const el=document.createElement('div');
-  el.className='card agent'; el.id='ag-'+a.key;
-  el.innerHTML=`
-    <div class="ch">
-      <div class="ch-left"><span style="font-size:15px">${a.icon}</span><h3>${esc(a.name)}</h3></div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="spin"></span>
-        <span class="ch-badge gold stx">Queued</span>
-      </div>
-    </div>
-    <div class="cb" style="padding-top:10px">
-      <div class="hint" style="margin-bottom:6px">${esc(a.role)}</div>
-      <div class="tools-log"></div>
-      <div class="memo-slot"></div>
+function stageRow(a, i){
+  const el=document.createElement('div'); el.className='stage'; el.id='st-'+a.key;
+  el.innerHTML=`<div class="num">${i+1}</div><div style="min-width:0">
+    <div class="nm">${ic(a.icon,13)}${esc(a.name)}</div>
+    <div class="rl">${esc(a.role)}</div>
+    <div class="st"><span class="stx">Queued</span></div></div>`;
+  el.onclick=()=>showPanel(a.key);
+  return el;
+}
+function panelCard(a, i){
+  const el=document.createElement('div'); el.className='card panel'; el.id='pn-'+a.key;
+  el.innerHTML=`<div class="ch"><div class="ch-left">${ic(a.icon)}<h3>${i+1} · ${esc(a.name)}</h3></div><span class="ch-badge gold stx">Queued</span></div>
+    <div class="cb">
+      <div class="callout" style="display:none"></div>
+      <div class="sec-lbl act-lbl" style="display:none">Activity</div>
+      <table class="log act-tbl" style="display:none"><thead><tr><th style="width:26px">#</th><th>Tool</th><th>Query</th><th>Result</th></tr></thead><tbody></tbody></table>
+      <div class="sec-lbl find-lbl" style="display:none">Findings</div>
+      <div class="find-body"></div>
+      <div class="sec-lbl id-lbl" style="display:none">Identifiers established</div>
+      <div class="id-chips"></div>
+      <div class="hint waiting" style="padding:8px 0">Agent has not started yet.</div>
     </div>`;
   return el;
 }
-
-function setBadge(el,text,cls){
-  const b=el.querySelector('.stx');
-  b.textContent=text; b.className='ch-badge stx '+cls;
+function showPanel(key){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('show', p.id==='pn-'+key));
+}
+function setStatus(key, text, cls){
+  const s=$('st-'+key), p=$('pn-'+key);
+  s.querySelector('.stx').innerHTML=text;
+  const b=p.querySelector('.stx'); b.textContent=text.replace(/<[^>]+>/g,'').trim(); b.className='ch-badge stx '+cls;
 }
 
 function handle(e, es){
   if(e.type==='pipeline_start'){
     order=e.agents.map(a=>a.key);
-    e.agents.forEach(a=>{agents[a.key]=a;$('agentList').appendChild(agentCard(a));});
+    e.agents.forEach((a,i)=>{agents[a.key]=a;$('stageList').appendChild(stageRow(a,i));$('panels').appendChild(panelCard(a,i));});
+    $('pipe').style.display='grid'; showPanel(order[0]);
     $('progBar').style.width='2%';
   }
   else if(e.type==='agent_start'){
-    const el=$('ag-'+e.agent); el.classList.add('running');
-    setBadge(el,'Working','amber');
-    $('anaStatus').textContent=`Agent ${order.indexOf(e.agent)+1} of ${order.length} — ${agents[e.agent].name} working…`;
-    el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    const i=order.indexOf(e.agent);
+    $('st-'+e.agent).classList.add('running');
+    setStatus(e.agent, '<span class="spin"></span> Working', 'amber');
+    $('pn-'+e.agent).querySelector('.waiting').textContent='Working…';
+    $('k_stage').innerHTML=(i+1)+'<small> / '+order.length+'</small>';
+    $('k_stageName').textContent=agents[e.agent].name;
+    $('anaStatus').textContent=`Stage ${i+1} of ${order.length} — ${agents[e.agent].name} working…`;
+    showPanel(e.agent);
   }
   else if(e.type==='tool_call'){
-    const log=$('ag-'+e.agent).querySelector('.tools-log');
-    const args=Object.values(e.args||{}).join(', ');
-    log.insertAdjacentHTML('beforeend',
-      `<div class="tline"><span>⚙</span><span class="tn">${esc(e.tool)}</span><span>${esc(args)}</span></div>`);
+    tools++; $('k_tools').textContent=tools;
+    const p=$('pn-'+e.agent); p.querySelector('.act-lbl').style.display=''; p.querySelector('.act-tbl').style.display='';
+    p.querySelector('.waiting').style.display='none';
+    const n=p.querySelectorAll('.act-tbl tbody tr').length+1;
+    p.querySelector('.act-tbl tbody').insertAdjacentHTML('beforeend',
+      `<tr><td>${n}</td><td class="tn">${esc(e.tool)}</td><td class="tq">${esc(Object.values(e.args||{}).join(', '))}</td><td class="pending">running…</td></tr>`);
   }
   else if(e.type==='tool_result'){
-    const log=$('ag-'+e.agent).querySelector('.tools-log');
-    log.insertAdjacentHTML('beforeend',`<div class="tline res">↳ ${esc(e.summary)}</div>`);
+    const rows=$('pn-'+e.agent).querySelectorAll('.act-tbl tbody tr');
+    const cell=[...rows].reverse().find(r=>r.querySelector('.pending'))?.querySelector('.pending');
+    if(cell){ cell.className=''; cell.innerHTML=(/\bMATCH\b/.test(e.summary)?`<span class="rb red" style="margin-right:6px">match</span>`:'')+esc(e.summary); }
+    if(/\bMATCH\b/.test(e.summary)){ matches++; $('k_matches').textContent=matches; }
   }
   else if(e.type==='agent_memo'){
-    const slot=$('ag-'+e.agent).querySelector('.memo-slot');
-    slot.innerHTML=`<div class="memo clamped">${md(e.memo)}</div><button class="memo-toggle">Show full memo ▾</button>`;
-    const btn=slot.querySelector('.memo-toggle'), m=slot.querySelector('.memo');
-    btn.onclick=()=>{const c=m.classList.toggle('clamped');btn.textContent=c?'Show full memo ▾':'Collapse ▴';};
+    const p=$('pn-'+e.agent), f=parseFindings(e.memo);
+    p.querySelector('.waiting').style.display='none';
+    if(f.verdict){ const c=p.querySelector('.callout'); c.style.display=''; c.textContent=f.verdict; }
+    if(f.body){ p.querySelector('.find-lbl').style.display=''; p.querySelector('.find-body').innerHTML=md(f.body); }
+    if(f.ids.length){ p.querySelector('.id-lbl').style.display=''; p.querySelector('.id-chips').innerHTML=chipsHtml(f.ids); ids+=f.ids.length; $('k_ids').textContent=ids; }
   }
   else if(e.type==='agent_done'){
-    const el=$('ag-'+e.agent); el.classList.remove('running'); el.classList.add('done');
-    setBadge(el,`Done · ${e.elapsed??''}s`,'green');
+    const s=$('st-'+e.agent); s.classList.remove('running'); s.classList.add('done');
+    setStatus(e.agent, `Done · ${e.elapsed??''}s`, 'green');
     doneCount++; $('progBar').style.width=Math.round(100*doneCount/order.length)+'%';
   }
   else if(e.type==='report'){
     sessionStorage.setItem('fcuReport',JSON.stringify(e.report));
     sessionStorage.removeItem('fcuRun');
+    clearInterval(timer);
     $('progBar').style.width='100%';
     $('anaStatus').textContent='Analysis complete — opening the investigation report…';
     $('doneActions').style.display='flex';
-    setTimeout(()=>location.href='report.html', 1100);
+    setTimeout(()=>location.href='report.html', 1300);
   }
-  else if(e.type==='error'){
-    toast(e.message);
-    $('anaStatus').textContent='Run failed: '+e.message;
-  }
+  else if(e.type==='error'){ toast(e.message); $('anaStatus').textContent='Run failed: '+e.message; clearInterval(timer); }
   else if(e.type==='done'){ es.close(); }
 }
 </script>
