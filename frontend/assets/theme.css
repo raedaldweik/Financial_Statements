@@ -121,7 +121,7 @@ svg.ic{flex-shrink:0;vertical-align:-2px}
 .dt td{padding:11px 14px;vertical-align:top;font-size:12px;color:var(--text-md)}
 .dt.compact td{padding:8px 14px;font-size:11.5px}
 .dt td .en-strong{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:1px}
-.dt td .en-sub{font-size:10px;color:var(--text-faint);line-height:1.45}
+.dt td .en-sub{display:block;font-size:10px;color:var(--text-faint);line-height:1.45}
 .mono{font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;color:var(--text-md)}
 .num{font-size:12.5px;font-weight:700;color:var(--text);white-space:nowrap;text-align:right}
 .num.red{color:var(--red)}.num.green{color:var(--green)}
@@ -258,3 +258,50 @@ tr.hl-row td{background:linear-gradient(90deg,rgba(192,57,43,0.06),rgba(192,57,4
 .metric b{display:block;font-size:15px;font-weight:800;color:var(--text);line-height:1.1}
 @media(max-width:1200px){.g3-eq{grid-template-columns:1fr 1fr}.g2-split,.g2-eq{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:760px){.g3-eq{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.nav-tabs{gap:16px}.tab{font-size:10px}}
+
+/* ══ CASE MANAGEMENT ADDITIONS ══ */
+.tabs{display:flex;gap:2px;border-bottom:1px solid rgba(180,140,50,0.2);margin-bottom:14px}
+.tab-btn{padding:10px 16px;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.on{color:var(--gold-lo);border-bottom-color:var(--gold)}
+.tab-btn .cnt{font-size:8.5px;background:rgba(200,164,74,0.14);border:1px solid rgba(200,164,74,0.3);border-radius:20px;padding:1px 7px;color:var(--gold-lo)}
+.tabpane{display:none}.tabpane.on{display:block}
+table.kv{width:100%;border-collapse:collapse}
+.kv td{padding:8px 14px;border-bottom:1px solid var(--line);font-size:12px;vertical-align:top;color:var(--text)}
+.kv td:first-child{font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint);width:36%;padding-top:10px}
+.kv tr:last-child td{border-bottom:none}
+.prose{padding:16px 18px}
+.prose p{font-size:12.8px;line-height:1.75;color:var(--text-md);margin-bottom:10px}
+.prose p:last-child{margin-bottom:0}
+.dot-status{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:var(--text);white-space:nowrap}
+.dt th.sortable{cursor:pointer;user-select:none}.dt th.sortable:hover{color:#E8C870}
+.dt th.sorted::after{content:' ↓';color:#E8C870}
+.dt tbody tr.clickable{cursor:pointer}
+.banner{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:var(--r);background:linear-gradient(90deg,rgba(200,164,74,0.14),rgba(200,164,74,0.04));border:1px solid rgba(200,164,74,0.3);margin-bottom:14px;font-size:12px;color:var(--text)}
+.banner .progress{flex:1;margin:0}
+.chat-fab{position:fixed;right:26px;bottom:26px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#96720A,#C8A44A 50%,#A8841A);box-shadow:0 8px 28px rgba(160,120,20,0.35),0 0 0 1px rgba(200,164,74,0.4);display:flex;align-items:center;justify-content:center;color:#1A1400;cursor:pointer;z-index:500;border:none;transition:transform .15s}
+.chat-fab:hover{transform:translateY(-2px)}
+.chat-panel{position:fixed;right:26px;bottom:92px;width:410px;height:min(620px,calc(100vh - 120px));background:rgba(255,255,255,0.97);backdrop-filter:blur(18px);border:1px solid var(--glass-border);border-radius:14px;box-shadow:var(--glass-shadow-lg);display:none;flex-direction:column;z-index:500;overflow:hidden}
+.chat-panel.open{display:flex}
+.chat-head{padding:12px 16px;background:var(--nav-grad);color:#E2BC68;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+.chat-head button{background:none;border:none;color:#E2BC68;cursor:pointer;font-size:16px;line-height:1}
+.chat-body{padding:14px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:10px}
+.chat-sugg{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 10px}
+.chat-sugg button{font-family:inherit;font-size:10px;font-weight:600;color:var(--gold-lo);background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.3);border-radius:20px;padding:4px 10px;cursor:pointer}
+.chat-sugg button:hover{background:rgba(200,164,74,0.2)}
+.chat-in{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--line)}
+.chat-in .fi{flex:1}
+.officer{display:inline-flex;align-items:center;gap:8px;font-size:10.5px;color:rgba(255,255,255,0.78);font-weight:600}
+.officer i{width:24px;height:24px;border-radius:50%;background:rgba(200,164,74,0.25);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:9px;color:#E2BC68;font-weight:800}
+.citizen-foot{margin-top:28px;display:flex;justify-content:space-between;font-size:10.5px;color:var(--text-faint)}
+.citizen-foot a{color:var(--text-faint)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:12px;color:var(--text-md);margin-top:14px}
+.check input{margin-top:3px}
+.confirm-ref{font-family:var(--mono);font-size:28px;font-weight:800;color:var(--text);letter-spacing:.04em}
+.nextsteps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.nextsteps div{padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,0.6);font-size:11.5px;color:var(--text-md);line-height:1.5}
+.nextsteps b{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-lo);margin-bottom:4px}
+.ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.ev-grid img{width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;border:1px solid rgba(200,164,74,0.35);cursor:zoom-in;background:#111}
+.ev-grid .cap{font-size:10px;color:var(--text-dim);margin-top:4px;font-family:var(--mono)}
+.q-hint{font-size:10.5px;color:var(--text-faint);padding:10px 14px}

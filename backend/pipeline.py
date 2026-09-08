@@ -18,6 +18,7 @@ from typing import Any, AsyncGenerator, Optional
 from anthropic import AsyncAnthropic
 
 import config
+import registry
 from agents import PIPELINE, REPORT_SCHEMA, AgentDef
 from store import RUNS, Case
 from tools import ALL_TOOLS, run_tool, schemas
@@ -129,7 +130,7 @@ async def _run_replay(case: Case, emit, speed: float = 1.0) -> None:
 
 # ─── Run management + SSE ────────────────────────────────────────────
 
-def start_run(case: Case, mode: str) -> str:
+def start_run(case: Case, mode: str, ref: Optional[str] = None) -> str:
     run_id = f"run-{uuid.uuid4().hex[:12]}"
     queue: asyncio.Queue = asyncio.Queue()
     RUNS[run_id] = {"queue": queue, "case_id": case.case_id, "mode": mode,
@@ -149,9 +150,13 @@ def start_run(case: Case, mode: str) -> str:
                 await _run_replay(case, emit)
             await emit({"type": "done"})
             RUNS[run_id]["status"] = "done"
+            if ref and case.report:
+                registry.complete(ref, case.report, case.memos)
         except Exception as exc:  # surface everything to the UI
             logger.exception("Run %s failed", run_id)
             RUNS[run_id]["status"] = "error"
+            if ref:
+                registry.fail(ref, str(exc))
             await emit({"type": "error", "message": f"{type(exc).__name__}: {exc}"})
             await emit({"type": "done"})
         finally:
@@ -179,38 +184,105 @@ async def event_stream(run_id: str) -> AsyncGenerator[str, None]:
         yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
 
 
-# ─── Follow-up Q&A (Case AI assistant) ───────────────────────────────
+# ─── Case assistant (investigator Q&A) ───────────────────────────────
 
 QA_SYSTEM = (
-    "You are the investigation assistant of a police financial crime unit, answering "
-    "follow-up questions about one specific analyzed case. You have tool access to OSINT "
-    "sources and the unit's intelligence repository — use them when the answer needs data "
-    "beyond the case file. Answer concisely in markdown (short paragraphs or bullets), "
-    "cite identifiers exactly, and say clearly when something is not in the case file or "
-    "repository. Never invent case records."
+    "You are the case assistant of a police financial crime unit, answering an "
+    "investigator's questions about one specific case file. You have tool access to OSINT "
+    "sources and the unit's complaint-history repository — use them when the answer needs "
+    "data beyond the file. When asked to draft a request (bank disclosure, freeze, telecom, "
+    "platform preservation), produce a complete, formal, ready-to-send draft with the exact "
+    "identifiers from the file (account numbers, IBANs, dates, references). Otherwise answer "
+    "concisely in markdown with short paragraphs or bullets. Never invent records; say "
+    "clearly when something is not in the file."
 )
 
 
-async def answer_question(case: Case, question: str) -> dict:
+def _accounts_from(report: dict) -> list[str]:
+    accts = []
+    for e in report.get("entities", []):
+        if e.get("type") == "account":
+            accts.append(e["label"])
+    if not accts:
+        for kf in report.get("key_facts", []):
+            if "account" in kf["label"].lower() or "beneficiary" in kf["label"].lower():
+                accts.append(kf["value"])
+    return accts
+
+
+def offline_answer(entry: dict, question: str) -> str:
+    """Deterministic fallback when no LLM is configured: answers and drafts built
+    from the case file itself."""
+    q = question.lower()
+    rep = entry.get("report") or {}
+    ref = entry["ref"]
+    accts = _accounts_from(rep)
+    acct_lines = "\n".join(f"- {a}" for a in accts) or "- (beneficiary account per case file)"
+    today = registry.TODAY
+    if any(k in q for k in ("freeze", "hold", "block")):
+        return (f"**Draft — request for temporary hold on beneficiary accounts**\n\n"
+                f"To: Compliance / MLRO, beneficiary bank\nRef: {ref} — {rep.get('classification','fraud complaint')}\nDate: {today}\n\n"
+                f"The Financial Crime Unit is investigating a complaint of {rep.get('classification','fraud').lower()} "
+                f"in which the complainant transferred funds to the following account(s):\n{acct_lines}\n\n"
+                "Please place a temporary no-debit hold on the above account(s) pending our formal disclosure request, "
+                "retain all funds currently held, and confirm the current balance and any pending outward instructions "
+                "by return.\n\nInvestigating officer, Financial Crime Unit")
+    if any(k in q for k in ("statement", "disclosure", "kyc", "bank record", "6 month", "six month")):
+        return (f"**Draft — disclosure request: 6-month statements and KYC**\n\n"
+                f"To: Compliance / MLRO, beneficiary bank\nRef: {ref}\nDate: {today}\n\n"
+                f"In connection with the above investigation, please provide for each of the following account(s):\n{acct_lines}\n\n"
+                "1. Full statements for the six months preceding this request, including counterparties and references.\n"
+                "2. The KYC file: identity document, registered address, contact numbers, account-opening form and date.\n"
+                "3. Details of all outward transfers, cash withdrawals (with ATM locations) and virtual-asset exchange "
+                "transfers since the first complainant credit.\n4. Linked accounts, cards and devices used for online banking.\n\n"
+                "Please treat this request as urgent; funds have historically left these accounts within 72 hours.\n\n"
+                "Investigating officer, Financial Crime Unit")
+    if any(k in q for k in ("telecom", "phone", "sim", "subscriber")):
+        phones = [e["label"] for e in rep.get("entities", []) if e.get("type") == "phone"]
+        return (f"**Draft — subscriber data request**\n\nTo: Law-enforcement liaison, telecom operator\nRef: {ref}\n\n"
+                f"Please provide subscriber registration documents, activation date, IMEI history and cell-site records "
+                f"for: {', '.join(phones) or 'the seller number on file'} (period: activation to date).\n\nInvestigating officer, Financial Crime Unit")
+    if any(k in q for k in ("what happened", "summar", "narrative", "explain the case", "brief")):
+        return rep.get("narrative") or entry.get("complaint_text") or "No narrative is available for this case yet."
+    if any(k in q for k in ("link", "other case", "connected", "network", "prior", "before", "same")):
+        pcs = rep.get("prior_cases") or []
+        if not pcs:
+            return "No prior occurrence of this case's identifiers was found in complaint history."
+        lines = [f"- **{p['case_id']}** ({p['filed_date']}, {p['victim']}, AED {p['amount']:,.0f}) — matched on: {', '.join(p['matched_on'])}" for p in pcs]
+        return (rep.get("investigation_summary", "") + "\n\n" + "\n".join(lines)).strip()
+    if any(k in q for k in ("recommend", "next", "action", "what should", "do first")):
+        acts = rep.get("recommended_actions") or []
+        return "\n".join(f"{i}. **{a['action']}** — {a['addressee']} · {a['timeframe']}" for i, a in enumerate(acts, 1)) or "No recommendations recorded yet."
+    if any(k in q for k in ("evidence", "screenshot", "receipt", "reconcil")):
+        ev = rep.get("evidence_assessment") or []
+        return "\n".join(f"- **{e['item']}** — {e['finding']} ({e['status']})" for e in ev) or "Evidence assessment is not available yet."
+    return ((rep.get("investigation_summary") or entry.get("complaint_text") or "") +
+            "\n\nI can draft the bank disclosure or freeze request, the telecom request, summarise what happened, "
+            "or list the linked cases and recommended actions.").strip()
+
+
+async def answer_question(entry: dict, question: str, store_case: Optional[Case]) -> dict:
     client = get_client()
     if client is None:
-        return {"answer": "Live AI is not configured (no ANTHROPIC_API_KEY set). "
-                          "Follow-up Q&A needs live mode.", "tools_used": []}
+        answer = offline_answer(entry, question)
+        entry.setdefault("qa_history", []).append({"q": question, "a": answer})
+        return {"answer": answer, "tools_used": []}
 
-    context = ["── CASE FILE ──",
-               json.dumps(case.complaint, ensure_ascii=False, indent=1)]
-    for key, memo in case.memos.items():
+    context = [f"── CASE FILE {entry['ref']} ──",
+               json.dumps({k: entry.get(k) for k in ("ref", "filed", "complainant", "type", "subtype",
+                                                      "amount", "status", "stage", "officer", "evidence")},
+                          ensure_ascii=False),
+               "── COMPLAINANT STATEMENT ──\n" + (entry.get("complaint_text") or "")]
+    for key, memo in (entry.get("memos") or {}).items():
         context.append(f"── {key.upper()} MEMO ──\n{memo}")
-    if case.report:
-        context.append("── FINAL REPORT (JSON) ──\n" +
-                       json.dumps(case.report, ensure_ascii=False))
+    if entry.get("report"):
+        context.append("── CASE FILE (JSON) ──\n" + json.dumps(entry["report"], ensure_ascii=False))
 
     messages: list[dict] = []
-    for turn in case.qa_history[-6:]:
+    for turn in (entry.get("qa_history") or [])[-6:]:
         messages.append({"role": "user", "content": turn["q"]})
         messages.append({"role": "assistant", "content": turn["a"]})
-    messages.append({"role": "user", "content":
-                     "\n\n".join(context) + f"\n\nQuestion: {question}"})
+    messages.append({"role": "user", "content": "\n\n".join(context) + f"\n\nQuestion: {question}"})
 
     tools_used: list[str] = []
     rounds = 0
@@ -223,8 +295,7 @@ async def answer_question(case: Case, question: str) -> dict:
     while True:
         resp = await client.messages.create(messages=messages, **kwargs)
         if resp.stop_reason == "refusal":
-            return {"answer": "The model declined to answer this question.",
-                    "tools_used": tools_used}
+            return {"answer": "The assistant declined to answer this question.", "tools_used": tools_used}
         tool_blocks = [b for b in resp.content if b.type == "tool_use"]
         if resp.stop_reason == "tool_use" and tool_blocks:
             messages.append({"role": "assistant", "content": resp.content})
@@ -232,13 +303,12 @@ async def answer_question(case: Case, question: str) -> dict:
             for tb in tool_blocks:
                 tools_used.append(tb.name)
                 out = run_tool(ALL_TOOLS, tb.name, dict(tb.input))
-                results.append({"type": "tool_result", "tool_use_id": tb.id,
-                                "content": out})
+                results.append({"type": "tool_result", "tool_use_id": tb.id, "content": out})
             messages.append({"role": "user", "content": results})
             rounds += 1
             if rounds >= config.MAX_TOOL_ROUNDS:
                 kwargs["tool_choice"] = {"type": "none"}
             continue
         answer = "".join(b.text for b in resp.content if b.type == "text").strip()
-        case.qa_history.append({"q": question, "a": answer})
+        entry.setdefault("qa_history", []).append({"q": question, "a": answer})
         return {"answer": answer, "tools_used": tools_used}

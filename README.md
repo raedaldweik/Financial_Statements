@@ -5,34 +5,53 @@
 > system (gold-waves landing, glass/gold dashboard pages) with all logos and
 > customer references removed.
 
-A demo for police financial investigation units showing how an **agentic AI
-engine fuses many evidence sources** — the complaint conversation **as
-screenshot images**, one or more **bank/financial statement PDFs**, automatic
-OSINT collection and the unit's own complaint history — into one investigation
-report and action plan.
+A demo for police financial investigation units, built around a real story:
+a victim pays for a product online, it never arrives, the seller disappears —
+and when the police call, the officer has a folder of screenshots and no idea
+what happened. The platform fixes that in two acts.
 
-**The storyline (from the client scenario pack):** Ahmed Hassan pays AED 12,500
-for an electronics bundle advertised by "Prime Gulf Electronics" on Instagram,
-transfers to the personal account the seller dictates on WhatsApp — Mubarak
-Salem, account 5660609, IBAN AE600340005660609 — and gets ghosted. He files
-Complaint #002 with 3 WhatsApp screenshots, the transfer confirmation and his
-bank statement. On **Run AI Analysis**, six AI agents work the case live — and
-the complaint-history cross-reference reveals the **same account previously
-received AED 275,000 in a citizenship-by-investment fraud (Complaint #001)**,
-while the "alternative account" offered in the chat belongs to a third fraud
-(Complaint #003). Entity resolution (shared KYC address & mobile) resolves
-separate complaints, separate accounts and two fraud typologies into **one
-connected fraud network** — combined losses AED 296,400. The report closes
-with a step-2 hand-off to SAS Visual Investigator.
+**Act 1 — the citizen.** An e-Crime reporting portal: describe what
+happened, enter the beneficiary details you were given, attach the chat
+screenshots, the payment confirmation and a bank statement, submit, get a
+reference number.
 
-## Pages (same structure as the dashboards on `main`)
+**Act 2 — the investigator.** A case-management workspace: a queue of open
+cases (sortable by risk score, date or amount) where the new submission
+appears immediately, is analysed in the background, and flips to *Ready for
+review*. Opening a case shows the case file an investigator actually needs:
 
-| Page | Design | What happens |
+1. **Case narrative** — what happened in plain chronological language, key
+   facts, evidence assessment (verified / partial / unverified), timeline.
+2. **Investigation** — complaint-history matches (the same account, IBAN,
+   phone or company in other complaints, with the exact identifiers
+   matched), entity resolution, open-source and registry checks, money
+   movement, key findings. No network diagram — that is SAS Visual
+   Investigator's job in the next step.
+3. **Recommendations** — prioritised actions with addressee and timeframe
+   (six-month statements and KYC from the bank, freeze, telecom data,
+   platform preservation, consolidation), each with a **Draft** button.
+4. **Evidence** — the submitted screenshots and statement, plus the
+   complainant's statement.
+
+A case assistant (bottom-right) answers questions about the file and drafts
+the requests with the exact identifiers.
+
+**The scenario (from the client scenario pack):** Ahmed Hassan pays AED 12,500
+to Mubarak Salem, account 5660609, IBAN AE600340005660609, for an electronics
+bundle from "Prime Gulf Electronics". The queue already holds FC-2026-0187 —
+a AED 275,000 citizenship-by-investment fraud paid to the **same account** —
+and FC-2026-0204, paid to the "alternative account" the seller offered in the
+chat. Three complaints, two accounts, one network: AED 296,400.
+
+## Pages
+
+| Page | Role | What it does |
 |---|---|---|
-| `index.html` | Dark gold-waves landing | Entry + "Run the Sample Case" |
-| `intake.html` | Light glass dashboard | Complaint form, screenshot & statement uploads, OSINT/history cards |
-| `analysis.html` | Light glass dashboard | The six agents streaming live (SSE): tool calls + findings memos |
-| `report.html` | Light glass dashboard | KPI strip, ✦ case brief, key findings, linked prior complaints table, losses chart, timeline, financial flow, entities, actions, Q&A assistant |
+| `index.html` | — | Landing page (dark gold-waves design) with both entrances |
+| `report-fraud.html` | Citizen | e-Crime reporting form + evidence upload (`?sample=1` pre-fills the demo submission) |
+| `cases.html` | Investigator | Case queue: KPIs, search, filters, sort by risk / date / amount |
+| `case.html?ref=…` | Investigator | Case file: narrative · investigation · recommendations · evidence, chat assistant |
+| `analysis.html?ref=…` | Investigator | Analysis log — the six agents' activity and findings for a case |
 
 ## The six agents
 
@@ -88,5 +107,7 @@ lives in `backend/demo_data/`:
 - `osint.json`, `intel_db.json` — the OSINT sources and prior-complaint data
   the agent tools query
 - `replay.json` — the recorded simulation run
+
+- `cases.json` — the seeded case queue (11 cases with their case files)
 
 Swap these files to retheme the storyline for another client.

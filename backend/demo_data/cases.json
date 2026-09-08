@@ -1,0 +1,1517 @@
+{
+ "today": "2026-09-18",
+ "next_sequence": 231,
+ "cases": [
+  {
+   "ref": "FC-2026-0187",
+   "filed": "2026-08-05T09:12",
+   "complainant": "Mysmo Gamal",
+   "emirate": "Dubai",
+   "type": "Investment fraud",
+   "subtype": "Citizenship-by-investment scheme",
+   "amount": 275000,
+   "currency": "AED",
+   "status": "Under investigation",
+   "stage": "Bank disclosure received",
+   "officer": "Insp. R. Haddad",
+   "risk_score": 91,
+   "risk_level": "CRITICAL",
+   "channel": "Police station",
+   "evidence": [
+    "Company profile & brochure (PDF)",
+    "Email correspondence (14 pages)",
+    "Transfer confirmation TRX-2026-10482",
+    "Transfer confirmation (25,000)",
+    "Bank statement Jun–Jul 2026",
+    "'Security approval' letter"
+   ],
+   "complaint_text": "I attended a real estate and investment networking event in Dubai where I met a representative of an international investment consultancy specialising in citizenship by investment. After several meetings I paid a processing fee of AED 25,000 and later a second milestone payment of AED 250,000 to the account they provided (Mubarak Salem, 5660609, AE600340005660609). After the second payment the representative gave excuses about government delays and then stopped responding.",
+   "linked_refs": [
+    "FC-2026-0204"
+   ],
+   "report": {
+    "case_ref": "FC-2026-0187",
+    "classification": "Investment fraud — citizenship-by-investment scheme",
+    "typology": "Advance-fee investment fraud through a front consultancy",
+    "risk_score": 91,
+    "risk_level": "CRITICAL",
+    "confidence": "high",
+    "narrative": "Mysmo Gamal met a man calling himself Karim at a real-estate networking event in Dubai in May 2026. Karim presented Global Pathways Investment Consultancy as an international firm handling citizenship-by-investment applications and provided a company profile, brochure and registration documents. After several meetings Mr Gamal agreed to proceed. On 10 June he paid a 'citizenship application processing fee' of AED 25,000 to Mubarak Salem, account 5660609, IBAN AE600340005660609. He then received emails and documents stating that due diligence was complete and initial security approval granted. On 14 July, on the strength of those documents, he paid a second milestone of AED 250,000 to the same account (reference TRX-2026-10482). Communication then deteriorated into explanations about government processing delays and additional verification. By 29 July the representative had stopped responding and no application could be verified with any authority. Mr Gamal reported the matter at the station on 5 August.",
+    "key_facts": [
+     {
+      "label": "Complainant",
+      "value": "Mysmo Gamal · Dubai"
+     },
+     {
+      "label": "Entity presented",
+      "value": "Global Pathways Investment Consultancy FZE"
+     },
+     {
+      "label": "Representative",
+      "value": "'Karim' — alias, identity unconfirmed"
+     },
+     {
+      "label": "Contact channel",
+      "value": "In person (networking event), then email"
+     },
+     {
+      "label": "Payment 1",
+      "value": "AED 25,000 — 10 Jun 2026 — 'processing fee'"
+     },
+     {
+      "label": "Payment 2",
+      "value": "AED 250,000 — 14 Jul 2026 — ref TRX-2026-10482"
+     },
+     {
+      "label": "Beneficiary",
+      "value": "Mubarak Salem — account 5660609 — IBAN AE600340005660609"
+     },
+     {
+      "label": "Last contact",
+      "value": "29 Jul 2026"
+     },
+     {
+      "label": "Bank disclosure",
+      "value": "Received 26 Aug 2026"
+     }
+    ],
+    "evidence_assessment": [
+     {
+      "item": "Company profile & brochure",
+      "finding": "Stock imagery; license number belongs to a cancelled management-consultancy license",
+      "status": "unverified"
+     },
+     {
+      "item": "Email correspondence",
+      "finding": "Sent from a free webmail domain, not the company domain",
+      "status": "partial"
+     },
+     {
+      "item": "Transfer confirmations (2)",
+      "finding": "Both reconcile with the complainant's bank statement",
+      "status": "verified"
+     },
+     {
+      "item": "'Security approval' letter",
+      "finding": "Template document; issuing authority denies issuance",
+      "status": "unverified"
+     }
+    ],
+    "investigation_summary": "The consultancy was never licensed for immigration services and its license was cancelled in April 2026; the account holder is the license signatory. Bank disclosure shows AED 180,000 cash-out and AED 60,000 to a virtual-asset exchange within 72 hours. KYC address and mobile are shared with the holder of account 3456660 (FC-2026-0204).",
+    "osint_findings": [
+     {
+      "subject": "Global Pathways Investment Consultancy FZE",
+      "source": "Trade license registries",
+      "finding": "License FZ-102284 (management consultancy) cancelled 2026-04-30; signatory Mubarak Salem",
+      "assessment": "adverse"
+     },
+     {
+      "subject": "globalpathways-invest.com",
+      "source": "Domain / hosting records",
+      "finding": "Registered 2026-03-02 via privacy proxy; template site; offline since 2026-08-10",
+      "assessment": "adverse"
+     },
+     {
+      "subject": "Global Pathways",
+      "source": "Public forums",
+      "finding": "Warning post 2026-08-12 describing identical milestone-payment scheme",
+      "assessment": "adverse"
+     }
+    ],
+    "key_findings": [
+     {
+      "title": "Front company with no immigration license",
+      "detail": "License FZ-102284 covered management consultancy only and was cancelled before the second payment.",
+      "severity": "critical",
+      "source": "OSINT"
+     },
+     {
+      "title": "Account holder is the company signatory",
+      "detail": "Mubarak Salem holds account 5660609 and signed the company license.",
+      "severity": "critical",
+      "source": "Bank disclosure"
+     },
+     {
+      "title": "Proceeds dissipated within 72 hours",
+      "detail": "AED 180,000 cash withdrawals and AED 60,000 to a virtual-asset exchange by 17 Jul.",
+      "severity": "critical",
+      "source": "Bank disclosure"
+     },
+     {
+      "title": "Shared KYC with a second collection account",
+      "detail": "Same address and mobile as the holder of account 3456660 (FC-2026-0204).",
+      "severity": "warning",
+      "source": "Complaint history"
+     }
+    ],
+    "prior_cases": [
+     {
+      "case_id": "FC-2026-0204",
+      "filed_date": "2026-08-28",
+      "victim": "Rashid Khalfan (Sharjah)",
+      "amount": 8900,
+      "currency": "AED",
+      "matched_on": [
+       "Shared KYC: Abdullah Mohammed ↔ Mubarak Salem"
+      ],
+      "summary": "Online purchase fraud paid to account 3456660 (Abdullah Mohammed).",
+      "status": "Under investigation"
+     }
+    ],
+    "entities": [
+     {
+      "id": "ENT-PER-001",
+      "label": "Mubarak Salem",
+      "type": "person",
+      "role": "Account holder 5660609; company signatory",
+      "flagged": true
+     },
+     {
+      "id": "ENT-ORG-001",
+      "label": "Global Pathways Investment Consultancy FZE",
+      "type": "organization",
+      "role": "Front company; license cancelled 2026-04-30",
+      "flagged": true
+     },
+     {
+      "id": "ENT-ACC-001",
+      "label": "Account 5660609 — IBAN AE600340005660609",
+      "type": "account",
+      "role": "Collection account; AED 275,000 received",
+      "flagged": true
+     },
+     {
+      "id": "ENT-PER-002",
+      "label": "Abdullah Mohammed",
+      "type": "person",
+      "role": "Shares KYC address and mobile with Mubarak Salem",
+      "flagged": true
+     },
+     {
+      "id": "ENT-VIC-000",
+      "label": "Mysmo Gamal",
+      "type": "person",
+      "role": "Complainant",
+      "flagged": false
+     }
+    ],
+    "timeline": [
+     {
+      "date": "2026-05-14",
+      "event": "Complainant meets 'Karim' at networking event",
+      "source": "Statement"
+     },
+     {
+      "date": "2026-06-10",
+      "event": "AED 25,000 processing fee paid",
+      "source": "Bank records"
+     },
+     {
+      "date": "2026-07-02",
+      "event": "'Security approval' letter received by email",
+      "source": "Evidence"
+     },
+     {
+      "date": "2026-07-14",
+      "event": "AED 250,000 milestone paid (TRX-2026-10482)",
+      "source": "Bank records"
+     },
+     {
+      "date": "2026-07-17",
+      "event": "AED 180,000 cash-out; AED 60,000 to exchange",
+      "source": "Bank disclosure"
+     },
+     {
+      "date": "2026-07-29",
+      "event": "Representative stops responding",
+      "source": "Statement"
+     },
+     {
+      "date": "2026-08-05",
+      "event": "Complaint filed at station",
+      "source": "Complaint"
+     },
+     {
+      "date": "2026-08-26",
+      "event": "Bank disclosure received",
+      "source": "Case file"
+     }
+    ],
+    "financial_flow": [
+     {
+      "date": "2026-06-10",
+      "from": "Mysmo Gamal (complainant)",
+      "to": "Account 5660609 (Mubarak Salem)",
+      "amount": 25000,
+      "currency": "AED",
+      "note": "THIS CASE — processing fee"
+     },
+     {
+      "date": "2026-07-14",
+      "from": "Mysmo Gamal (complainant)",
+      "to": "Account 5660609 (Mubarak Salem)",
+      "amount": 250000,
+      "currency": "AED",
+      "note": "THIS CASE — milestone 2, ref TRX-2026-10482"
+     },
+     {
+      "date": "2026-07-16",
+      "from": "Account 5660609 (Mubarak Salem)",
+      "to": "Cash withdrawals",
+      "amount": 180000,
+      "currency": "AED",
+      "note": "Bank disclosure"
+     },
+     {
+      "date": "2026-07-17",
+      "from": "Account 5660609 (Mubarak Salem)",
+      "to": "Virtual-asset exchange",
+      "amount": 60000,
+      "currency": "AED",
+      "note": "Bank disclosure"
+     }
+    ],
+    "recommended_actions": [
+     {
+      "action": "Request KYC and transaction records from the virtual-asset exchange for the AED 60,000 transfer of 17 Jul 2026",
+      "priority": "immediate",
+      "addressee": "Virtual-asset service provider — Compliance",
+      "timeframe": "Today",
+      "rationale": "Only remaining traceable proceeds."
+     },
+     {
+      "action": "Extend the disclosure to account 3456660 (Abdullah Mohammed): 6-month statements and KYC",
+      "priority": "high",
+      "addressee": "Example Bank — Compliance / MLRO",
+      "timeframe": "48 hours",
+      "rationale": "Shared KYC indicates a second collection account."
+     },
+     {
+      "action": "Identify and summon Mubarak Salem using the KYC identity document on file",
+      "priority": "high",
+      "addressee": "Internal — Investigating officer",
+      "timeframe": "This week",
+      "rationale": "Signatory of the front company and account holder."
+     },
+     {
+      "action": "Refer the case for prosecution review once suspect interviews are complete",
+      "priority": "routine",
+      "addressee": "Public prosecution",
+      "timeframe": "Routine",
+      "rationale": "Evidence chain is complete for the payments."
+     }
+    ]
+   }
+  },
+  {
+   "ref": "FC-2026-0204",
+   "filed": "2026-08-28T14:35",
+   "complainant": "Rashid Khalfan",
+   "emirate": "Sharjah",
+   "type": "Online purchase fraud",
+   "subtype": "Classifieds listing — non-delivery",
+   "amount": 8900,
+   "currency": "AED",
+   "status": "Under investigation",
+   "stage": "Awaiting platform response",
+   "officer": "Sgt. N. Aziz",
+   "risk_score": 72,
+   "risk_level": "HIGH",
+   "channel": "e-Crime Portal",
+   "evidence": [
+    "Listing screenshots (2)",
+    "WhatsApp screenshots (4)",
+    "Transfer confirmation",
+    "Bank statement Aug 2026"
+   ],
+   "complaint_text": "I bought a gaming PC and console bundle from a seller called TechDeals UAE on a classifieds site. The seller (+971 55 302 8817) asked for a bank transfer to Abdullah Mohammed, account 3456660, IBAN AE750340003456660. I paid AED 8,900 on 20 August. Nothing was delivered and the listing and profile were deleted.",
+   "linked_refs": [
+    "FC-2026-0187"
+   ],
+   "report": {
+    "case_ref": "FC-2026-0204",
+    "classification": "Online purchase fraud — non-delivery",
+    "typology": "Disposable classifieds storefront with personal collection account",
+    "risk_score": 72,
+    "risk_level": "HIGH",
+    "confidence": "high",
+    "narrative": "Rashid Khalfan found a discounted gaming PC and console bundle listed by 'TechDeals UAE' on a classifieds platform on 18 August 2026. He contacted the seller on WhatsApp (+971 55 302 8817), who confirmed availability and requested a bank transfer to a personal account — Abdullah Mohammed, account 3456660, IBAN AE750340003456660 — with delivery promised within two days. Mr Khalfan transferred AED 8,900 on 20 August and sent the confirmation. The seller acknowledged the payment, then stopped replying the following day. The listing and the seller profile were deleted on 22 August. Mr Khalfan filed this report through the e-Crime portal on 28 August with the listing screenshots, the chat, the transfer confirmation and his bank statement.",
+    "key_facts": [
+     {
+      "label": "Complainant",
+      "value": "Rashid Khalfan · Sharjah"
+     },
+     {
+      "label": "Seller identity presented",
+      "value": "TechDeals UAE — classifieds profile (deleted)"
+     },
+     {
+      "label": "Contact channel",
+      "value": "Classifieds listing → WhatsApp +971 55 302 8817"
+     },
+     {
+      "label": "Payment",
+      "value": "AED 8,900 — 20 Aug 2026 — online transfer"
+     },
+     {
+      "label": "Beneficiary",
+      "value": "Abdullah Mohammed — account 3456660 — IBAN AE750340003456660"
+     },
+     {
+      "label": "Last contact",
+      "value": "21 Aug 2026"
+     },
+     {
+      "label": "Platform request",
+      "value": "Sent 2 Sep 2026 — awaiting response"
+     }
+    ],
+    "evidence_assessment": [
+     {
+      "item": "Listing screenshots",
+      "finding": "Stock images; profile created 2026-06-28",
+      "status": "partial"
+     },
+     {
+      "item": "WhatsApp screenshots",
+      "finding": "Payment instructions and acknowledgement visible",
+      "status": "verified"
+     },
+     {
+      "item": "Transfer confirmation",
+      "finding": "Reconciles with bank statement entry of 20 Aug",
+      "status": "verified"
+     }
+    ],
+    "investigation_summary": "Funds were withdrawn at ATMs the same evening. The seller phone is a prepaid SIM under an unverified identity. Bank KYC for account 3456660 shares an address and mobile with the holder of account 5660609 (FC-2026-0187).",
+    "osint_findings": [
+     {
+      "subject": "+971 55 302 8817",
+      "source": "Telecom intelligence",
+      "finding": "Prepaid SIM activated 2026-04-18; registered to 'K. Rahim' (unverified)",
+      "assessment": "adverse"
+     },
+     {
+      "subject": "TechDeals UAE",
+      "source": "Public scam reports",
+      "finding": "Forum report 2026-09-01 describing identical non-delivery with the same number",
+      "assessment": "adverse"
+     }
+    ],
+    "key_findings": [
+     {
+      "title": "Same-day cash-out",
+      "detail": "AED 8,900 withdrawn at three ATMs within six hours of receipt.",
+      "severity": "critical",
+      "source": "Bank disclosure"
+     },
+     {
+      "title": "Shared KYC with FC-2026-0187",
+      "detail": "Account holder shares address and mobile with Mubarak Salem.",
+      "severity": "warning",
+      "source": "Complaint history"
+     }
+    ],
+    "prior_cases": [
+     {
+      "case_id": "FC-2026-0187",
+      "filed_date": "2026-08-05",
+      "victim": "Mysmo Gamal (Dubai)",
+      "amount": 275000,
+      "currency": "AED",
+      "matched_on": [
+       "Shared KYC: Abdullah Mohammed ↔ Mubarak Salem"
+      ],
+      "summary": "Citizenship-by-investment fraud paid to account 5660609.",
+      "status": "Under investigation"
+     }
+    ],
+    "entities": [
+     {
+      "id": "ENT-PER-002",
+      "label": "Abdullah Mohammed",
+      "type": "person",
+      "role": "Account holder 3456660",
+      "flagged": true
+     },
+     {
+      "id": "ENT-ACC-002",
+      "label": "Account 3456660 — IBAN AE750340003456660",
+      "type": "account",
+      "role": "Collection account; same-day ATM cash-out",
+      "flagged": true
+     },
+     {
+      "id": "ENT-PHN-001",
+      "label": "+971 55 302 8817",
+      "type": "phone",
+      "role": "Seller phone; prepaid, unverified identity",
+      "flagged": true
+     },
+     {
+      "id": "ENT-SOC-001",
+      "label": "TechDeals UAE",
+      "type": "social",
+      "role": "Classifieds storefront (deleted)",
+      "flagged": true
+     }
+    ],
+    "timeline": [
+     {
+      "date": "2026-08-18",
+      "event": "Complainant contacts seller from listing",
+      "source": "Statement"
+     },
+     {
+      "date": "2026-08-20",
+      "event": "AED 8,900 transferred",
+      "source": "Bank records"
+     },
+     {
+      "date": "2026-08-20",
+      "event": "Funds withdrawn at ATMs same evening",
+      "source": "Bank disclosure"
+     },
+     {
+      "date": "2026-08-22",
+      "event": "Listing and profile deleted",
+      "source": "Platform"
+     },
+     {
+      "date": "2026-08-28",
+      "event": "Complaint filed via e-Crime portal",
+      "source": "Complaint"
+     }
+    ],
+    "financial_flow": [
+     {
+      "date": "2026-08-20",
+      "from": "Rashid Khalfan (complainant)",
+      "to": "Account 3456660 (Abdullah Mohammed)",
+      "amount": 8900,
+      "currency": "AED",
+      "note": "THIS CASE"
+     },
+     {
+      "date": "2026-08-20",
+      "from": "Account 3456660 (Abdullah Mohammed)",
+      "to": "Cash withdrawals",
+      "amount": 8900,
+      "currency": "AED",
+      "note": "Bank disclosure — 3 ATM withdrawals"
+     }
+    ],
+    "recommended_actions": [
+     {
+      "action": "Chase the platform preservation request for the TechDeals UAE account (registration email, phone, IP logs)",
+      "priority": "high",
+      "addressee": "Platform trust & safety",
+      "timeframe": "48 hours",
+      "rationale": "Request outstanding since 2 Sep."
+     },
+     {
+      "action": "Obtain ATM CCTV for the three withdrawals of 20 Aug 2026",
+      "priority": "high",
+      "addressee": "Example Bank — Security",
+      "timeframe": "This week",
+      "rationale": "Identifies who controls the card."
+     },
+     {
+      "action": "Link this file to FC-2026-0187 under one lead officer",
+      "priority": "routine",
+      "addressee": "Internal — Unit supervisor",
+      "timeframe": "Routine",
+      "rationale": "Shared KYC indicates one network."
+     }
+    ]
+   }
+  },
+  {
+   "ref": "FC-2026-0229",
+   "filed": "2026-09-17T16:48",
+   "complainant": "Layla Haddad",
+   "emirate": "Abu Dhabi",
+   "type": "Phishing / account takeover",
+   "subtype": "SMS link — banking credentials",
+   "amount": 43200,
+   "currency": "AED",
+   "status": "New",
+   "stage": "Analysis queued",
+   "officer": null,
+   "risk_score": null,
+   "risk_level": null,
+   "channel": "e-Crime Portal",
+   "evidence": [
+    "SMS screenshots (3)",
+    "Bank transaction alerts (5)",
+    "Bank statement Sep 2026"
+   ],
+   "complaint_text": "I received an SMS saying my card would be blocked and clicked the link, which asked for my banking login and an OTP. Within twenty minutes five transfers totalling AED 43,200 left my account to accounts I do not know. My bank has blocked the card and asked me to file a report.",
+   "linked_refs": [],
+   "report": null
+  },
+  {
+   "ref": "FC-2026-0226",
+   "filed": "2026-09-15T11:20",
+   "complainant": "Omar Saeed",
+   "emirate": "Dubai",
+   "type": "Rental fraud",
+   "subtype": "Fake apartment listing — deposit",
+   "amount": 18000,
+   "currency": "AED",
+   "status": "Triage",
+   "stage": "Pending assignment",
+   "officer": "Lt. M. Al Ketbi",
+   "risk_score": 64,
+   "risk_level": "MEDIUM",
+   "channel": "e-Crime Portal",
+   "evidence": [
+    "Listing screenshots (3)",
+    "WhatsApp screenshots (6)",
+    "Transfer confirmation",
+    "Tenancy contract (PDF)"
+   ],
+   "complaint_text": "I found a two-bedroom apartment in Al Barsha on a property site at a very good price. The agent sent a tenancy contract and asked for a deposit of AED 18,000 to secure it. After paying he stopped answering and the building security told me the apartment is occupied and not for rent.",
+   "linked_refs": [],
+   "report": {
+    "case_ref": "FC-2026-0226",
+    "classification": "Rental fraud — fictitious listing",
+    "typology": "Deposit fraud via cloned property listing",
+    "risk_score": 64,
+    "risk_level": "MEDIUM",
+    "confidence": "medium",
+    "narrative": "Omar Saeed responded to a listing for a two-bedroom apartment in Al Barsha on 9 September 2026. The 'agent' communicated only on WhatsApp, sent a tenancy contract bearing a real brokerage's name, and pressed for a deposit of AED 18,000 to secure the unit before a viewing. Mr Saeed transferred the deposit on 12 September to a personal account. The agent then stopped responding, and building security confirmed the apartment is occupied. Mr Saeed filed this report on 15 September.",
+    "key_facts": [
+     {
+      "label": "Complainant",
+      "value": "Omar Saeed · Dubai"
+     },
+     {
+      "label": "Listing",
+      "value": "Two-bedroom, Al Barsha — cloned from a genuine listing"
+     },
+     {
+      "label": "Contact channel",
+      "value": "Property portal → WhatsApp"
+     },
+     {
+      "label": "Payment",
+      "value": "AED 18,000 — 12 Sep 2026"
+     },
+     {
+      "label": "Beneficiary",
+      "value": "Personal account — details on file"
+     },
+     {
+      "label": "Brokerage named",
+      "value": "Genuine brokerage denies any involvement"
+     }
+    ],
+    "evidence_assessment": [
+     {
+      "item": "Tenancy contract",
+      "finding": "Brokerage license number genuine; signature and stamp do not match",
+      "status": "unverified"
+     },
+     {
+      "item": "Transfer confirmation",
+      "finding": "Reconciles with statement",
+      "status": "verified"
+     }
+    ],
+    "investigation_summary": "The listing photos were copied from a genuine listing; the brokerage confirms the agent is not an employee. No match in complaint history for the beneficiary account.",
+    "osint_findings": [
+     {
+      "subject": "Listing photos",
+      "source": "Reverse image search",
+      "finding": "Identical to a genuine listing by a licensed brokerage",
+      "assessment": "adverse"
+     },
+     {
+      "subject": "Beneficiary account",
+      "source": "Complaint history",
+      "finding": "No prior occurrence",
+      "assessment": "neutral"
+     }
+    ],
+    "key_findings": [
+     {
+      "title": "Cloned listing",
+      "detail": "Photos and description copied from a genuine advertisement.",
+      "severity": "warning",
+      "source": "OSINT"
+     },
+     {
+      "title": "Deposit before viewing",
+      "detail": "Pressure to pay before any viewing; contract forged.",
+      "severity": "warning",
+      "source": "Conversation forensics"
+     }
+    ],
+    "prior_cases": [],
+    "entities": [],
+    "timeline": [
+     {
+      "date": "2026-09-09",
+      "event": "Complainant contacts listing agent",
+      "source": "Statement"
+     },
+     {
+      "date": "2026-09-12",
+      "event": "AED 18,000 deposit transferred",
+      "source": "Bank records"
+     },
+     {
+      "date": "2026-09-15",
+      "event": "Complaint filed",
+      "source": "Complaint"
+     }
+    ],
+    "financial_flow": [
+     {
+      "date": "2026-09-12",
+      "from": "Omar Saeed (complainant)",
+      "to": "Beneficiary account (personal)",
+      "amount": 18000,
+      "currency": "AED",
+      "note": "THIS CASE — deposit"
+     }
+    ],
+    "recommended_actions": [
+     {
+      "action": "Request 6-month statements and KYC for the beneficiary account",
+      "priority": "high",
+      "addressee": "Beneficiary bank — Compliance",
+      "timeframe": "48 hours",
+      "rationale": "Identify holder and other victims' credits."
+     },
+     {
+      "action": "Obtain the property portal's account records for the listing",
+      "priority": "high",
+      "addressee": "Platform trust & safety",
+      "timeframe": "This week",
+      "rationale": "Registration details for the fake agent."
+     }
+    ]
+   }
+  },
+  {
+   "ref": "FC-2026-0221",
+   "filed": "2026-09-12T09:05",
+   "complainant": "Priya Nair",
+   "emirate": "Dubai",
+   "type": "Employment fraud",
+   "subtype": "Job offer — visa processing fee",
+   "amount": 6400,
+   "currency": "AED",
+   "status": "Under investigation",
+   "stage": "Awaiting bank response",
+   "officer": "Sgt. N. Aziz",
+   "risk_score": 58,
+   "risk_level": "MEDIUM",
+   "channel": "e-Crime Portal",
+   "evidence": [
+    "Offer letter (PDF)",
+    "Email correspondence (9 pages)",
+    "Transfer confirmation"
+   ],
+   "complaint_text": "I received a job offer by email from a company I had applied to on a job site. They asked for AED 6,400 for visa processing and medical, refundable on joining. After I paid, the recruiter's email stopped working and the company said they never sent any offer.",
+   "linked_refs": [],
+   "report": {
+    "case_ref": "FC-2026-0221",
+    "classification": "Employment fraud — advance fee",
+    "typology": "Fake recruitment with refundable-fee pretext",
+    "risk_score": 58,
+    "risk_level": "MEDIUM",
+    "confidence": "medium",
+    "narrative": "Priya Nair applied for a position through a job portal in late August 2026 and received an offer letter by email from an address resembling the company's domain. The 'recruiter' requested AED 6,400 for visa processing and medical tests, described as refundable on joining. She transferred the amount on 8 September. The email address then bounced, and the company's HR department confirmed no offer had been issued. She filed this report on 12 September.",
+    "key_facts": [
+     {
+      "label": "Complainant",
+      "value": "Priya Nair · Dubai"
+     },
+     {
+      "label": "Contact channel",
+      "value": "Job portal → look-alike email domain"
+     },
+     {
+      "label": "Payment",
+      "value": "AED 6,400 — 8 Sep 2026"
+     },
+     {
+      "label": "Beneficiary",
+      "value": "Personal account — details on file"
+     },
+     {
+      "label": "Company response",
+      "value": "HR confirms offer is fraudulent"
+     }
+    ],
+    "evidence_assessment": [
+     {
+      "item": "Offer letter",
+      "finding": "Uses the company's logo; signatory not an employee",
+      "status": "unverified"
+     },
+     {
+      "item": "Transfer confirmation",
+      "finding": "Reconciles with statement",
+      "status": "verified"
+     }
+    ],
+    "investigation_summary": "Look-alike domain registered 2026-08-19. Beneficiary bank disclosure requested 14 September; no prior occurrence in complaint history.",
+    "osint_findings": [
+     {
+      "subject": "Recruiter email domain",
+      "source": "Domain records",
+      "finding": "Registered 2026-08-19 via privacy proxy; mimics the employer's domain",
+      "assessment": "adverse"
+     }
+    ],
+    "key_findings": [
+     {
+      "title": "Look-alike domain",
+      "detail": "Recruiter domain registered days before the offer was sent.",
+      "severity": "warning",
+      "source": "OSINT"
+     }
+    ],
+    "prior_cases": [],
+    "entities": [],
+    "timeline": [
+     {
+      "date": "2026-09-01",
+      "event": "Offer letter received",
+      "source": "Evidence"
+     },
+     {
+      "date": "2026-09-08",
+      "event": "AED 6,400 transferred",
+      "source": "Bank records"
+     },
+     {
+      "date": "2026-09-12",
+      "event": "Complaint filed",
+      "source": "Complaint"
+     }
+    ],
+    "financial_flow": [
+     {
+      "date": "2026-09-08",
+      "from": "Priya Nair (complainant)",
+      "to": "Beneficiary account (personal)",
+      "amount": 6400,
+      "currency": "AED",
+      "note": "THIS CASE — 'visa processing'"
+     }
+    ],
+    "recommended_actions": [
+     {
+      "action": "Follow up the bank disclosure request sent 14 Sep",
+      "priority": "high",
+      "addressee": "Beneficiary bank — Compliance",
+      "timeframe": "48 hours",
+      "rationale": "Response overdue."
+     },
+     {
+      "action": "Request registrar records for the look-alike domain",
+      "priority": "routine",
+      "addressee": "Registrar",
+      "timeframe": "This week",
+      "rationale": "Registrant identity and payment method."
+     }
+    ]
+   }
+  },
+  {
+   "ref": "FC-2026-0219",
+   "filed": "2026-09-11T13:42",
+   "complainant": "Khalid Al Mazrouei",
+   "emirate": "Abu Dhabi",
+   "type": "Investment fraud",
+   "subtype": "Crypto trading platform — Telegram group",
+   "amount": 96000,
+   "currency": "AED",
+   "status": "Under investigation",
+   "stage": "Exchange disclosure requested",
+   "officer": "Insp. R. Haddad",
+   "risk_score": 83,
+   "risk_level": "HIGH",
+   "channel": "Police station",
+   "evidence": [
+    "Telegram screenshots (22)",
+    "Platform dashboard screenshots (6)",
+    "Crypto exchange transaction history",
+    "Bank statement Jul–Aug 2026"
+   ],
+   "complaint_text": "I joined a Telegram trading group and was guided to deposit into a trading platform that showed profits. I deposited AED 96,000 over five weeks through a crypto exchange. When I tried to withdraw they asked for a 20% tax payment first and then blocked my account.",
+   "linked_refs": [],
+   "report": {
+    "case_ref": "FC-2026-0219",
+    "classification": "Investment fraud — fraudulent trading platform",
+    "typology": "Pig-butchering scheme via messaging group",
+    "risk_score": 83,
+    "risk_level": "HIGH",
+    "confidence": "high",
+    "narrative": "Khalid Al Mazrouei was added to a Telegram trading group in July 2026 where a 'mentor' posted daily signals. He was guided to register on a trading platform, converted funds through a licensed crypto exchange and deposited the equivalent of AED 96,000 in five transfers between 22 July and 28 August. The platform displayed growing profits. When he requested a withdrawal on 3 September, he was told to pay a 20% 'tax' first; on refusal, his account was blocked and the group administrators removed him. He reported the matter on 11 September with 22 Telegram screenshots, platform screenshots and his exchange history.",
+    "key_facts": [
+     {
+      "label": "Complainant",
+      "value": "Khalid Al Mazrouei · Abu Dhabi"
+     },
+     {
+      "label": "Contact channel",
+      "value": "Telegram group → trading platform"
+     },
+     {
+      "label": "Deposits",
+      "value": "5 transfers, 22 Jul – 28 Aug 2026 — AED 96,000 equivalent"
+     },
+     {
+      "label": "Route",
+      "value": "Licensed exchange → platform wallet addresses"
+     },
+     {
+      "label": "Withdrawal block",
+      "value": "3 Sep 2026 — '20% tax' demand"
+     }
+    ],
+    "evidence_assessment": [
+     {
+      "item": "Exchange transaction history",
+      "finding": "Five outbound transfers to two wallet addresses",
+      "status": "verified"
+     },
+     {
+      "item": "Platform screenshots",
+      "finding": "Displayed balances not backed by any exchange record",
+      "status": "unverified"
+     }
+    ],
+    "investigation_summary": "The platform domain is 6 weeks old and the two receiving wallets consolidate to a single address flagged in two other jurisdictions' warnings. Exchange disclosure requested 12 September.",
+    "osint_findings": [
+     {
+      "subject": "Trading platform domain",
+      "source": "Domain records",
+      "finding": "Registered 2026-07-28; hosted offshore; cloned interface",
+      "assessment": "adverse"
+     },
+     {
+      "subject": "Receiving wallets",
+      "source": "Blockchain analytics",
+      "finding": "Consolidate to an address named in two foreign regulator warnings",
+      "assessment": "adverse"
+     }
+    ],
+    "key_findings": [
+     {
+      "title": "Withdrawal 'tax' demand",
+      "detail": "Classic exit step of platform investment fraud.",
+      "severity": "critical",
+      "source": "Conversation forensics"
+     },
+     {
+      "title": "Wallets flagged abroad",
+      "detail": "Consolidation address appears in two regulator warnings.",
+      "severity": "critical",
+      "source": "OSINT"
+     }
+    ],
+    "prior_cases": [],
+    "entities": [],
+    "timeline": [
+     {
+      "date": "2026-07-22",
+      "event": "First deposit",
+      "source": "Exchange records"
+     },
+     {
+      "date": "2026-08-28",
+      "event": "Fifth and final deposit",
+      "source": "Exchange records"
+     },
+     {
+      "date": "2026-09-03",
+      "event": "Withdrawal blocked; 'tax' demanded",
+      "source": "Statement"
+     },
+     {
+      "date": "2026-09-11",
+      "event": "Complaint filed",
+      "source": "Complaint"
+     }
+    ],
+    "financial_flow": [
+     {
+      "date": "2026-07-22",
+      "from": "Khalid Al Mazrouei (complainant)",
+      "to": "Platform wallet A",
+      "amount": 24000,
+      "currency": "AED",
+      "note": "THIS CASE — deposit 1"
+     },
+     {
+      "date": "2026-08-28",
+      "from": "Khalid Al Mazrouei (complainant)",
+      "to": "Platform wallet B",
+      "amount": 72000,
+      "currency": "AED",
+      "note": "THIS CASE — deposits 2–5"
+     }
+    ],
+    "recommended_actions": [
+     {
+      "action": "Chase the exchange disclosure for the two receiving wallets and any KYC on cash-out addresses",
+      "priority": "immediate",
+      "addressee": "Virtual-asset service provider — Compliance",
+      "timeframe": "Today",
+      "rationale": "Funds may still be traceable on-chain."
+     },
+     {
+      "action": "Request Telegram group administrator data via legal channel",
+      "priority": "high",
+      "addressee": "Platform — Law-enforcement liaison",
+      "timeframe": "This week",
+      "rationale": "Identifies the 'mentor' account."
+     }
+    ]
+   }
+  },
+  {
+   "ref": "FC-2026-0213",
+   "filed": "2026-09-06T10:15",
+   "complainant": "Fatima Al Ali",
+   "emirate": "Dubai",
+   "type": "Phishing / account takeover",
+   "subtype": "Fake delivery SMS — card details",
+   "amount": 2150,
+   "currency": "AED",
+   "status": "Closed",
+   "stage": "Resolved — bank chargeback",
+   "officer": "Cpl. S. Farouk",
+   "risk_score": 35,
+   "risk_level": "LOW",
+   "channel": "e-Crime Portal",
+   "evidence": [
+    "SMS screenshot",
+    "Card transaction alerts (2)"
+   ],
+   "complaint_text": "I received an SMS about a parcel needing a small customs fee and entered my card details on the link. Two card transactions of AED 2,150 followed. The bank reversed the transactions.",
+   "linked_refs": [],
+   "report": {
+    "case_ref": "FC-2026-0213",
+    "classification": "Phishing — card-not-present fraud",
+    "typology": "Smishing (delivery fee pretext)",
+    "risk_score": 35,
+    "risk_level": "LOW",
+    "confidence": "high",
+    "narrative": "Fatima Al Ali received an SMS on 4 September 2026 claiming a parcel was held pending a small customs fee. She entered her card details on the linked page. Two online transactions totalling AED 2,150 were charged the same evening. Her bank blocked the card and reversed both transactions under chargeback on 6 September. The report was filed for record and closed.",
+    "key_facts": [
+     {
+      "label": "Complainant",
+      "value": "Fatima Al Ali · Dubai"
+     },
+     {
+      "label": "Loss",
+      "value": "AED 2,150 — fully reversed by the bank"
+     },
+     {
+      "label": "Merchant",
+      "value": "Two overseas online merchants"
+     },
+     {
+      "label": "Outcome",
+      "value": "Chargeback completed 6 Sep 2026"
+     }
+    ],
+    "evidence_assessment": [
+     {
+      "item": "SMS screenshot",
+      "finding": "Sender ID spoofed; link domain since taken down",
+      "status": "partial"
+     }
+    ],
+    "investigation_summary": "Loss fully recovered through chargeback; phishing domain taken down by the registrar. No further action.",
+    "osint_findings": [
+     {
+      "subject": "Phishing link domain",
+      "source": "Domain records",
+      "finding": "Registered 2026-09-03; suspended 2026-09-05",
+      "assessment": "adverse"
+     }
+    ],
+    "key_findings": [
+     {
+      "title": "Loss recovered",
+      "detail": "Both transactions reversed under chargeback.",
+      "severity": "info",
+      "source": "Bank"
+     }
+    ],
+    "prior_cases": [],
+    "entities": [],
+    "timeline": [
+     {
+      "date": "2026-09-04",
+      "event": "SMS received; card details entered",
+      "source": "Statement"
+     },
+     {
+      "date": "2026-09-06",
+      "event": "Chargeback completed; case closed",
+      "source": "Bank"
+     }
+    ],
+    "financial_flow": [
+     {
+      "date": "2026-09-04",
+      "from": "Fatima Al Ali (complainant)",
+      "to": "Online merchants (2)",
+      "amount": 2150,
+      "currency": "AED",
+      "note": "THIS CASE — reversed"
+     }
+    ],
+    "recommended_actions": [
+     {
+      "action": "No further action — retain for pattern analysis",
+      "priority": "routine",
+      "addressee": "Internal",
+      "timeframe": "Routine",
+      "rationale": "Loss recovered; domain suspended."
+     }
+    ]
+   }
+  },
+  {
+   "ref": "FC-2026-0208",
+   "filed": "2026-09-02T08:50",
+   "complainant": "Meridian Trading LLC",
+   "emirate": "Dubai",
+   "type": "Business email compromise",
+   "subtype": "Invoice redirection — supplier impersonation",
+   "amount": 310000,
+   "currency": "AED",
+   "status": "Under investigation",
+   "stage": "Bank recall in progress",
+   "officer": "Lt. M. Al Ketbi",
+   "risk_score": 88,
+   "risk_level": "CRITICAL",
+   "channel": "Police station",
+   "evidence": [
+    "Email correspondence (31 pages)",
+    "Supplier invoices (3)",
+    "Payment instructions letter",
+    "Bank statement Aug 2026"
+   ],
+   "complaint_text": "Our accounts department received an email from what appeared to be our regular supplier notifying a change of bank account. Two invoice payments totalling AED 310,000 were made to the new account before the genuine supplier queried non-payment.",
+   "linked_refs": [],
+   "report": {
+    "case_ref": "FC-2026-0208",
+    "classification": "Business email compromise — invoice redirection",
+    "typology": "Supplier impersonation via look-alike domain",
+    "risk_score": 88,
+    "risk_level": "CRITICAL",
+    "confidence": "high",
+    "narrative": "Meridian Trading LLC received an email on 19 August 2026 from an address differing from its supplier's genuine domain by one character, notifying a change of bank account for future invoices. The accounts department updated the beneficiary record and paid two genuine invoices, AED 185,000 on 24 August and AED 125,000 on 28 August, to the new account. The supplier queried non-payment on 1 September. The company's bank initiated a recall and the company filed this report on 2 September.",
+    "key_facts": [
+     {
+      "label": "Complainant",
+      "value": "Meridian Trading LLC · Dubai"
+     },
+     {
+      "label": "Contact channel",
+      "value": "Look-alike email domain"
+     },
+     {
+      "label": "Payments",
+      "value": "AED 185,000 (24 Aug) + AED 125,000 (28 Aug)"
+     },
+     {
+      "label": "Beneficiary",
+      "value": "Company account — details on file"
+     },
+     {
+      "label": "Recall status",
+      "value": "Initiated 1 Sep 2026 — partial hold reported"
+     }
+    ],
+    "evidence_assessment": [
+     {
+      "item": "Change-of-account email",
+      "finding": "Domain registered 2026-08-15; headers show foreign mail relay",
+      "status": "unverified"
+     },
+     {
+      "item": "Payment records",
+      "finding": "Both payments reconcile with statement",
+      "status": "verified"
+     }
+    ],
+    "investigation_summary": "Look-alike domain registered four days before the email. Receiving account opened in July 2026 in the name of a newly registered trading company; bank confirms AED 96,000 held under recall.",
+    "osint_findings": [
+     {
+      "subject": "Sender domain",
+      "source": "Domain records",
+      "finding": "Registered 2026-08-15; one-character variant of supplier domain",
+      "assessment": "adverse"
+     },
+     {
+      "subject": "Receiving company",
+      "source": "Trade license registries",
+      "finding": "Licensed 2026-07-08; general trading; flexi-desk",
+      "assessment": "adverse"
+     }
+    ],
+    "key_findings": [
+     {
+      "title": "Partial recall in progress",
+      "detail": "AED 96,000 held by the receiving bank pending disclosure.",
+      "severity": "critical",
+      "source": "Bank"
+     },
+     {
+      "title": "Newly formed receiving company",
+      "detail": "Licensed six weeks before the first payment.",
+      "severity": "warning",
+      "source": "OSINT"
+     }
+    ],
+    "prior_cases": [],
+    "entities": [],
+    "timeline": [
+     {
+      "date": "2026-08-19",
+      "event": "Change-of-account email received",
+      "source": "Evidence"
+     },
+     {
+      "date": "2026-08-24",
+      "event": "AED 185,000 paid",
+      "source": "Bank records"
+     },
+     {
+      "date": "2026-08-28",
+      "event": "AED 125,000 paid",
+      "source": "Bank records"
+     },
+     {
+      "date": "2026-09-01",
+      "event": "Supplier queries non-payment; recall initiated",
+      "source": "Statement"
+     },
+     {
+      "date": "2026-09-02",
+      "event": "Complaint filed",
+      "source": "Complaint"
+     }
+    ],
+    "financial_flow": [
+     {
+      "date": "2026-08-24",
+      "from": "Meridian Trading LLC (complainant)",
+      "to": "Receiving company account",
+      "amount": 185000,
+      "currency": "AED",
+      "note": "THIS CASE — invoice 1"
+     },
+     {
+      "date": "2026-08-28",
+      "from": "Meridian Trading LLC (complainant)",
+      "to": "Receiving company account",
+      "amount": 125000,
+      "currency": "AED",
+      "note": "THIS CASE — invoice 2"
+     }
+    ],
+    "recommended_actions": [
+     {
+      "action": "Formal freeze request and 6-month statements plus KYC for the receiving company account",
+      "priority": "immediate",
+      "addressee": "Receiving bank — Compliance / MLRO",
+      "timeframe": "Today",
+      "rationale": "AED 96,000 currently held under recall."
+     },
+     {
+      "action": "Request mail-server logs for the look-alike domain",
+      "priority": "high",
+      "addressee": "Registrar / hosting provider",
+      "timeframe": "48 hours",
+      "rationale": "Sender IP and registrant details."
+     }
+    ]
+   }
+  },
+  {
+   "ref": "FC-2026-0199",
+   "filed": "2026-08-24T17:30",
+   "complainant": "M. R. (name withheld)",
+   "emirate": "Dubai",
+   "type": "Romance fraud",
+   "subtype": "Online relationship — emergency payments",
+   "amount": 54500,
+   "currency": "AED",
+   "status": "Under investigation",
+   "stage": "Awaiting bank response",
+   "officer": "Sgt. N. Aziz",
+   "risk_score": 70,
+   "risk_level": "HIGH",
+   "channel": "Police station",
+   "evidence": [
+    "Chat export (PDF, 140 pages)",
+    "Transfer confirmations (6)",
+    "Bank statement Jun–Aug 2026"
+   ],
+   "complaint_text": "I met someone on a dating application who said he was an engineer working abroad. Over three months he asked for help with medical bills and a customs problem and I sent six transfers totalling AED 54,500. He then disappeared.",
+   "linked_refs": [],
+   "report": {
+    "case_ref": "FC-2026-0199",
+    "classification": "Romance fraud — advance payments",
+    "typology": "Long-con relationship fraud with emergency pretexts",
+    "risk_score": 70,
+    "risk_level": "HIGH",
+    "confidence": "high",
+    "narrative": "The complainant met a man on a dating application in May 2026 who described himself as an engineer on an overseas contract. Over three months he built a relationship by daily messaging and video calls he always cut short. From June he requested help with medical bills, then a customs problem with a shipment of gifts. The complainant made six transfers totalling AED 54,500 between 12 June and 15 August to three different personal accounts. After the last payment all contact stopped. The report was filed on 24 August with a 140-page chat export and the six transfer confirmations.",
+    "key_facts": [
+     {
+      "label": "Complainant",
+      "value": "M. R. · Dubai (name withheld)"
+     },
+     {
+      "label": "Contact channel",
+      "value": "Dating application → messaging"
+     },
+     {
+      "label": "Payments",
+      "value": "6 transfers — AED 54,500 — 12 Jun to 15 Aug 2026"
+     },
+     {
+      "label": "Beneficiaries",
+      "value": "Three personal accounts — details on file"
+     },
+     {
+      "label": "Last contact",
+      "value": "16 Aug 2026"
+     }
+    ],
+    "evidence_assessment": [
+     {
+      "item": "Chat export",
+      "finding": "Consistent scripted pretexts; profile photos belong to a public figure",
+      "status": "partial"
+     },
+     {
+      "item": "Transfer confirmations (6)",
+      "finding": "All reconcile with statements",
+      "status": "verified"
+     }
+    ],
+    "investigation_summary": "Profile photos are stolen from a public figure; the three receiving accounts belong to different holders, two of which have prior mule indicators with their banks. Disclosure requests sent 26 August.",
+    "osint_findings": [
+     {
+      "subject": "Profile photos",
+      "source": "Reverse image search",
+      "finding": "Photos of a public figure with no connection to the case",
+      "assessment": "adverse"
+     }
+    ],
+    "key_findings": [
+     {
+      "title": "Three receiving accounts",
+      "detail": "Payments spread across three personal accounts — typical mule layering.",
+      "severity": "warning",
+      "source": "Financial analysis"
+     }
+    ],
+    "prior_cases": [],
+    "entities": [],
+    "timeline": [
+     {
+      "date": "2026-05-20",
+      "event": "Contact begins on dating application",
+      "source": "Statement"
+     },
+     {
+      "date": "2026-06-12",
+      "event": "First transfer",
+      "source": "Bank records"
+     },
+     {
+      "date": "2026-08-15",
+      "event": "Sixth and final transfer",
+      "source": "Bank records"
+     },
+     {
+      "date": "2026-08-24",
+      "event": "Complaint filed",
+      "source": "Complaint"
+     }
+    ],
+    "financial_flow": [
+     {
+      "date": "2026-06-12",
+      "from": "M. R. (complainant)",
+      "to": "Personal account 1",
+      "amount": 12000,
+      "currency": "AED",
+      "note": "THIS CASE — 'medical bills'"
+     },
+     {
+      "date": "2026-08-15",
+      "from": "M. R. (complainant)",
+      "to": "Personal accounts 2–3",
+      "amount": 42500,
+      "currency": "AED",
+      "note": "THIS CASE — 'customs', 5 transfers"
+     }
+    ],
+    "recommended_actions": [
+     {
+      "action": "Follow up disclosure requests for the three receiving accounts (6-month statements and KYC)",
+      "priority": "high",
+      "addressee": "Receiving banks — Compliance",
+      "timeframe": "48 hours",
+      "rationale": "Two accounts already carry mule indicators."
+     },
+     {
+      "action": "Victim support referral",
+      "priority": "routine",
+      "addressee": "Internal — Victim support",
+      "timeframe": "This week",
+      "rationale": "Prolonged psychological manipulation."
+     }
+    ]
+   }
+  },
+  {
+   "ref": "FC-2026-0195",
+   "filed": "2026-08-20T12:05",
+   "complainant": "Saeed Al Nuaimi",
+   "emirate": "Ajman",
+   "type": "Online purchase fraud",
+   "subtype": "Vehicle deposit — social media listing",
+   "amount": 25000,
+   "currency": "AED",
+   "status": "Awaiting complainant",
+   "stage": "Documents requested 22 Aug",
+   "officer": null,
+   "risk_score": 61,
+   "risk_level": "MEDIUM",
+   "channel": "e-Crime Portal",
+   "evidence": [
+    "Listing screenshot",
+    "WhatsApp screenshots (5)"
+   ],
+   "complaint_text": "I paid a deposit of AED 25,000 for a car advertised on social media. The seller said the car was at a showroom in Sharjah and would be delivered after the deposit. He then stopped answering. I have the chat but not yet my bank statement.",
+   "linked_refs": [],
+   "report": null
+  },
+  {
+   "ref": "FC-2026-0181",
+   "filed": "2026-08-02T15:22",
+   "complainant": "Nadia Kamal",
+   "emirate": "Dubai",
+   "type": "Charity fraud",
+   "subtype": "Fake donation appeal — social media",
+   "amount": 3000,
+   "currency": "AED",
+   "status": "Closed",
+   "stage": "No further action — account closed by bank",
+   "officer": "Cpl. S. Farouk",
+   "risk_score": 28,
+   "risk_level": "LOW",
+   "channel": "e-Crime Portal",
+   "evidence": [
+    "Social media screenshots (2)",
+    "Transfer confirmation"
+   ],
+   "complaint_text": "I donated AED 3,000 to an appeal for medical treatment posted on social media. The page was later removed and I found out it was not a registered charity.",
+   "linked_refs": [],
+   "report": {
+    "case_ref": "FC-2026-0181",
+    "classification": "Charity fraud — unlicensed appeal",
+    "typology": "Fake donation appeal",
+    "risk_score": 28,
+    "risk_level": "LOW",
+    "confidence": "medium",
+    "narrative": "Nadia Kamal donated AED 3,000 on 28 July 2026 to a social-media appeal for a child's medical treatment. The appeal page was removed on 31 July. The receiving bank confirmed the account had been closed following its own review, with no funds remaining. The report was filed on 2 August and closed with no further action after the platform confirmed the page had been removed for policy violation.",
+    "key_facts": [
+     {
+      "label": "Complainant",
+      "value": "Nadia Kamal · Dubai"
+     },
+     {
+      "label": "Loss",
+      "value": "AED 3,000 — 28 Jul 2026"
+     },
+     {
+      "label": "Outcome",
+      "value": "Account closed by bank; page removed by platform"
+     }
+    ],
+    "evidence_assessment": [
+     {
+      "item": "Transfer confirmation",
+      "finding": "Reconciles with statement",
+      "status": "verified"
+     }
+    ],
+    "investigation_summary": "Unlicensed appeal; receiving account closed by the bank; no funds recoverable. Closed.",
+    "osint_findings": [
+     {
+      "subject": "Appeal page",
+      "source": "Platform",
+      "finding": "Removed 2026-07-31 for policy violation",
+      "assessment": "adverse"
+     }
+    ],
+    "key_findings": [
+     {
+      "title": "No recoverable funds",
+      "detail": "Account emptied and closed before the report.",
+      "severity": "info",
+      "source": "Bank"
+     }
+    ],
+    "prior_cases": [],
+    "entities": [],
+    "timeline": [
+     {
+      "date": "2026-07-28",
+      "event": "Donation transferred",
+      "source": "Bank records"
+     },
+     {
+      "date": "2026-07-31",
+      "event": "Appeal page removed",
+      "source": "Platform"
+     },
+     {
+      "date": "2026-08-02",
+      "event": "Complaint filed and closed",
+      "source": "Complaint"
+     }
+    ],
+    "financial_flow": [
+     {
+      "date": "2026-07-28",
+      "from": "Nadia Kamal (complainant)",
+      "to": "Appeal account",
+      "amount": 3000,
+      "currency": "AED",
+      "note": "THIS CASE"
+     }
+    ],
+    "recommended_actions": [
+     {
+      "action": "No further action",
+      "priority": "routine",
+      "addressee": "Internal",
+      "timeframe": "Routine",
+      "rationale": "Account closed; no funds remaining."
+     }
+    ]
+   }
+  }
+ ]
+}

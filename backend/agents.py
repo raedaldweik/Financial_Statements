@@ -223,25 +223,36 @@ def _lead_user(case: Case, ctx: dict) -> list:
     return [{"type": "text", "text":
              _complaint_block(case) + "\n\n" +
              _memo_context(case, ["intake", "conversation", "financial", "osint", "crossref"]) +
-             "\n\nSynthesize the full investigation report. Rules:\n"
-             "- entities: one entry per real-world entity, reuse ids like ENT-ORG-001 where "
-             "the memos mention them; give the victim and current case entities new ids "
-             "(e.g. ENT-VIC-000, ENT-SOC-000).\n"
-             "- timeline: merge conversation, financial, OSINT and prior-case dates into one "
-             "chronological view (ISO dates).\n"
-             "- financial_flow: every confirmed victim->suspect transfer in this case AND "
-             "prior linked cases, plus known onward movement (cash-out, exchange).\n"
+             "\n\nProduce the investigation case file for the officer who will pick this up "
+             "and has NOT seen the evidence. Rules:\n"
+             "- narrative: 130-180 words, plain chronological language, no jargon: who the "
+             "complainant is, what they were promised, how contact happened, what they paid "
+             "(amount, date, beneficiary name, account, IBAN, reference), what happened after, "
+             "and when contact was lost. Written like a case summary, not marketing.\n"
+             "- key_facts: 8-12 label/value pairs an officer needs at a glance (complainant, "
+             "seller identity presented, contact channel, payment date, amount, beneficiary, "
+             "account, IBAN, bank reference, promised delivery, last contact, evidence items).\n"
+             "- evidence_assessment: one row per evidence item; status verified when it "
+             "reconciles with another source, partial when only internally consistent, "
+             "unverified otherwise.\n"
+             "- investigation_summary: at most 60 words - what the cross-case and OSINT work "
+             "established.\n"
+             "- osint_findings: one row per check performed (registry, phone, social, domain, "
+             "scam reports), assessment adverse/neutral/clear.\n"
              "- prior_cases: every linked complaint with the exact identifiers matched on.\n"
-             "- recommended_actions: concrete police actions in priority order (account "
-             "freeze, bank disclosure, telecom subpoena, platform preservation requests, "
-             "case consolidation, suspect identification steps, victim communication).\n"
-             "- vi_case_summary: one short paragraph describing the consolidated case that "
-             "should be opened in the unit's network-investigation platform in the next step "
-             "(entities, links, prior complaints to merge).\n"
-             "- executive_summary: at most 80 words for a unit commander, then a final "
-             "sentence starting exactly with 'Recommendation:'.\n"
-             "- Dashboard brevity: finding detail <= 25 words; timeline event <= 12 words; "
-             "action rationale <= 15 words; entity role <= 14 words; prior-case summary "
+             "- entities: one entry per real-world entity, reuse ids like ENT-ORG-001 where the "
+             "memos mention them; new ids for the complainant and current-case entities.\n"
+             "- timeline: merge all sources chronologically (ISO dates), events <= 12 words.\n"
+             "- financial_flow: every victim->suspect transfer in this and linked cases, plus "
+             "known onward movement; note starts with 'THIS CASE' for the current complaint.\n"
+             "- recommended_actions: 6-8 concrete actions in priority order with addressee "
+             "(e.g. 'Example Bank - Compliance / MLRO', 'Telecom operator', 'Platform trust & "
+             "safety', 'Public prosecution', 'Internal') and timeframe ('Today', '48 hours', "
+             "'This week', 'Routine'). The first bank action must request account statements "
+             "for the past 6 months plus KYC for every beneficiary account. Rationale <= 15 "
+             "words. Last action: open a network case in SAS Visual Investigator for link "
+             "analysis.\n"
+             "- key_findings detail <= 25 words; entity role <= 14 words; prior-case summary "
              "<= 25 words. Numbers over narrative."}]
 
 
@@ -287,11 +298,22 @@ REPORT_SCHEMA = _obj({
     "risk_score": {"type": "integer", "minimum": 0, "maximum": 100},
     "risk_level": {"type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]},
     "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
-    "executive_summary": _S,
+    "narrative": _S,
+    "key_facts": _arr(_obj({"label": _S, "value": _S})),
+    "evidence_assessment": _arr(_obj({
+        "item": _S, "finding": _S,
+        "status": {"type": "string", "enum": ["verified", "partial", "unverified"]}})),
+    "investigation_summary": _S,
+    "osint_findings": _arr(_obj({
+        "subject": _S, "source": _S, "finding": _S,
+        "assessment": {"type": "string", "enum": ["adverse", "neutral", "clear"]}})),
     "key_findings": _arr(_obj({
         "title": _S, "detail": _S,
         "severity": {"type": "string", "enum": ["info", "warning", "critical"]},
         "source": _S})),
+    "prior_cases": _arr(_obj({
+        "case_id": _S, "filed_date": _S, "victim": _S, "amount": _N,
+        "currency": _S, "matched_on": _arr(_S), "summary": _S, "status": _S})),
     "entities": _arr(_obj({
         "id": _S, "label": _S,
         "type": {"type": "string", "enum": ENTITY_TYPES},
@@ -300,12 +322,10 @@ REPORT_SCHEMA = _obj({
     "financial_flow": _arr(_obj({
         "date": _S, "from": _S, "to": _S, "amount": _N,
         "currency": _S, "note": _S})),
-    "prior_cases": _arr(_obj({
-        "case_id": _S, "filed_date": _S, "victim": _S, "amount": _N,
-        "currency": _S, "matched_on": _arr(_S), "summary": _S, "status": _S})),
     "recommended_actions": _arr(_obj({
         "action": _S,
         "priority": {"type": "string", "enum": ["immediate", "high", "routine"]},
+        "addressee": _S,
+        "timeframe": _S,
         "rationale": _S})),
-    "vi_case_summary": _S,
 })

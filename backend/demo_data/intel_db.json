@@ -2,7 +2,7 @@
   "description": "Internal financial-crime intelligence repository (demo). Contains prior complaints, resolved entities and relationship links.",
   "cases": [
     {
-      "case_id": "Complaint #001",
+      "case_id": "FC-2026-0187",
       "filed_date": "2026-08-05",
       "status": "Open — beneficiary bank disclosure received",
       "category": "Citizenship-by-investment fraud / false representation",
@@ -21,7 +21,7 @@
       "assigned_to": "Insp. R. Haddad"
     },
     {
-      "case_id": "Complaint #003",
+      "case_id": "FC-2026-0204",
       "filed_date": "2026-08-28",
       "status": "Open",
       "category": "Online product purchase fraud (non-delivery)",
@@ -46,9 +46,9 @@
       "label": "Mubarak Salem",
       "attributes": {
         "role": "Holder of account 5660609 (AE600340005660609); authorized signatory of Global Pathways Investment Consultancy FZE; suspected network controller",
-        "notes": "Named in bank KYC (Complaint #001 disclosure). Registered contact mobile and address shared with Abdullah Mohammed (holder of AE750340003456660)."
+        "notes": "Named in bank KYC (FC-2026-0187 disclosure). Registered contact mobile and address shared with Abdullah Mohammed (holder of AE750340003456660)."
       },
-      "linked_cases": ["Complaint #001"]
+      "linked_cases": ["FC-2026-0187"]
     },
     {
       "id": "ENT-PER-002",
@@ -56,9 +56,9 @@
       "label": "Abdullah Mohammed",
       "attributes": {
         "role": "Holder of account 3456660 (AE750340003456660) — associate / secondary collection account",
-        "notes": "Bank KYC shows same registered address and contact mobile as Mubarak Salem. Received victim funds in Complaint #003."
+        "notes": "Bank KYC shows same registered address and contact mobile as Mubarak Salem. Received victim funds in FC-2026-0204."
       },
-      "linked_cases": ["Complaint #003"]
+      "linked_cases": ["FC-2026-0204"]
     },
     {
       "id": "ENT-ACC-001",
@@ -66,9 +66,9 @@
       "label": "Account 5660609 — IBAN AE600340005660609",
       "attributes": {
         "holder": "Mubarak Salem",
-        "pattern": "Rapid cash withdrawal and partial transfer to a virtual-asset exchange within 72h of victim credits (Complaint #001 disclosure)"
+        "pattern": "Rapid cash withdrawal and partial transfer to a virtual-asset exchange within 72h of victim credits (FC-2026-0187 disclosure)"
       },
-      "linked_cases": ["Complaint #001"]
+      "linked_cases": ["FC-2026-0187"]
     },
     {
       "id": "ENT-ACC-002",
@@ -76,9 +76,9 @@
       "label": "Account 3456660 — IBAN AE750340003456660",
       "attributes": {
         "holder": "Abdullah Mohammed",
-        "pattern": "Same-day ATM cash-out of victim credits (Complaint #003)"
+        "pattern": "Same-day ATM cash-out of victim credits (FC-2026-0204)"
       },
-      "linked_cases": ["Complaint #003"]
+      "linked_cases": ["FC-2026-0204"]
     },
     {
       "id": "ENT-PHN-001",
@@ -86,9 +86,9 @@
       "label": "+971 55 302 8817",
       "attributes": {
         "registered_name": "K. Rahim (suspected false identity)",
-        "role": "Seller contact number for 'TechDeals UAE' (Complaint #003) and for the 'Prime Gulf Electronics' page"
+        "role": "Seller contact number for 'TechDeals UAE' (FC-2026-0204) and for the 'Prime Gulf Electronics' page"
       },
-      "linked_cases": ["Complaint #003"]
+      "linked_cases": ["FC-2026-0204"]
     },
     {
       "id": "ENT-ORG-001",
@@ -97,15 +97,15 @@
       "attributes": {
         "license": "FZ-102284 (CANCELLED 2026-04-30)",
         "authorized_signatory": "Mubarak Salem",
-        "role": "Front company used in the citizenship-by-investment fraud (Complaint #001); never licensed for immigration services"
+        "role": "Front company used in the citizenship-by-investment fraud (FC-2026-0187); never licensed for immigration services"
       },
-      "linked_cases": ["Complaint #001"]
+      "linked_cases": ["FC-2026-0187"]
     },
     {
       "id": "ENT-SOC-001",
       "type": "social",
       "label": "TechDeals UAE (classifieds seller profile)",
-      "linked_cases": ["Complaint #003"]
+      "linked_cases": ["FC-2026-0204"]
     }
   ],
   "links": [
@@ -113,8 +113,8 @@
     {"from": "ENT-PER-002", "to": "ENT-ACC-002", "relation": "account holder"},
     {"from": "ENT-PER-001", "to": "ENT-PER-002", "relation": "shared KYC address & contact mobile (bank disclosure)"},
     {"from": "ENT-PER-001", "to": "ENT-ORG-001", "relation": "authorized signatory of"},
-    {"from": "ENT-ORG-001", "to": "ENT-ACC-001", "relation": "victim payments routed to (Complaint #001)"},
+    {"from": "ENT-ORG-001", "to": "ENT-ACC-001", "relation": "victim payments routed to (FC-2026-0187)"},
     {"from": "ENT-SOC-001", "to": "ENT-PHN-001", "relation": "seller contact number"},
-    {"from": "ENT-SOC-001", "to": "ENT-ACC-002", "relation": "victim payments routed to (Complaint #003)"}
+    {"from": "ENT-SOC-001", "to": "ENT-ACC-002", "relation": "victim payments routed to (FC-2026-0204)"}
   ]
 }

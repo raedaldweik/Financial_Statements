@@ -1,37 +1,39 @@
-"""Fraud Complaint Analyzer — agentic AI demo for police financial investigation units.
+"""Financial Crime Unit — complaint intake portal + investigator case management.
 
-FastAPI backend serving the API + the static frontend. See README.md at the
-repository root for the storyline and Railway deployment notes.
+FastAPI backend serving the API and the static frontend. See README.md.
 """
 from __future__ import annotations
 
 import logging
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 import config
 import pipeline
+import registry
 import store
 
 logging.basicConfig(level=logging.INFO)
 
-app = FastAPI(title="Fraud Complaint Analyzer", version="1.0")
+app = FastAPI(title="Financial Crime Unit — Complaint Analyzer", version="2.0")
 
 
 @app.get("/api/health")
 def health() -> dict:
     return {"ok": True, "llm_configured": config.llm_configured(),
-            "model": config.MODEL,
-            "default_mode": pipeline.resolve_mode("auto")}
+            "model": config.MODEL, "default_mode": pipeline.resolve_mode("auto"),
+            "today": registry.TODAY}
 
+
+# ─── Citizen portal ─────────────────────────────────────────────────
 
 @app.post("/api/case/new")
 def case_new() -> dict:
     case = store.new_case()
-    return {"case_id": case.case_id, "complaint": {}, "evidence": case.evidence_summary()}
+    return {"case_id": case.case_id, "evidence": case.evidence_summary()}
 
 
 @app.post("/api/case/demo")
@@ -58,31 +60,54 @@ async def upload(case_id: str = Form(...), kind: str = Form(...),
     return {"case_id": case.case_id, "evidence": evidence}
 
 
-class AnalyzeRequest(BaseModel):
+class SubmitRequest(BaseModel):
     case_id: str
-    mode: str = "auto"          # auto | live | replay
-    complaint: dict | None = None
+    complaint: dict
+    mode: str = "auto"          # auto | live | replay (investigator setting)
 
 
-@app.post("/api/analyze")
-async def analyze(req: AnalyzeRequest) -> dict:
+@app.post("/api/submit")
+async def submit(req: SubmitRequest) -> dict:
     case = store.get_case(req.case_id)
     if not case:
         raise HTTPException(404, "Unknown case id")
-    if req.complaint:
-        case.complaint = req.complaint
     mode = pipeline.resolve_mode(req.mode)
     if mode == "live" and not config.llm_configured():
-        raise HTTPException(400, "Live mode requires ANTHROPIC_API_KEY. "
-                                 "Use simulation mode or configure the key.")
+        mode = "replay"
     if mode == "live" and not case.has_evidence():
-        raise HTTPException(400, "Attach at least one piece of evidence "
-                                 "(complaint screenshots or a financial statement) "
-                                 "before analyzing.")
+        raise HTTPException(400, "Please attach at least one screenshot or statement.")
+    case.complaint = req.complaint
     case.memos.clear()
     case.report = None
-    run_id = pipeline.start_run(case, mode)
-    return {"run_id": run_id, "mode": mode}
+    # register first so the ref is known, then start the run bound to it
+    entry = registry.register_submission(case, case.complaint, run_id="", mode=mode)
+    run_id = pipeline.start_run(case, mode, ref=entry["ref"])
+    entry["run_id"] = run_id
+    return {"ref": entry["ref"], "filed": entry["filed"], "run_id": run_id, "mode": mode}
+
+
+# ─── Investigator workspace ─────────────────────────────────────────
+
+@app.get("/api/cases")
+def cases() -> dict:
+    return {"today": registry.TODAY, "cases": registry.list_cases()}
+
+
+@app.get("/api/cases/{ref}")
+def case_detail(ref: str) -> dict:
+    c = registry.get(ref)
+    if not c:
+        raise HTTPException(404, "Unknown case reference")
+    return c
+
+
+@app.get("/api/cases/{ref}/evidence/{index}")
+def case_evidence(ref: str, index: int) -> Response:
+    hit = registry.evidence_image(ref, index, store.get_case)
+    if not hit:
+        raise HTTPException(404, "No such evidence image")
+    data, media = hit
+    return Response(content=data, media_type=media)
 
 
 @app.get("/api/stream/{run_id}")
@@ -95,31 +120,28 @@ async def stream(run_id: str) -> StreamingResponse:
 
 
 class AskRequest(BaseModel):
-    case_id: str
+    ref: str
     question: str
 
 
 @app.post("/api/ask")
 async def ask(req: AskRequest) -> dict:
-    case = store.get_case(req.case_id)
-    if not case:
-        raise HTTPException(404, "Unknown case id")
+    entry = registry.CASES.get(req.ref)
+    if not entry:
+        raise HTTPException(404, "Unknown case reference")
     if not req.question.strip():
         raise HTTPException(400, "Empty question")
-    return await pipeline.answer_question(case, req.question.strip()[:2000])
+    sc = store.get_case(entry["case_id"]) if entry.get("case_id") else None
+    return await pipeline.answer_question(entry, req.question.strip()[:2000], sc)
 
+
+# ─── Demo assets ────────────────────────────────────────────────────
 
 @app.get("/api/demo/statement.pdf")
 def demo_statement() -> FileResponse:
     return FileResponse(config.DEMO_DIR / "bank_statement.pdf",
                         media_type="application/pdf",
-                        filename="bank_statement_aug_2026.pdf")
-
-
-@app.get("/api/demo/conversation.txt")
-def demo_conversation() -> FileResponse:
-    return FileResponse(config.DEMO_DIR / "conversation.txt",
-                        media_type="text/plain; charset=utf-8")
+                        filename="bank_statement_sep_2026.pdf")
 
 
 @app.get("/api/demo/img/{n}")

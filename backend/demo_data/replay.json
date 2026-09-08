@@ -1,5 +1,5 @@
 {
- "description": "Recorded simulation of a full analysis run (Complaint #002 — online product trading fraud). Used when no ANTHROPIC_API_KEY is configured or when simulation mode is selected. The UI labels this mode clearly.",
+ "description": "Recorded simulation of a full analysis run (FC-2026-0231 — online product trading fraud). Used when no ANTHROPIC_API_KEY is configured or when simulation mode is selected. The UI labels this mode clearly.",
  "events": [
   {
    "delay": 0.6,
@@ -237,7 +237,7 @@
     "type": "tool_result",
     "agent": "crossref",
     "tool": "search_intelligence",
-    "summary": "MATCH — Complaint #001 (citizenship-by-investment fraud, AED 275,000): same beneficiary account 5660609 / AE600340005660609. Entity ENT-ACC-001."
+    "summary": "MATCH — FC-2026-0187 (citizenship-by-investment fraud, AED 275,000): same beneficiary account 5660609 / AE600340005660609. Entity ENT-ACC-001."
    }
   },
   {
@@ -257,7 +257,7 @@
     "type": "tool_result",
     "agent": "crossref",
     "tool": "search_intelligence",
-    "summary": "Entity ENT-PER-001: account holder of 5660609; authorized signatory of Global Pathways Investment Consultancy FZE (Complaint #001 front company)."
+    "summary": "Entity ENT-PER-001: account holder of 5660609; authorized signatory of Global Pathways Investment Consultancy FZE (FC-2026-0187 front company)."
    }
   },
   {
@@ -277,7 +277,7 @@
     "type": "tool_result",
     "agent": "crossref",
     "tool": "search_intelligence",
-    "summary": "MATCH — the 'alternative account' offered in this case's chat is a known fraud account: Complaint #003 (AED 8,900), holder Abdullah Mohammed. Entity ENT-ACC-002."
+    "summary": "MATCH — the 'alternative account' offered in this case's chat is a known fraud account: FC-2026-0204 (AED 8,900), holder Abdullah Mohammed. Entity ENT-ACC-002."
    }
   },
   {
@@ -297,7 +297,7 @@
     "type": "tool_result",
     "agent": "crossref",
     "tool": "search_intelligence",
-    "summary": "MATCH — same seller phone as Complaint #003 ('TechDeals UAE'). Entity ENT-PHN-001."
+    "summary": "MATCH — same seller phone as FC-2026-0204 ('TechDeals UAE'). Entity ENT-PHN-001."
    }
   },
   {
@@ -307,7 +307,7 @@
     "agent": "crossref",
     "tool": "get_case_details",
     "args": {
-     "case_id": "Complaint #001"
+     "case_id": "FC-2026-0187"
     }
    }
   },
@@ -327,7 +327,7 @@
     "agent": "crossref",
     "tool": "get_case_details",
     "args": {
-     "case_id": "Complaint #003"
+     "case_id": "FC-2026-0204"
     }
    }
   },
@@ -365,7 +365,7 @@
    "event": {
     "type": "agent_memo",
     "agent": "crossref",
-    "memo": "**Verdict: not an isolated complaint — the beneficiary account previously received AED 275,000 in an investment fraud; three complaints, two accounts and two typologies resolve to one network. Combined losses AED 296,400.**\n\n| Case | Filed | Typology | Loss | Matched on |\n|---|---|---|---|---|\n| Complaint #001 | 5 Aug | Citizenship-by-investment fraud | AED 275,000 | Same account 5660609 / AE600340005660609 |\n| Complaint #003 | 28 Aug | Online product fraud | AED 8,900 | Same seller phone; the 'alternative account' AE750340003456660 |\n| Complaint #002 | 18 Sep | Online product fraud | AED 12,500 | current complaint |\n\n- Mubarak Salem holds account 5660609 and signs for Global Pathways Investment Consultancy FZE (Complaint #001 front company).\n- Abdullah Mohammed holds account 3456660; bank KYC shows the same registered address and contact mobile as Mubarak Salem.\n- Proceeds pattern: AED 180,000 cash-out + AED 60,000 to a virtual-asset exchange within 72h of the largest payment.\n\n**Key identifiers**\n- Linked cases: Complaint #001 (AED 275,000), Complaint #003 (AED 8,900)\n- Combined losses: AED 296,400 across 3 victims\n- Controller: Mubarak Salem (ENT-PER-001)\n- Associate: Abdullah Mohammed (ENT-PER-002)\n- Accounts: 5660609, 3456660\n- Front company: Global Pathways Investment Consultancy FZE"
+    "memo": "**Verdict: not an isolated complaint — the beneficiary account previously received AED 275,000 in an investment fraud; three complaints, two accounts and two typologies resolve to one network. Combined losses AED 296,400.**\n\n| Case | Filed | Typology | Loss | Matched on |\n|---|---|---|---|---|\n| FC-2026-0187 | 5 Aug | Citizenship-by-investment fraud | AED 275,000 | Same account 5660609 / AE600340005660609 |\n| FC-2026-0204 | 28 Aug | Online product fraud | AED 8,900 | Same seller phone; the 'alternative account' AE750340003456660 |\n| FC-2026-0231 | 18 Sep | Online product fraud | AED 12,500 | current complaint |\n\n- Mubarak Salem holds account 5660609 and signs for Global Pathways Investment Consultancy FZE (FC-2026-0187 front company).\n- Abdullah Mohammed holds account 3456660; bank KYC shows the same registered address and contact mobile as Mubarak Salem.\n- Proceeds pattern: AED 180,000 cash-out + AED 60,000 to a virtual-asset exchange within 72h of the largest payment.\n\n**Key identifiers**\n- Linked cases: FC-2026-0187 (AED 275,000), FC-2026-0204 (AED 8,900)\n- Combined losses: AED 296,400 across 3 victims\n- Controller: Mubarak Salem (ENT-PER-001)\n- Associate: Abdullah Mohammed (ENT-PER-002)\n- Accounts: 5660609, 3456660\n- Front company: Global Pathways Investment Consultancy FZE"
    }
   },
   {
@@ -396,29 +396,28 @@
    "event": {
     "type": "report",
     "report": {
-     "case_ref": "Complaint #002",
+     "case_ref": "FC-2026-0231",
      "classification": "Online product trading fraud (non-delivery)",
      "typology": "Multi-typology serial fraud network — common beneficiary accounts across investment and e-commerce scams",
      "risk_score": 88,
      "risk_level": "CRITICAL",
      "confidence": "high",
-     "executive_summary": "Complaint #002 (Ahmed Hassan, confirmed loss AED 12,500) presents as an isolated online shopping fraud. It is not: beneficiary account 5660609 previously received AED 275,000 in a citizenship-by-investment fraud (Complaint #001), and the alternative account offered in the chat funds a third case (Complaint #003). Shared bank KYC resolves both account holders into one network — 3 complaints, 2 accounts, AED 296,400 — with proceeds dissipated within 72 hours. Recommendation: freeze both accounts today, consolidate the three complaints, and identify both account holders from bank KYC.",
      "key_findings": [
       {
        "title": "Beneficiary account matches a AED 275,000 investment fraud",
-       "detail": "Account 5660609 / AE600340005660609 (Mubarak Salem) is the collection account of Complaint #001 — AED 25,000 + AED 250,000 citizenship-investment payments.",
+       "detail": "Account 5660609 / AE600340005660609 (Mubarak Salem) is the collection account of FC-2026-0187 — AED 25,000 + AED 250,000 citizenship-investment payments.",
        "severity": "critical",
        "source": "Complaint history"
       },
       {
        "title": "Chat's 'alternative account' is a known fraud account",
-       "detail": "The backup account offered in the chat (Abdullah Mohammed, AE750340003456660) is the collection account of Complaint #003, which shares this case's seller phone.",
+       "detail": "The backup account offered in the chat (Abdullah Mohammed, AE750340003456660) is the collection account of FC-2026-0204, which shares this case's seller phone.",
        "severity": "critical",
        "source": "Conversation + complaint history"
       },
       {
        "title": "One network behind two fraud typologies",
-       "detail": "Bank KYC shows both account holders share an address and mobile; Mubarak Salem signs for the Complaint #001 front company.",
+       "detail": "Bank KYC shows both account holders share an address and mobile; Mubarak Salem signs for the FC-2026-0187 front company.",
        "severity": "critical",
        "source": "Complaint history"
       },
@@ -426,7 +425,7 @@
        "title": "Proceeds dissipated within 72 hours",
        "detail": "After the AED 250,000 payment: AED 180,000 cash-out and AED 60,000 to a virtual-asset exchange within 72 hours.",
        "severity": "critical",
-       "source": "Bank disclosure, Complaint #001"
+       "source": "Bank disclosure, FC-2026-0187"
       },
       {
        "title": "Unregistered, manufactured storefront",
@@ -452,14 +451,14 @@
        "id": "ENT-VIC-000",
        "label": "Ahmed Hassan",
        "type": "person",
-       "role": "Complainant, Complaint #002 — loss AED 12,500",
+       "role": "Complainant, FC-2026-0231 — loss AED 12,500",
        "flagged": false
       },
       {
        "id": "ENT-PER-001",
        "label": "Mubarak Salem",
        "type": "person",
-       "role": "Holder of account 5660609; signatory of the Complaint #001 front company",
+       "role": "Holder of account 5660609; signatory of the FC-2026-0187 front company",
        "flagged": true
       },
       {
@@ -473,28 +472,28 @@
        "id": "ENT-ACC-001",
        "label": "Account 5660609 — IBAN AE600340005660609",
        "type": "account",
-       "role": "Primary collection account — this case + Complaint #001 (AED 287,500)",
+       "role": "Primary collection account — this case + FC-2026-0187 (AED 287,500)",
        "flagged": true
       },
       {
        "id": "ENT-ACC-002",
        "label": "Account 3456660 — IBAN AE750340003456660",
        "type": "account",
-       "role": "Secondary collection account — Complaint #003; offered as backup in this chat",
+       "role": "Secondary collection account — FC-2026-0204; offered as backup in this chat",
        "flagged": true
       },
       {
        "id": "ENT-PHN-001",
        "label": "+971 55 302 8817",
        "type": "phone",
-       "role": "Seller phone in this case and Complaint #003; prepaid, false identity",
+       "role": "Seller phone in this case and FC-2026-0204; prepaid, false identity",
        "flagged": true
       },
       {
        "id": "ENT-ORG-001",
        "label": "Global Pathways FZE",
        "type": "organization",
-       "role": "Front company of Complaint #001; license cancelled 2026-04-30",
+       "role": "Front company of FC-2026-0187; license cancelled 2026-04-30",
        "flagged": true
       },
       {
@@ -508,7 +507,7 @@
        "id": "ENT-SOC-001",
        "label": "TechDeals UAE — classifieds seller profile",
        "type": "social",
-       "role": "Storefront of Complaint #003 — same contact phone",
+       "role": "Storefront of FC-2026-0204 — same contact phone",
        "flagged": true
       },
       {
@@ -532,12 +531,12 @@
       },
       {
        "date": "2026-06-10",
-       "event": "Complaint #001: AED 25,000 'processing fee' to account 5660609",
+       "event": "FC-2026-0187: AED 25,000 'processing fee' to account 5660609",
        "source": "History"
       },
       {
        "date": "2026-07-14",
-       "event": "Complaint #001: AED 250,000 milestone to same account",
+       "event": "FC-2026-0187: AED 250,000 milestone to same account",
        "source": "History"
       },
       {
@@ -552,12 +551,12 @@
       },
       {
        "date": "2026-08-05",
-       "event": "Complaint #001 filed; scam domain registered same week",
+       "event": "FC-2026-0187 filed; scam domain registered same week",
        "source": "History"
       },
       {
        "date": "2026-08-20",
-       "event": "Complaint #003: AED 8,900 to account 3456660",
+       "event": "FC-2026-0204: AED 8,900 to account 3456660",
        "source": "History"
       },
       {
@@ -582,14 +581,14 @@
       },
       {
        "date": "2026-09-18",
-       "event": "Complaint #002 filed via e-Crime Portal",
+       "event": "FC-2026-0231 filed via e-Crime Portal",
        "source": "Complaint"
       }
      ],
      "financial_flow": [
       {
        "date": "2026-06-10",
-       "from": "Mysmo Gamal (victim, Complaint #001)",
+       "from": "Mysmo Gamal (victim, FC-2026-0187)",
        "to": "Account 5660609 (Mubarak Salem)",
        "amount": 25000,
        "currency": "AED",
@@ -597,7 +596,7 @@
       },
       {
        "date": "2026-07-14",
-       "from": "Mysmo Gamal (victim, Complaint #001)",
+       "from": "Mysmo Gamal (victim, FC-2026-0187)",
        "to": "Account 5660609 (Mubarak Salem)",
        "amount": 250000,
        "currency": "AED",
@@ -609,7 +608,7 @@
        "to": "Cash withdrawals",
        "amount": 180000,
        "currency": "AED",
-       "note": "Cash-out within 72h (bank disclosure, Complaint #001)"
+       "note": "Cash-out within 72h (bank disclosure, FC-2026-0187)"
       },
       {
        "date": "2026-07-17",
@@ -617,11 +616,11 @@
        "to": "Virtual-asset exchange",
        "amount": 60000,
        "currency": "AED",
-       "note": "Layering into crypto (bank disclosure, Complaint #001)"
+       "note": "Layering into crypto (bank disclosure, FC-2026-0187)"
       },
       {
        "date": "2026-08-20",
-       "from": "Rashid K. (victim, Complaint #003)",
+       "from": "Rashid K. (victim, FC-2026-0204)",
        "to": "Account 3456660 (Abdullah Mohammed)",
        "amount": 8900,
        "currency": "AED",
@@ -638,7 +637,7 @@
      ],
      "prior_cases": [
       {
-       "case_id": "Complaint #001",
+       "case_id": "FC-2026-0187",
        "filed_date": "2026-08-05",
        "victim": "Mysmo Gamal (Dubai)",
        "amount": 275000,
@@ -652,7 +651,7 @@
        "status": "Open — bank disclosure received"
       },
       {
-       "case_id": "Complaint #003",
+       "case_id": "FC-2026-0204",
        "filed_date": "2026-08-28",
        "victim": "Rashid K. (Sharjah)",
        "amount": 8900,
@@ -668,42 +667,179 @@
      ],
      "recommended_actions": [
       {
-       "action": "Freeze accounts 5660609 (AE600340005660609) and 3456660 (AE750340003456660)",
+       "action": "Request account statements for the past 6 months, KYC file and account-opening documents for account 5660609 (AE600340005660609) and account 3456660 (AE750340003456660)",
        "priority": "immediate",
-       "rationale": "Proceeds leave within 72h; AED 12,500 credited 8 Sep is at immediate risk."
+       "addressee": "Example Bank — Compliance / MLRO",
+       "timeframe": "Today",
+       "rationale": "Identifies holders, other victims' credits and onward transfers."
       },
       {
-       "action": "Consolidate Complaints #001, #002 and #003 into one investigation",
+       "action": "Request a temporary freeze / no-debit hold on both beneficiary accounts pending disclosure",
        "priority": "immediate",
-       "rationale": "Three complaints, one resolved network — separate handling loses the pattern."
+       "addressee": "Example Bank — Compliance / MLRO",
+       "timeframe": "Today",
+       "rationale": "Proceeds leave within 72 hours; AED 12,500 credited 8 Sep."
       },
       {
-       "action": "Obtain full KYC and statement disclosure for both accounts, incl. onward transfers",
+       "action": "Consolidate FC-2026-0187, FC-2026-0204 and FC-2026-0231 under one investigation and one lead officer",
+       "priority": "immediate",
+       "addressee": "Internal — Unit supervisor",
+       "timeframe": "Today",
+       "rationale": "Three complaints, one network; avoids duplicated bank requests."
+      },
+      {
+       "action": "Subscriber and device data for +971 55 302 8817: registration documents, IMEI history, cell-site records (Apr–Sep 2026)",
        "priority": "high",
-       "rationale": "Confirms identities, total throughput and the exchange accounts for recovery."
+       "addressee": "Telecom operator — Law-enforcement liaison",
+       "timeframe": "48 hours",
+       "rationale": "SIM under a false identity links both storefronts."
       },
       {
-       "action": "Telecom data request for +971 55 302 8817 (registration, IMEI, cell-site)",
+       "action": "Preservation and disclosure requests for @primegulf.electronics, the TechDeals UAE listing account and the two domains (registration email, phone, IP logs, ad payment instrument)",
        "priority": "high",
-       "rationale": "SIM under a false identity links both storefronts; device data identifies operators."
+       "addressee": "Platform trust & safety / Registrars",
+       "timeframe": "48 hours",
+       "rationale": "Storefronts are deleted after each strike; logs identify operators."
       },
       {
-       "action": "Preservation requests: Instagram, classifieds platform, WhatsApp, registrars",
+       "action": "Request KYC and transaction records from the virtual-asset exchange that received AED 60,000 on 17 Jul 2026",
        "priority": "high",
-       "rationale": "Storefronts are deleted after each strike; platform logs identify the operators."
+       "addressee": "Virtual-asset service provider — Compliance",
+       "timeframe": "This week",
+       "rationale": "Opens the asset-recovery trail for the largest loss."
       },
       {
-       "action": "Locate and summon Mubarak Salem and Abdullah Mohammed; screen for further accounts",
+       "action": "Summon Mubarak Salem and Abdullah Mohammed for interview once KYC identities are confirmed; screen both IDs for further accounts",
        "priority": "high",
-       "rationale": "KYC already names both holders; the same IDs may run further accounts."
+       "addressee": "Internal — Investigating officer",
+       "timeframe": "This week",
+       "rationale": "Same identities may operate additional collection accounts."
       },
       {
-       "action": "Formal victim statements with exhibits; notify bank compliance of mule indicators",
+       "action": "Open a network case in SAS Visual Investigator with both accounts, the phone, the front company and the three complaints for link analysis",
        "priority": "routine",
-       "rationale": "Secures the evidential chain and lets banks detect related accounts."
+       "addressee": "Internal — Analyst",
+       "timeframe": "This week",
+       "rationale": "Single view of the network for the case team."
       }
      ],
-     "vi_case_summary": "Consolidated network case: suspects Mubarak Salem and Abdullah Mohammed (shared KYC), accounts 5660609 and 3456660, seller phone +971 55 302 8817, front company Global Pathways FZE, storefronts Prime Gulf Electronics and TechDeals UAE; merge Complaints #001, #002 and #003 with victims and exhibits. Total exposure AED 296,400."
+     "narrative": "Ahmed Hassan, a Dubai resident, saw an Instagram advertisement in mid-August 2026 from a page called Prime Gulf Electronics offering discounted electronics. On 30 August he messaged the seller on WhatsApp (+971 55 302 8817), who presented himself as a company sales representative and offered a bundle of an iPhone, a MacBook, AirPods and an iPad for AED 12,500. The seller refused an in-person viewing and cash on delivery, and on 5 September sent payment details for a personal account — Mubarak Salem, account 5660609, IBAN AE600340005660609 — explaining that the company account was under maintenance. He also offered a second account under the name Abdullah Mohammed. On 8 September Mr Hassan transferred AED 12,500 from his Example Bank account (reference TRX-2026-0918-4821) and sent the confirmation. The seller acknowledged receipt and gave an order number, then followed with customs and courier excuses. From 14 September messages went unanswered, the Instagram page and website were taken down, and no refund was made. Mr Hassan filed this report on 18 September with three chat screenshots, the transfer confirmation and his bank statement.",
+     "key_facts": [
+      {
+       "label": "Complainant",
+       "value": "Ahmed Hassan · +971 50 771 2094 · Dubai"
+      },
+      {
+       "label": "Seller identity presented",
+       "value": "Prime Gulf Electronics (Instagram @primegulf.electronics) — unregistered"
+      },
+      {
+       "label": "Contact channel",
+       "value": "Instagram ad → WhatsApp +971 55 302 8817"
+      },
+      {
+       "label": "Goods promised",
+       "value": "iPhone 16 Pro Max, MacBook Air M3, AirPods Pro, iPad — bundle"
+      },
+      {
+       "label": "Payment",
+       "value": "AED 12,500 on 8 Sep 2026, online transfer"
+      },
+      {
+       "label": "Beneficiary",
+       "value": "Mubarak Salem — account 5660609 — IBAN AE600340005660609"
+      },
+      {
+       "label": "Bank reference",
+       "value": "TRX-2026-0918-4821 (Example Bank)"
+      },
+      {
+       "label": "Alternative account offered",
+       "value": "Abdullah Mohammed — account 3456660 — IBAN AE750340003456660"
+      },
+      {
+       "label": "Promised delivery",
+       "value": "3–5 days by insured courier; order ref PG-1180"
+      },
+      {
+       "label": "Last contact from seller",
+       "value": "14 Sep 2026 — 'refund request submitted'"
+      },
+      {
+       "label": "Storefront status",
+       "value": "Instagram page and website removed ~15 Sep 2026"
+      },
+      {
+       "label": "Evidence on file",
+       "value": "3 chat screenshots · transfer confirmation · bank statement (Sep 2026)"
+      }
+     ],
+     "evidence_assessment": [
+      {
+       "item": "WhatsApp screenshots (3)",
+       "finding": "Continuous conversation 30 Aug – 18 Sep; payment instructions and both accounts visible",
+       "status": "verified"
+      },
+      {
+       "item": "Transfer confirmation — Example Bank",
+       "finding": "Ref TRX-2026-0918-4821, AED 12,500 to account 5660609; matches statement entry",
+       "status": "verified"
+      },
+      {
+       "item": "Bank statement Sep 2026",
+       "finding": "Debit of AED 12,500 on 08/09/2026 to Mubarak Salem, same reference",
+       "status": "verified"
+      },
+      {
+       "item": "Seller identity (Prime Gulf Electronics)",
+       "finding": "No trade license; page and domain removed after complaint",
+       "status": "unverified"
+      },
+      {
+       "item": "Order confirmation PG-1180",
+       "finding": "Exists only in the chat; no courier or tracking record",
+       "status": "unverified"
+      }
+     ],
+     "investigation_summary": "Account 5660609 already appears as the collection account in FC-2026-0187 (AED 275,000 investment fraud). The alternative account 3456660 is the collection account in FC-2026-0204, which also shares this case's seller phone. Bank KYC links both holders by address and mobile: one network, three complaints, AED 296,400.",
+     "osint_findings": [
+      {
+       "subject": "Prime Gulf Electronics",
+       "source": "Trade license registries",
+       "finding": "No license under this name in any UAE registry",
+       "assessment": "adverse"
+      },
+      {
+       "subject": "+971 55 302 8817",
+       "source": "Telecom intelligence",
+       "finding": "Prepaid SIM, activated 2026-04-18, registered to unverified identity; contact number for two storefronts",
+       "assessment": "adverse"
+      },
+      {
+       "subject": "@primegulf.electronics",
+       "source": "Social profiling",
+       "finding": "Created 2026-08-02; 15,200 followers gained in 48h; comments disabled; stock product photos",
+       "assessment": "adverse"
+      },
+      {
+       "subject": "primegulf-electronics.com",
+       "source": "Domain / hosting records",
+       "finding": "Privacy-proxy registration 2026-08-05; offshore VPS shared with globalpathways-invest.com",
+       "assessment": "adverse"
+      },
+      {
+       "subject": "Mubarak Salem",
+       "source": "Public scam reports",
+       "finding": "Two reports name the beneficiary and an IBAN ending 609 for identical non-delivery",
+       "assessment": "adverse"
+      },
+      {
+       "subject": "Global Pathways Investment Consultancy FZE",
+       "source": "Trade license registries",
+       "finding": "License FZ-102284 cancelled 2026-04-30; signatory Mubarak Salem; never licensed for immigration services",
+       "assessment": "adverse"
+      }
+     ]
     }
    }
   }

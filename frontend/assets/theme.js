@@ -121,22 +121,36 @@ function chipsHtml(ids){
   }).join('');
 }
 
-/* Mode pill in the nav */
+/* Mode pill in the nav: click cycles auto -> live -> simulation (stored per browser) */
+let _health = null;
 async function initModePill(){
   const pill = $('modePill');
-  if(!pill) return null;
-  try{
-    const h = await (await fetch('/api/health')).json();
-    setModePill(h.default_mode);
-    return h;
-  }catch(e){ pill.textContent='Offline'; return null; }
+  try{ _health = await (await fetch('/api/health')).json(); }catch(e){ _health = null; }
+  if(!pill) return _health;
+  renderModePill();
+  pill.style.cursor = 'pointer';
+  pill.title = 'Analysis mode — click to change';
+  pill.onclick = () => {
+    const order = ['auto','live','replay'];
+    const cur = localStorage.getItem('fcuMode') || 'auto';
+    localStorage.setItem('fcuMode', order[(order.indexOf(cur)+1)%order.length]);
+    renderModePill();
+  };
+  return _health;
 }
-function setModePill(mode){
-  const pill = $('modePill');
-  if(!pill) return;
-  pill.classList.toggle('live', mode==='live');
-  pill.textContent = mode==='live' ? 'Live agents' : 'Simulation';
+function effectiveMode(){
+  const pref = localStorage.getItem('fcuMode') || 'auto';
+  if(pref === 'auto') return _health ? _health.default_mode : 'replay';
+  if(pref === 'live' && _health && !_health.llm_configured) return 'replay';
+  return pref;
 }
+function renderModePill(){
+  const pill = $('modePill'); if(!pill) return;
+  const m = effectiveMode();
+  pill.classList.toggle('live', m === 'live');
+  pill.textContent = m === 'live' ? 'Live analysis' : 'Simulation';
+}
+function setModePill(mode){ const pill=$('modePill'); if(!pill) return; pill.classList.toggle('live', mode==='live'); pill.textContent = mode==='live' ? 'Live analysis' : 'Simulation'; }
 
 /* ══ BACKGROUND — PRISMATIC AURORA (verbatim from the dashboard design) ══ */
 (()=>{

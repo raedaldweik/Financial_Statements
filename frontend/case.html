@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File — Financial Crime Unit</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%23191100' stroke='%23C8A44A' stroke-width='1.6'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav class="nav">
+  <div class="nav-left"><span class="nav-title">Financial Crime Unit</span><span style="color:rgba(255,255,255,0.45);letter-spacing:.08em;text-transform:uppercase;font-size:9.5px">Investigator Workspace</span></div>
+  <div class="nav-tabs">
+    <a href="index.html" class="tab">Landing Page</a>
+    <a href="cases.html" class="tab">Case Queue</a>
+    <a href="#" class="tab active" id="navCase">Case File</a>
+  </div>
+  <div class="nav-right"><span class="officer"><i>RH</i>Insp. R. Haddad</span><span class="mode-pill" id="modePill">…</span></div>
+</nav>
+
+<div class="pw">
+  <div class="card" id="emptyState" style="display:none"><div class="empty-state"><div class="big">Case not found</div><p>The reference in the address does not match a case in the queue.</p><a class="btn btn-primary" href="cases.html">Back to case queue</a></div></div>
+
+  <div id="file" style="display:none">
+    <div class="ph">
+      <div class="ph-left">
+        <div class="row" style="gap:10px;margin-bottom:4px"><span class="mono" style="font-size:12px;font-weight:800;color:var(--text)" id="h_ref"></span><span class="rb" id="h_status"></span><span class="rb" id="h_risk"></span></div>
+        <h1 id="h_title"></h1>
+        <p id="h_meta"></p>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-glass btn-sm" id="btnLog" href="#">Analysis log</a>
+        <a class="btn btn-glass btn-sm" href="cases.html">Back to queue</a>
+      </div>
+    </div>
+
+    <div class="banner" id="procBanner" style="display:none">
+      <span class="spin"></span>
+      <div style="min-width:260px"><b id="procStage">Analysis in progress</b><div class="hint" id="procNote">The case file will populate automatically when the analysis completes.</div></div>
+      <div class="progress"><i id="procBar" style="width:3%"></i></div>
+    </div>
+
+    <div class="kpis" id="kpiStrip"></div>
+
+    <div class="tabs">
+      <button class="tab-btn on" data-tab="narrative" id="tb-narrative">Case narrative</button>
+      <button class="tab-btn" data-tab="investigation" id="tb-investigation">Investigation <span class="cnt" id="cntLinked">0 linked</span></button>
+      <button class="tab-btn" data-tab="actions" id="tb-actions">Recommendations <span class="cnt" id="cntActions">0</span></button>
+      <button class="tab-btn" data-tab="evidence" id="tb-evidence">Evidence <span class="cnt" id="cntEvidence">0</span></button>
+    </div>
+
+    <!-- ── Narrative ── -->
+    <div class="tabpane on" id="tab-narrative">
+      <div class="g2-split">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="ch"><div class="ch-left" data-ic="doc"><h3>What Happened</h3></div><span class="ch-badge gold" id="narrBadge">Case narrative</span></div>
+            <div class="prose" id="narrative"></div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ch-left" data-ic="clock"><h3>Timeline</h3></div><span class="ch-badge gold" id="tlBadge"></span></div>
+            <div id="timeline"></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="ch"><div class="ch-left" data-ic="list"><h3>Key Facts</h3></div></div>
+            <table class="kv" id="keyfacts"></table>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ch-left" data-ic="check"><h3>Evidence Assessment</h3></div><span class="ch-badge green" id="evaBadge"></span></div>
+            <table class="dt compact" id="evassess"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Investigation ── -->
+    <div class="tabpane" id="tab-investigation">
+      <div class="callout" id="invSummary" style="margin-bottom:14px"></div>
+      <div class="card mb">
+        <div class="ch"><div class="ch-left" data-ic="database"><h3>Complaint History — Linked Cases</h3></div><span class="ch-badge" id="linkedBadge"></span></div>
+        <div style="overflow-x:auto"><table class="dt" id="linked"></table></div>
+      </div>
+      <div class="g2-eq">
+        <div class="card">
+          <div class="ch"><div class="ch-left" data-ic="users"><h3>Persons, Accounts &amp; Identifiers</h3></div><span class="ch-badge amber" id="entBadge"></span></div>
+          <div style="overflow-x:auto"><table class="dt compact" id="entities"></table></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ch-left" data-ic="globe"><h3>Open-Source &amp; Registry Checks</h3></div><span class="ch-badge red" id="osintBadge"></span></div>
+          <div style="overflow-x:auto"><table class="dt compact" id="osint"></table></div>
+        </div>
+      </div>
+      <div class="g2-split">
+        <div class="card">
+          <div class="ch"><div class="ch-left" data-ic="card"><h3>Money Movement</h3></div><span class="ch-badge gold" id="flowBadge"></span></div>
+          <div style="overflow-x:auto"><table class="dt compact" id="flow"></table></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ch-left" data-ic="alert"><h3>Key Findings</h3></div><span class="ch-badge red" id="findBadge"></span></div>
+          <div id="findings"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Recommendations ── -->
+    <div class="tabpane" id="tab-actions">
+      <div class="card">
+        <div class="ch"><div class="ch-left" data-ic="flag"><h3>Recommended Actions</h3></div><span class="ch-badge red" id="actBadge"></span></div>
+        <div style="overflow-x:auto"><table class="dt" id="actions"></table></div>
+        <div class="q-hint">Use <b>Draft</b> to have the case assistant prepare the request with the exact identifiers from this file.</div>
+      </div>
+    </div>
+
+    <!-- ── Evidence ── -->
+    <div class="tabpane" id="tab-evidence">
+      <div class="g2-split">
+        <div class="card">
+          <div class="ch"><div class="ch-left" data-ic="image"><h3>Submitted Evidence</h3></div><span class="ch-badge gold" id="evGridBadge"></span></div>
+          <div class="cb"><div class="ev-grid" id="evGrid"></div><div class="hint" id="evNote" style="margin-top:10px"></div></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ch-left" data-ic="folder"><h3>Evidence Register</h3></div></div>
+          <table class="dt compact" id="evList"></table>
+          <div class="ch" style="border-top:1px solid var(--line);border-bottom:none"><div class="ch-left" data-ic="chat"><h3>Complainant's Statement</h3></div></div>
+          <div class="prose" id="statement"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- chat assistant -->
+<button class="chat-fab" id="chatFab" title="Case assistant"></button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head"><span>Case assistant · <span id="chatRef"></span></span><button id="chatClose">×</button></div>
+  <div class="chat-body" id="chatBody"><div class="qa-a">Ask about this case, or ask me to draft a request. I work from the case file and the unit's complaint history.</div></div>
+  <div class="chat-sugg">
+    <button data-q="Draft the disclosure request to the bank for the beneficiary accounts: statements for the past 6 months and KYC.">Draft bank disclosure request</button>
+    <button data-q="Which other cases share the same accounts, phone numbers or company names, and what exactly was matched?">Linked cases</button>
+    <button data-q="What should I do first on this case, and why?">What should I do first?</button>
+  </div>
+  <div class="chat-in"><input class="fi" id="chatInput" placeholder="Ask about this case…"><button class="btn btn-primary btn-sm" id="chatSend">Send</button></div>
+</div>
+
+<div class="lightbox" id="lightbox"><img id="lightboxImg" alt="evidence"></div>
+<div class="toast" id="toast"></div>
+
+<script src="assets/theme.js"></script>
+<script>
+"use strict";
+const REF = new URLSearchParams(location.search).get('ref');
+let C = null;
+document.querySelectorAll('[data-ic]').forEach(el=>el.insertAdjacentHTML('afterbegin', ic(el.dataset.ic)));
+$('chatFab').innerHTML = ic('chat', 24);
+const lvlCls={LOW:'green',MEDIUM:'amber',HIGH:'red',CRITICAL:'red'};
+const stCls={'New':'amber','Triage':'amber','Under investigation':'green','Awaiting complainant':'grey','Closed':'grey'};
+
+document.querySelectorAll('.tab-btn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.toggle('on', x===b));
+  document.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('on', p.id==='tab-'+b.dataset.tab));
+});
+
+(async function boot(){
+  await initModePill();
+  if(!REF){ $('emptyState').style.display='block'; return; }
+  await load();
+})();
+
+async function load(){
+  const res = await fetch('/api/cases/'+encodeURIComponent(REF));
+  if(!res.ok){ $('emptyState').style.display='block'; return; }
+  C = await res.json();
+  $('file').style.display='block';
+  renderHeader(); renderEvidence();
+  if(C.processing){ startProgress(); renderPending(); }
+  else if(C.report){ renderReport(C.report); }
+  else renderPending();
+}
+
+function renderHeader(){
+  $('h_ref').textContent=C.ref; $('chatRef').textContent=C.ref;
+  $('h_title').textContent=C.subtype||C.type;
+  $('h_meta').textContent=`${C.type} · ${C.complainant}${C.emirate?' · '+C.emirate:''} · Filed ${C.filed.replace('T',' ')} via ${C.channel||'—'} · ${C.officer?'Assigned to '+C.officer:'Unassigned'}`;
+  $('h_status').textContent=C.status+(C.stage?' — '+C.stage:''); $('h_status').className='rb '+(stCls[C.status]||'grey');
+  if(C.risk_score!=null){ $('h_risk').textContent='Risk '+C.risk_score+' · '+C.risk_level; $('h_risk').className='rb '+(lvlCls[C.risk_level]||'grey'); }
+  else { $('h_risk').textContent=C.processing?'Analysing':'Risk pending'; $('h_risk').className='rb grey'; }
+  $('btnLog').href='analysis.html?ref='+encodeURIComponent(C.ref);
+  $('btnLog').style.display=(C.run_id||Object.keys(C.memos||{}).length)?'':'none';
+  const r=C.report||{}; const linked=(r.prior_cases||[]).length;
+  const loss=r.financial_flow?r.financial_flow.filter(f=>/^THIS CASE/i.test(f.note)).reduce((s,f)=>s+f.amount,0):0;
+  $('kpiStrip').innerHTML=[
+    {l:'Reported loss',v:'AED '+fmt(C.amount||0),cls:'gold',tr:loss?`AED ${fmt(loss)} reconciled`:'per complainant'},
+    {l:'Risk score',v:C.risk_score!=null?C.risk_score+'<small> /100</small>':'—',cls:lvlCls[C.risk_level]||'amber',tr:C.risk_level||(C.processing?'analysing':'pending')},
+    {l:'Linked cases',v:String(linked),cls:linked?'red':'green',tr:linked?'same accounts / identities':'no prior occurrence'},
+    {l:'Evidence items',v:String((C.evidence||[]).length),cls:'blue',tr:(r.evidence_assessment||[]).filter(e=>e.status==='verified').length+' verified'},
+    {l:'Days open',v:String(C.days_open),cls:'amber',tr:'since '+C.filed.slice(0,10)},
+    {l:'Stage',v:`<span style="font-size:13px">${esc(C.stage||C.status)}</span>`,cls:'',tr:C.officer||'unassigned'},
+  ].map(k=>`<div class="kpi"><div class="kpi-lbl">${k.l}</div><div class="kpi-val ${k.cls}">${k.v}</div><div class="kpi-tr">${k.tr}</div></div>`).join('');
+}
+
+function renderPending(){
+  $('narrBadge').textContent=C.processing?'Being prepared':'Not yet prepared';
+  $('narrative').innerHTML=`<p><b>Complainant's statement</b></p>`+esc(C.complaint_text||'').split('\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('')+
+    `<p class="hint">${C.processing?'The case narrative, investigation findings and recommendations are being prepared from the submitted evidence.':'The case narrative has not been prepared yet — analysis is queued.'}</p>`;
+  $('keyfacts').innerHTML=[['Complainant',C.complainant],['Type',C.type],['Reported loss','AED '+fmt(C.amount||0)],['Filed',C.filed.replace('T',' ')],['Channel',C.channel||'—'],['Officer',C.officer||'Unassigned']].map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('');
+  $('evassess').innerHTML=`<tbody><tr><td class="hint">Pending</td></tr></tbody>`; $('evaBadge').textContent='';
+  $('timeline').innerHTML=`<div class="q-hint">Pending</div>`; $('tlBadge').textContent='';
+  $('invSummary').textContent=C.processing?'Cross-case matching and open-source checks are running.':'Investigation findings will appear here once the analysis has run.';
+  $('linked').innerHTML=''; $('entities').innerHTML=''; $('osint').innerHTML=''; $('flow').innerHTML=''; $('findings').innerHTML='<div class="q-hint">Pending</div>';
+  $('actions').innerHTML='<tbody><tr><td class="q-hint">Pending</td></tr></tbody>';
+  ['linkedBadge','entBadge','osintBadge','flowBadge','findBadge','actBadge'].forEach(id=>$(id).textContent='');
+  $('cntLinked').textContent='—'; $('cntActions').textContent='—';
+}
+
+function renderReport(r){
+  $('narrBadge').textContent='Case narrative';
+  $('narrative').innerHTML=esc(r.narrative).split(/\n+/).filter(Boolean).map(p=>`<p>${p}</p>`).join('');
+  $('keyfacts').innerHTML=(r.key_facts||[]).map(k=>`<tr><td>${esc(k.label)}</td><td>${esc(k.value)}</td></tr>`).join('');
+  const stB={verified:'green',partial:'amber',unverified:'red'};
+  $('evaBadge').textContent=(r.evidence_assessment||[]).filter(e=>e.status==='verified').length+' of '+(r.evidence_assessment||[]).length+' verified';
+  $('evassess').innerHTML=`<thead><tr><th>Item</th><th>Finding</th><th class="r">Status</th></tr></thead><tbody>`+(r.evidence_assessment||[]).map(e=>`<tr><td><span class="en-strong">${esc(e.item)}</span></td><td><span class="en-sub" style="font-size:11px;color:var(--text-md)">${esc(e.finding)}</span></td><td style="text-align:right"><span class="rb ${stB[e.status]||'grey'}">${esc(e.status)}</span></td></tr>`).join('')+'</tbody>';
+  $('tlBadge').textContent=(r.timeline||[]).length+' events';
+  $('timeline').innerHTML=(r.timeline||[]).map(t=>`<div class="tl-item"><div class="dt-lbl">${esc(t.date)}</div><div>${esc(t.event)}</div><span class="src">${esc(t.source)}</span></div>`).join('');
+
+  $('invSummary').textContent=r.investigation_summary||'';
+  const pcs=r.prior_cases||[];
+  $('cntLinked').textContent=pcs.length+' linked';
+  $('linkedBadge').textContent=pcs.length?`${pcs.length} prior case${pcs.length===1?'':'s'} · AED ${fmt(pcs.reduce((s,c)=>s+c.amount,0))}`:'No prior occurrence';
+  $('linkedBadge').className='ch-badge '+(pcs.length?'red':'green');
+  $('linked').innerHTML=`<thead><tr><th>Case</th><th>Filed</th><th>Complainant</th><th class="r">Loss (AED)</th><th>Matched on</th><th>Status</th><th></th></tr></thead><tbody>`+
+    (pcs.length?pcs.map(c=>`<tr><td><span class="mono" style="font-weight:700;color:var(--text)">${esc(c.case_id)}</span></td><td class="mono">${esc(c.filed_date)}</td>
+      <td><span class="en-strong">${esc(c.victim)}</span><span class="en-sub">${esc(c.summary)}</span></td><td class="num">${fmt(c.amount)}</td>
+      <td>${(c.matched_on||[]).map(m=>`<span class="match-chip">${esc(m)}</span>`).join('')}</td><td><span class="rb amber">${esc(c.status)}</span></td>
+      <td style="text-align:right"><a class="btn btn-glass btn-sm" href="case.html?ref=${encodeURIComponent(c.case_id)}">Open</a></td></tr>`).join('')
+    :`<tr><td colspan="7"><span class="dot-status"><span class="dot green"></span>No prior occurrence of this case's accounts, phone numbers or company names in complaint history.</span></td></tr>`)+'</tbody>';
+  const tyIc={person:'user',organization:'building',account:'card',phone:'phone',social:'tag',website:'globe',case:'folder',location:'flag',other:'doc'};
+  const ents=r.entities||[]; $('entBadge').textContent=ents.filter(e=>e.flagged).length+' flagged';
+  $('entities').innerHTML=`<thead><tr><th>Entity</th><th>Type</th><th class="r">Status</th></tr></thead><tbody>`+(ents.length?ents.map(e=>`<tr><td><span class="en-strong">${esc(e.label)}</span><span class="en-sub">${esc(e.role)}</span></td><td style="white-space:nowrap">${ic(tyIc[e.type]||'doc',12)} <span style="margin-left:4px;text-transform:capitalize">${esc(e.type)}</span></td><td style="text-align:right">${e.flagged?'<span class="rb red">Flagged</span>':'<span class="rb green">Complainant</span>'}</td></tr>`).join(''):`<tr><td colspan="3" class="hint">No entities recorded</td></tr>`)+'</tbody>';
+  const osB={adverse:'red',neutral:'grey',clear:'green'}; const os=r.osint_findings||[];
+  $('osintBadge').textContent=os.filter(o=>o.assessment==='adverse').length+' adverse';
+  $('osint').innerHTML=`<thead><tr><th>Subject</th><th>Source</th><th>Finding</th><th class="r">Result</th></tr></thead><tbody>`+(os.length?os.map(o=>`<tr><td><span class="en-strong">${esc(o.subject)}</span></td><td class="hint" style="white-space:nowrap">${esc(o.source)}</td><td style="font-size:11px">${esc(o.finding)}</td><td style="text-align:right"><span class="rb ${osB[o.assessment]||'grey'}">${esc(o.assessment)}</span></td></tr>`).join(''):`<tr><td colspan="4" class="hint">No checks recorded</td></tr>`)+'</tbody>';
+  const ff=r.financial_flow||[]; $('flowBadge').textContent=ff.length+' movements';
+  $('flow').innerHTML=`<thead><tr><th>Date</th><th>From</th><th>To</th><th class="r">Amount (AED)</th><th>Note</th></tr></thead><tbody>`+ff.map(f=>{const cur=/^THIS CASE/i.test(f.note);return `<tr${cur?' class="hl-row"':''}><td class="mono" style="white-space:nowrap">${esc(f.date)}</td><td>${esc(f.from)}</td><td>${esc(f.to)}</td><td class="num${cur?' red':''}">${fmt(f.amount)}</td><td><span class="en-sub">${esc(f.note.replace(/^THIS CASE\s*—?\s*/i,''))}${cur?' <span class="rb red" style="margin-left:4px">this case</span>':''}</span></td></tr>`;}).join('')+'</tbody>';
+  const dotCls={critical:'red',warning:'amber',info:'blue'}; const kf=r.key_findings||[];
+  $('findBadge').textContent=kf.filter(f=>f.severity==='critical').length+' critical';
+  $('findings').innerHTML=kf.map(f=>`<div class="alert-item"><div class="alert-dot ${dotCls[f.severity]||'blue'}"></div><div><div class="alert-title">${esc(f.title)}</div><div class="alert-desc">${esc(f.detail)}</div><div class="alert-src">${esc(f.source)}</div></div></div>`).join('');
+
+  const acts=r.recommended_actions||[]; const prCls={immediate:'red',high:'amber',routine:'grey'};
+  $('cntActions').textContent=acts.length; $('actBadge').textContent=acts.filter(a=>a.priority==='immediate').length+' immediate';
+  $('actions').innerHTML=`<thead><tr><th>#</th><th>Priority</th><th>Action</th><th>Addressee</th><th>Timeframe</th><th>Basis</th><th></th></tr></thead><tbody>`+acts.map((a,i)=>`<tr><td class="mono">${i+1}</td><td><span class="rb ${prCls[a.priority]||'grey'}">${esc(a.priority)}</span></td><td><span class="en-strong" style="font-weight:600">${esc(a.action)}</span></td><td style="white-space:nowrap">${esc(a.addressee||'')}</td><td style="white-space:nowrap">${esc(a.timeframe||'')}</td><td><span class="en-sub">${esc(a.rationale)}</span></td><td style="text-align:right"><button class="btn btn-glass btn-sm" onclick="draft(${i})">Draft</button></td></tr>`).join('')+'</tbody>';
+}
+
+function renderEvidence(){
+  const ev=C.evidence||[]; $('cntEvidence').textContent=ev.length; $('evGridBadge').textContent=(C.image_count||0)+' images';
+  if(C.image_count){
+    $('evGrid').innerHTML=Array.from({length:C.image_count},(_,i)=>`<div><img src="/api/cases/${encodeURIComponent(C.ref)}/evidence/${i}" alt="evidence ${i+1}"><div class="cap">${esc(ev[i]||('Image '+(i+1)))}</div></div>`).join('');
+    $('evNote').textContent='Click an image to view it at full size.';
+  } else { $('evGrid').innerHTML=''; $('evNote').textContent='Evidence documents are held on the physical case file. Items are listed in the register.'; }
+  $('evGrid').onclick=e=>{ if(e.target.tagName!=='IMG') return; $('lightboxImg').src=e.target.src; $('lightbox').classList.add('open'); };
+  $('lightbox').onclick=()=>$('lightbox').classList.remove('open');
+  $('evList').innerHTML=`<thead><tr><th>#</th><th>Item</th><th class="r">Status</th></tr></thead><tbody>`+ev.map((n,i)=>`<tr><td class="mono">${i+1}</td><td><span class="mono">${esc(n)}</span>${C.is_demo&&/statement/i.test(n)?` <a class="hint" href="/api/demo/statement.pdf" target="_blank">open</a>`:''}</td><td style="text-align:right"><span class="rb green">On file</span></td></tr>`).join('')+'</tbody>';
+  $('statement').innerHTML=esc(C.complaint_text||'').split('\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('')||'<p class="hint">No statement recorded.</p>';
+}
+
+/* processing: follow the analysis stream, then reload the file */
+function startProgress(){
+  $('procBanner').style.display='flex';
+  if(!C.run_id) return;
+  const stages=['Intake & triage','Reading the conversation','Reconciling bank records','Open-source checks','Complaint-history matching','Preparing the case file'];
+  let i=0; const es=new EventSource('/api/stream/'+C.run_id);
+  es.onmessage=async ev=>{
+    const e=JSON.parse(ev.data);
+    if(e.type==='agent_start'){ $('procStage').textContent=stages[i]||'Working'; $('procBar').style.width=Math.round(8+i*15)+'%'; i++; }
+    if(e.type==='report'||e.type==='done'||e.type==='error'){ es.close(); $('procBar').style.width='100%';
+      setTimeout(async()=>{ $('procBanner').style.display='none'; await load(); }, 700); }
+  };
+  es.onerror=()=>{};
+}
+
+/* chat assistant */
+$('chatFab').onclick=()=>{ $('chatPanel').classList.toggle('open'); if($('chatPanel').classList.contains('open')) $('chatInput').focus(); };
+$('chatClose').onclick=()=>$('chatPanel').classList.remove('open');
+document.querySelectorAll('.chat-sugg button').forEach(b=>b.onclick=()=>ask(b.dataset.q));
+$('chatSend').onclick=()=>ask($('chatInput').value);
+$('chatInput').addEventListener('keydown',e=>{ if(e.key==='Enter') ask($('chatInput').value); });
+function draft(i){ const a=(C.report?.recommended_actions||[])[i]; if(!a) return; $('chatPanel').classList.add('open'); ask(`Draft the request for action ${i+1}: "${a.action}" — addressed to ${a.addressee}. Include the exact identifiers from the case file.`); }
+async function ask(q){
+  q=(q||'').trim(); if(!q) return; $('chatInput').value='';
+  const body=$('chatBody');
+  body.insertAdjacentHTML('beforeend',`<div class="qa-q">${esc(q)}</div>`);
+  const w=document.createElement('div'); w.className='qa-a'; w.innerHTML='<em style="color:var(--text-faint)">Working…</em>'; body.appendChild(w); body.scrollTop=body.scrollHeight;
+  try{
+    const res=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ref:C.ref,question:q})});
+    if(!res.ok) throw new Error((await res.json()).detail||res.statusText);
+    const d=await res.json(); w.innerHTML=md(d.answer);
+  }catch(err){ w.innerHTML=`<span style="color:var(--red)">${esc(err.message)}</span>`; }
+  body.scrollTop=body.scrollHeight;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Queue — Financial Crime Unit</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%23191100' stroke='%23C8A44A' stroke-width='1.6'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav class="nav">
+  <div class="nav-left"><span class="nav-title">Financial Crime Unit</span><span style="color:rgba(255,255,255,0.45);letter-spacing:.08em;text-transform:uppercase;font-size:9.5px">Investigator Workspace</span></div>
+  <div class="nav-tabs">
+    <a href="index.html" class="tab">Landing Page</a>
+    <a href="cases.html" class="tab active">Case Queue</a>
+  </div>
+  <div class="nav-right"><span class="officer"><i>RH</i>Insp. R. Haddad</span><span class="mode-pill" id="modePill">…</span></div>
+</nav>
+
+<div class="pw">
+  <div class="ph">
+    <div class="ph-left">
+      <h1>Case Queue</h1>
+      <p id="subline">Financial crime complaints — open cases and new submissions</p>
+    </div>
+    <div class="ph-actions">
+      <span class="hint" id="asOf"></span>
+      <a class="btn btn-glass btn-sm" href="cases.html">Refresh</a>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpiStrip"></div>
+
+  <div class="row" style="margin-bottom:14px;gap:10px;flex-wrap:wrap">
+    <input class="fi" id="q" placeholder="Search reference, complainant, type…" style="width:280px">
+    <select class="fs" id="fType"><option value="">All types</option></select>
+    <select class="fs" id="fStatus"><option value="">All statuses</option><option>New</option><option>Triage</option><option>Under investigation</option><option>Awaiting complainant</option><option>Closed</option></select>
+    <select class="fs" id="fSort"><option value="filed">Sort: Newest first</option><option value="risk">Sort: Risk score</option><option value="amount">Sort: Amount</option><option value="oldest">Sort: Oldest first</option></select>
+    <span class="hint" id="count" style="margin-left:auto"></span>
+  </div>
+
+  <div class="card">
+    <div style="overflow-x:auto">
+      <table class="dt" id="tbl">
+        <thead><tr>
+          <th class="sortable" data-sort="filed">Reference</th><th class="sortable" data-sort="filed">Filed</th><th>Complainant</th><th>Type</th>
+          <th class="r sortable" data-sort="amount">Amount (AED)</th><th class="sortable" data-sort="risk">Risk</th><th>Status</th><th>Officer</th><th>Links</th><th></th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="tfoot" id="tfoot"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/theme.js"></script>
+<script>
+"use strict";
+let DATA=[], TODAY='';
+const lvlCls={LOW:'green',MEDIUM:'amber',HIGH:'red',CRITICAL:'red'};
+const stDot={'New':'amber','Triage':'amber','Under investigation':'green','Awaiting complainant':'grey','Closed':'grey'};
+
+(async function boot(){
+  await initModePill();
+  await load();
+  ['q','fType','fStatus','fSort'].forEach(id=>$(id).addEventListener('input',render));
+  document.querySelectorAll('th.sortable').forEach(th=>th.onclick=()=>{ $('fSort').value = th.dataset.sort==='filed'?'filed':th.dataset.sort; render(); });
+  setInterval(async()=>{ if(DATA.some(c=>c.processing)) await load(); }, 3000);
+})();
+
+async function load(){
+  try{
+    const d=await (await fetch('/api/cases')).json();
+    DATA=d.cases; TODAY=d.today;
+    $('asOf').textContent='As of '+TODAY+' · '+new Date().toTimeString().slice(0,5);
+    const types=[...new Set(DATA.map(c=>c.type))].sort();
+    const sel=$('fType'), cur=sel.value; sel.innerHTML='<option value="">All types</option>'+types.map(t=>`<option>${esc(t)}</option>`).join(''); sel.value=cur;
+    kpis(); render();
+  }catch(e){ toast('Could not load the case queue: '+e.message); }
+}
+
+function kpis(){
+  const open=DATA.filter(c=>c.status!=='Closed');
+  const d30=DATA.filter(c=>c.days_open<=30);
+  const linked=DATA.filter(c=>c.linked_count>0);
+  $('kpiStrip').innerHTML=[
+    {l:'Open cases',v:open.length,cls:'gold',tr:DATA.length+' in queue'},
+    {l:'New / unassigned',v:DATA.filter(c=>c.status==='New').length,cls:'amber',tr:'awaiting triage'},
+    {l:'Under investigation',v:DATA.filter(c=>c.status==='Under investigation').length,cls:'green',tr:'assigned to officers'},
+    {l:'Awaiting external response',v:DATA.filter(c=>/awaiting|requested|recall|response/i.test(c.stage||'')).length,cls:'blue',tr:'banks · platforms · telecom'},
+    {l:'Reported loss — 30 days',v:'AED '+fmt(d30.reduce((s,c)=>s+(c.amount||0),0)),cls:'red',tr:d30.length+' complaints'},
+    {l:'Cross-case links',v:linked.length,cls:'red',tr:'cases sharing accounts or identities'},
+  ].map(k=>`<div class="kpi"><div class="kpi-lbl">${k.l}</div><div class="kpi-val ${k.cls}">${k.v}</div><div class="kpi-tr">${k.tr}</div></div>`).join('');
+}
+
+function render(){
+  const q=$('q').value.toLowerCase(), ft=$('fType').value, fs=$('fStatus').value, sort=$('fSort').value;
+  let rows=DATA.filter(c=>(!ft||c.type===ft)&&(!fs||c.status===fs)&&(!q||[c.ref,c.complainant,c.type,c.subtype,c.officer||'',c.stage||''].join(' ').toLowerCase().includes(q)));
+  const key={filed:(a,b)=>b.filed.localeCompare(a.filed),oldest:(a,b)=>a.filed.localeCompare(b.filed),
+             risk:(a,b)=>(b.risk_score??-1)-(a.risk_score??-1)||b.filed.localeCompare(a.filed),
+             amount:(a,b)=>(b.amount||0)-(a.amount||0)}[sort];
+  rows.sort(key);
+  document.querySelectorAll('th.sortable').forEach(th=>th.classList.toggle('sorted', th.dataset.sort===(sort==='oldest'?'filed':sort)));
+  $('rows').innerHTML=rows.map(c=>{
+    const risk = c.processing ? `<span class="dot-status"><span class="spin"></span><span class="hint">Analysing</span></span>`
+      : c.risk_score==null ? `<span class="rb grey">Pending</span>`
+      : `<span style="display:inline-flex;align-items:center;gap:8px"><b style="font-size:13px">${c.risk_score}</b><span class="rb ${lvlCls[c.risk_level]||'grey'}">${esc(c.risk_level)}</span></span>`;
+    const isNew = c.days_open===0 && c.status==='New';
+    return `<tr class="clickable" onclick="location.href='case.html?ref=${encodeURIComponent(c.ref)}'">
+      <td><span class="mono" style="font-weight:700;color:var(--text)">${esc(c.ref)}</span>${isNew?' <span class="rb gold" style="margin-left:6px">Today</span>':''}</td>
+      <td><span class="mono">${esc(c.filed.replace('T',' '))}</span><span class="en-sub">${c.days_open} day${c.days_open===1?'':'s'} open</span></td>
+      <td><span class="en-strong">${esc(c.complainant)}</span><span class="en-sub">${esc(c.emirate||'')} · ${esc(c.channel||'')}</span></td>
+      <td><span class="en-strong" style="font-weight:600">${esc(c.type)}</span><span class="en-sub">${esc(c.subtype||'')}</span></td>
+      <td class="num">${fmt(c.amount||0)}</td>
+      <td>${risk}</td>
+      <td><span class="dot-status"><span class="dot ${stDot[c.status]||'grey'}"></span>${esc(c.status)}</span><span class="en-sub">${esc(c.stage||'')}</span></td>
+      <td>${c.officer?esc(c.officer):'<span class="hint">Unassigned</span>'}</td>
+      <td>${c.linked_count?`<span class="rb red">${c.linked_count} linked</span>`:'<span class="hint">—</span>'}</td>
+      <td style="text-align:right"><a class="btn btn-glass btn-sm" href="case.html?ref=${encodeURIComponent(c.ref)}" onclick="event.stopPropagation()">Open</a></td></tr>`;
+  }).join('');
+  $('count').textContent=rows.length+' of '+DATA.length+' cases';
+  $('tfoot').innerHTML=`<span>Showing ${rows.length} cases</span><span>Total reported loss in view: <b>AED ${fmt(rows.reduce((s,c)=>s+(c.amount||0),0))}</b></span>`;
+}
+</script>
+</body>
+</html>

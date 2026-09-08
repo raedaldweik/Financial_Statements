@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Analysis — Financial Crime Complaint Analyzer</title>
+<title>Analysis Log — Financial Crime Unit</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%23191100' stroke='%23C8A44A' stroke-width='1.6'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/theme.css">
@@ -13,24 +13,24 @@
 <canvas id="bg-canvas"></canvas>
 
 <nav class="nav">
-  <div class="nav-left"><span class="nav-title">Financial Crime Unit</span></div>
+  <div class="nav-left"><span class="nav-title">Financial Crime Unit</span><span style="color:rgba(255,255,255,0.45);letter-spacing:.08em;text-transform:uppercase;font-size:9.5px">Investigator Workspace</span></div>
   <div class="nav-tabs">
     <a href="index.html" class="tab">Landing Page</a>
-    <a href="intake.html" class="tab">Complaint Intake</a>
-    <a href="analysis.html" class="tab active">AI Analysis</a>
-    <a href="report.html" class="tab">Investigation Report</a>
+    <a href="cases.html" class="tab">Case Queue</a>
+    <a href="#" class="tab" id="navCase">Case File</a>
+    <a href="#" class="tab active">Analysis Log</a>
   </div>
-  <div class="nav-right"><span class="mode-pill" id="modePill">…</span></div>
+  <div class="nav-right"><span class="officer"><i>RH</i>Insp. R. Haddad</span><span class="mode-pill" id="modePill">…</span></div>
 </nav>
 
 <div class="pw">
   <div class="ph">
     <div class="ph-left">
-      <h1>AI Investigation</h1>
-      <p id="anaStatus">Waiting for a run…</p>
+      <h1 id="anaTitle">Analysis Log</h1>
+      <p id="anaStatus">Loading…</p>
     </div>
-    <div class="ph-actions" id="doneActions" style="display:none">
-      <a class="btn btn-primary" href="report.html">Open investigation report</a>
+    <div class="ph-actions">
+      <a class="btn btn-primary btn-sm" id="btnCase" href="cases.html">Open case file</a>
     </div>
   </div>
 
@@ -54,9 +54,9 @@
 
   <div class="card" id="emptyState" style="display:none">
     <div class="empty-state">
-      <div class="big">No analysis running</div>
-      <p>Start from the complaint intake — register a complaint, attach evidence and run the AI analysis.</p>
-      <a class="btn btn-primary" href="intake.html">Go to complaint intake</a>
+      <div class="big">No analysis log for this case</div>
+      <p>Analysis logs are retained for cases processed through the platform.</p>
+      <a class="btn btn-primary" href="cases.html">Back to case queue</a>
     </div>
   </div>
 </div>
@@ -66,26 +66,49 @@
 <script src="assets/theme.js"></script>
 <script>
 "use strict";
-const runId = sessionStorage.getItem('fcuRun');
-const mode  = sessionStorage.getItem('fcuMode');
+const REF = new URLSearchParams(location.search).get('ref');
+let runId = null, mode = null;
 let order = [], agents = {}, doneCount = 0, tools = 0, ids = 0, matches = 0, t0 = Date.now(), timer = null;
 $('chPipe').insertAdjacentHTML('afterbegin', ic('cpu'));
 
+const STATIC_AGENTS = [
+  {key:'intake',name:'Intake & Triage Agent',icon:'clipboard',role:'Classifies the complaint, profiles the claims, sets analysis priorities'},
+  {key:'conversation',name:'Conversation Forensics Agent',icon:'chat',role:'Reconstructs the exchange, extracts identifiers, detects manipulation patterns'},
+  {key:'financial',name:'Financial Analysis Agent',icon:'bank',role:'Parses the bank statement, isolates fraud transfers, quantifies the loss'},
+  {key:'osint',name:'OSINT Agent',icon:'globe',role:'Queries registries, phone/domain intel, social profiles and scam databases'},
+  {key:'crossref',name:'Complaint History Cross-Reference Agent',icon:'database',role:'Searches prior complaints and known entities'},
+  {key:'lead',name:'Lead Investigator Agent',icon:'shield',role:'Prepares the case file, findings and recommendations'},
+];
+
 (async function boot(){
   await initModePill();
-  if(mode){ setModePill(mode); $('k_mode').textContent = mode==='live' ? 'live agentic run' : 'simulation'; }
-  if(!runId){
-    if(sessionStorage.getItem('fcuReport')){
-      $('anaStatus').textContent='Analysis complete — report ready.';
-      $('progBar').style.width='100%'; $('doneActions').style.display='flex';
-    } else $('emptyState').style.display='block';
+  if(!REF){ $('emptyState').style.display='block'; $('anaStatus').textContent='No case selected.'; return; }
+  $('btnCase').href='case.html?ref='+encodeURIComponent(REF); $('navCase').href=$('btnCase').href;
+  $('anaTitle').textContent='Analysis Log — '+REF;
+  const res=await fetch('/api/cases/'+encodeURIComponent(REF));
+  if(!res.ok){ $('emptyState').style.display='block'; $('anaStatus').textContent='Case not found.'; return; }
+  const c=await res.json();
+  mode=c.mode||null; if(mode) setModePill(mode); $('k_mode').textContent = mode==='live' ? 'live analysis' : (mode==='replay' ? 'recorded analysis' : '—');
+  if(c.processing && c.run_id){
+    runId=c.run_id;
+    $('anaStatus').textContent='Connecting to the analysis stream…';
+    timer=setInterval(()=>{ $('k_elapsed').innerHTML=Math.round((Date.now()-t0)/1000)+'<small>s</small>'; },1000);
+    const es=new EventSource('/api/stream/'+runId);
+    es.onmessage=ev=>{ try{ handle(JSON.parse(ev.data),es); }catch(e){ console.error(e); } };
+    es.onerror=()=>{};
     return;
   }
-  $('anaStatus').textContent='Connecting to the investigation stream…';
-  timer = setInterval(()=>{ $('k_elapsed').innerHTML = Math.round((Date.now()-t0)/1000)+'<small>s</small>'; }, 1000);
-  const es=new EventSource('/api/stream/'+runId);
-  es.onmessage=ev=>{ try{ handle(JSON.parse(ev.data),es); }catch(e){ console.error(e); } };
-  es.onerror=()=>{};
+  const memos=c.memos||{};
+  if(Object.keys(memos).length){
+    handle({type:'pipeline_start',agents:STATIC_AGENTS});
+    STATIC_AGENTS.forEach(a=>{ if(memos[a.key]) handle({type:'agent_memo',agent:a.key,memo:memos[a.key]}); handle({type:'agent_done',agent:a.key,elapsed:''}); });
+    $('k_stage').innerHTML='6<small> / 6</small>'; $('k_stageName').textContent='complete'; $('progBar').style.width='100%'; $('k_elapsed').textContent='—'; $('k_tools').textContent='—';
+    $('anaStatus').textContent='Analysis complete — '+(c.filed||'').replace('T',' ');
+    $('k_matches').textContent=(c.report&&c.report.prior_cases)?c.report.prior_cases.length:0;
+    showPanel('crossref');
+    return;
+  }
+  $('emptyState').style.display='block'; $('anaStatus').textContent='No analysis log retained for this case.';
 })();
 
 function stageRow(a, i){
@@ -161,17 +184,13 @@ function handle(e, es){
   }
   else if(e.type==='agent_done'){
     const s=$('st-'+e.agent); s.classList.remove('running'); s.classList.add('done');
-    setStatus(e.agent, `Done · ${e.elapsed??''}s`, 'green');
+    setStatus(e.agent, e.elapsed?`Done · ${e.elapsed}s`:'Done', 'green');
     doneCount++; $('progBar').style.width=Math.round(100*doneCount/order.length)+'%';
   }
   else if(e.type==='report'){
-    sessionStorage.setItem('fcuReport',JSON.stringify(e.report));
-    sessionStorage.removeItem('fcuRun');
     clearInterval(timer);
     $('progBar').style.width='100%';
-    $('anaStatus').textContent='Analysis complete — opening the investigation report…';
-    $('doneActions').style.display='flex';
-    setTimeout(()=>location.href='report.html', 1300);
+    $('anaStatus').textContent='Analysis complete — the case file is ready.';
   }
   else if(e.type==='error'){ toast(e.message); $('anaStatus').textContent='Run failed: '+e.message; clearInterval(timer); }
   else if(e.type==='done'){ es.close(); }
