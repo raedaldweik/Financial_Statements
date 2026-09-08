@@ -153,7 +153,7 @@ async function loadDemo(){
     caseId = r.case_id;
     fillComplaint(r.complaint);
     renderDemoEvidence(r.evidence);
-    toast('Sample case loaded — complaint, 3 chat screenshots and a bank statement attached.', false);
+    toast('Sample case loaded — complaint, 3 chat screenshots, the transfer confirmation and a bank statement attached.', false);
   }catch(e){ toast('Could not load sample case: '+e.message); }
 }
 
@@ -168,7 +168,7 @@ function fillComplaint(c){
 
 function renderDemoEvidence(ev){
   $('thumbs').innerHTML = ev.complaint_images.map((n,i)=>
-    `<img class="thumb" src="/api/demo/chat/${i+1}.png" title="${esc(n)}">`).join('');
+    `<img class="thumb" src="/api/demo/img/${i}" title="${esc(n)}">`).join('');
   $('imgBadge').textContent = ev.complaint_images.length+' files';
   renderStmts(ev.statements);
   $('lnkStmt').style.display='inline';

@@ -58,22 +58,31 @@ def get_case(case_id: str) -> Optional[Case]:
     return CASES.get(case_id)
 
 
+# Demo evidence images bundled with the sample case, in display order.
+DEMO_IMAGES = [
+    ("chat_1.png", "WhatsApp screenshot 1 of 3.png", "image/png"),
+    ("chat_2.png", "WhatsApp screenshot 2 of 3.png", "image/png"),
+    ("chat_3.png", "WhatsApp screenshot 3 of 3.png", "image/png"),
+    ("receipt.jpg", "Transfer confirmation — Example Bank.jpg", "image/jpeg"),
+]
+
+
 def load_demo_case() -> Case:
     case = new_case()
     case.is_demo = True
     case.complaint = json.loads((DEMO_DIR / "complaint.json").read_text(encoding="utf-8"))
-    for i in (1, 2, 3):
-        p = DEMO_DIR / f"chat_{i}.png"
+    for fname, label, media in DEMO_IMAGES:
+        p = DEMO_DIR / fname
         if p.exists():
             case.complaint_images.append({
-                "name": f"WhatsApp screenshot {i} of 3.png",
+                "name": label,
                 "b64": base64.standard_b64encode(p.read_bytes()).decode(),
-                "media": "image/png",
+                "media": media,
             })
-    if not case.complaint_images:  # fallback if screenshots are missing
+    if not case.complaint_images:  # fallback if images are missing
         case.complaint_text = (DEMO_DIR / "conversation.txt").read_text(encoding="utf-8")
     case.statements.append({
-        "name": "Al Noor National Bank statement — Aug 2026.pdf",
+        "name": "Example Bank statement — Sep 2026.pdf",
         "text": extract_pdf_text((DEMO_DIR / "bank_statement.pdf").read_bytes()),
     })
     return case

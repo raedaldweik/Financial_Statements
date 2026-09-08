@@ -123,7 +123,11 @@ CONVERSATION = AgentDef(
         "(phones, handles, IBANs, banks, companies, order refs, websites), the sequence of "
         "promises and payments with dates, and the social-engineering techniques used "
         "(urgency, scarcity, trust signals, advance-fee escalation, ghosting). Name each "
-        "technique explicitly — investigators use this to establish intent. " + MEMO_RULES),
+        "technique explicitly — investigators use this to establish intent. Payment "
+        "receipts or transfer confirmations may be included among the images: extract "
+        "their details precisely (bank, reference number, amount, sender, beneficiary, "
+        "account, IBAN, date, purpose) so the financial analyst can reconcile them "
+        "against bank records. " + MEMO_RULES),
     build_user=_conversation_user,
 )
 

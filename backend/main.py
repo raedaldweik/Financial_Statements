@@ -122,11 +122,12 @@ def demo_conversation() -> FileResponse:
                         media_type="text/plain; charset=utf-8")
 
 
-@app.get("/api/demo/chat/{n}.png")
-def demo_chat_image(n: int) -> FileResponse:
-    if n not in (1, 2, 3):
-        raise HTTPException(404, "No such screenshot")
-    return FileResponse(config.DEMO_DIR / f"chat_{n}.png", media_type="image/png")
+@app.get("/api/demo/img/{n}")
+def demo_evidence_image(n: int) -> FileResponse:
+    if not 0 <= n < len(store.DEMO_IMAGES):
+        raise HTTPException(404, "No such image")
+    fname, _, media = store.DEMO_IMAGES[n]
+    return FileResponse(config.DEMO_DIR / fname, media_type=media)
 
 
 app.mount("/", StaticFiles(directory=config.FRONTEND_DIR, html=True), name="frontend")

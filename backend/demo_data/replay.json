@@ -1,739 +1,120 @@
 {
- "description": "Recorded simulation of a full analysis run. Used when no ANTHROPIC_API_KEY is configured or when simulation mode is selected. The UI labels this mode clearly.",
- "events": [
-  {
-   "delay": 0.6,
-   "event": {
-    "type": "agent_start",
-    "agent": "intake"
-   }
-  },
-  {
-   "delay": 3.2,
-   "event": {
-    "type": "agent_memo",
-    "agent": "intake",
-    "memo": "**Verdict: valid complaint of online purchase fraud (non-delivery) with advance-fee escalation — evidence set is strong and analyzable.**\n\nThe victim reports paying AED 18,500 for a luxury watch to an Instagram shop, followed by a demanded AED 2,750 \"refundable customs deposit\" — a classic advance-fee escalation — then ghosting and blocking. Claimed loss AED 21,250. Evidence provided: 3 WhatsApp screenshots of the seller conversation and the victim's August bank statement; OSINT and intelligence cross-reference will run automatically.\n\n**Priorities for downstream agents**\n- *Conversation forensics:* extract seller identity/aliases, payment instructions, and the manipulation sequence.\n- *Financial analysis:* confirm both transfers, beneficiary account details for a freeze request.\n- *OSINT:* verify the seller company, phone, handle and website.\n- *Cross-reference:* IBAN and phone are the strongest link keys — check for prior complaints.\n\n**Key identifiers**\n- Victim: Sara Al Mansouri, +971 50 442 8113, Dubai\n- Shop: LuxeTime Watches, Instagram @luxetime.ae\n- Seller alias: \"Khalid\", phone +971 52 884 7719\n- Beneficiary: Bright Star General Trading FZE\n- Amounts: AED 18,500 (2026-08-14), AED 2,750 (2026-08-19)\n- Complaint: FCU-2026-08812, filed 2026-09-02"
-   }
-  },
-  {
-   "delay": 0.4,
-   "event": {
-    "type": "agent_done",
-    "agent": "intake",
-    "elapsed": 3.8
-   }
-  },
-  {
-   "delay": 0.7,
-   "event": {
-    "type": "agent_start",
-    "agent": "conversation"
-   }
-  },
-  {
-   "delay": 4.5,
-   "event": {
-    "type": "agent_memo",
-    "agent": "conversation",
-    "memo": "**Verdict: the conversation shows a deliberate, scripted fraud — every classic manipulation stage is present and documented.**\n\nReconstructed sequence: contact initiated by victim on 11 Aug after an Instagram ad; \"Khalid\" quotes AED 18,500 against a claimed AED 24,000 retail (-23%), refuses in-person viewing (\"free zone security\") and card payment (\"machine broken\"), and pressures with scarcity (\"3 other customers\", \"last piece\", deadline nudge on 13 Aug at 21:47). Payment instructions name a company account, not a personal one — lends false legitimacy. After payment: fake order ref **LT-2214**, phantom shipping, then the **advance-fee escalation** on 19 Aug (AED 2,750 \"refundable customs & insurance deposit\", threat of a 60-day refund). Four broken \"tomorrow\" promises, a fake refund claim, then blocking by 25 Aug.\n\n**Manipulation techniques identified:** scarcity & urgency, authority/trust signals (follower count, \"official reseller\"), inspection avoidance, payment-method steering, advance-fee escalation, exit-cost framing, ghosting.\n\n**Key identifiers**\n- Seller alias: \"Khalid\" — WhatsApp +971 52 884 7719\n- Instagram: @luxetime.ae (LuxeTime Watches)\n- Beneficiary: Bright Star General Trading FZE, Gulf Trust Bank\n- IBAN: AE47 0331 0000 0234 5678 901\n- Order ref LT-2214; item: Rolex Datejust 36 blue dial\n- Payments: AED 18,500 (14 Aug 09:58), AED 2,750 (19 Aug 12:41)\n- Ghosting confirmed from 25 Aug; page deleted"
-   }
-  },
-  {
-   "delay": 0.4,
-   "event": {
-    "type": "agent_done",
-    "agent": "conversation",
-    "elapsed": 5.1
-   }
-  },
-  {
-   "delay": 0.7,
-   "event": {
-    "type": "agent_start",
-    "agent": "financial"
-   }
-  },
-  {
-   "delay": 4.2,
-   "event": {
-    "type": "agent_memo",
-    "agent": "financial",
-    "memo": "**Verdict: both fraud transfers are confirmed on the statement and match the conversation exactly — total confirmed loss AED 21,250.**\n\nFrom the Al Noor National Bank statement (account 012-345678-01, IBAN AE21 0260 0000 1234 5678 901, period 01–31 Aug 2026):\n\n| Date | Transfer | Amount |\n|---|---|---|\n| 14/08/2026 | BRIGHT STAR GENERAL TRADING FZE — REF: ORDER LT-2214 LUXETIME WATCH | AED 18,500.00 |\n| 19/08/2026 | BRIGHT STAR GENERAL TRADING FZE — REF: CUSTOMS LT-2214 | AED 2,750.00 |\n\nBoth to **IBAN AE47 0331 0000 0234 5678 901, Gulf Trust Bank** — identical to the account dictated in the chat, and the references match the fake order number. Timing matches the conversation to the minute-level narrative (transfer claimed 09:58 on 14 Aug; statement shows same-day debit).\n\nContrast: the victim's normal profile is salary credit (AED 16,400 from Meridian Consulting DMCC) plus routine card spend of AED 34–650. The two transfers are the only outliers and drained ~57% of available balance.\n\n**Key identifiers**\n- Confirmed loss: AED 21,250.00 (18,500 + 2,750)\n- Beneficiary: BRIGHT STAR GENERAL TRADING FZE\n- Beneficiary IBAN: AE47 0331 0000 0234 5678 901 (Gulf Trust Bank)\n- Refs: ORDER LT-2214 / CUSTOMS LT-2214\n- Victim account: Al Noor National Bank 012-345678-01"
-   }
-  },
-  {
-   "delay": 0.4,
-   "event": {
-    "type": "agent_done",
-    "agent": "financial",
-    "elapsed": 4.6
-   }
-  },
-  {
-   "delay": 0.7,
-   "event": {
-    "type": "agent_start",
-    "agent": "osint"
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "osint",
-    "tool": "lookup_company_registry",
-    "args": {
-     "name": "Bright Star General Trading FZE"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "osint",
-    "tool": "lookup_company_registry",
-    "summary": "License FZ-114482 — status CANCELLED (expired 2026-02-11). Signatory: Imran K. Baig. Flexi-desk, no e-commerce permit."
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "osint",
-    "tool": "lookup_phone",
-    "args": {
-     "number": "+971 52 884 7719"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "osint",
-    "tool": "lookup_phone",
-    "summary": "Prepaid SIM activated 2026-05-02, registered to 'M. Rahman' (unverified). Linked to @luxetime.ae and @prestigehours_uae. 3 public scam reports."
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "osint",
-    "tool": "lookup_social",
-    "args": {
-     "handle": "@luxetime.ae"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "osint",
-    "tool": "lookup_social",
-    "summary": "Created 2026-06-10; +20,100 followers in 72h (purchased); engagement 0.1%; comments disabled; stock photos from a Singapore retailer; deactivated ~2026-08-27."
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "osint",
-    "tool": "lookup_domain",
-    "args": {
-     "domain": "luxetime-ae.com"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "osint",
-    "tool": "lookup_domain",
-    "summary": "Registered 2026-06-21 via privacy proxy; offshore VPS; cloned storefront template; offline since 2026-08-26. Same subnet hosts timevault-dxb.com and prestige-hours.com."
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "osint",
-    "tool": "search_scam_reports",
-    "args": {
-     "query": "luxetime"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "osint",
-    "tool": "search_scam_reports",
-    "summary": "3 hits: 'customs deposit' scam warnings, non-delivery reports, payments to a Gulf Trust Bank IBAN ending 901."
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "osint",
-    "tool": "search_scam_reports",
-    "args": {
-     "query": "+971 52 884 7719"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "osint",
-    "tool": "search_scam_reports",
-    "summary": "2 hits: same number tied to 'Prestige Hours' seller 'Khalid'; users report identical customs-deposit script."
-   }
-  },
-  {
-   "delay": 3.8,
-   "event": {
-    "type": "agent_memo",
-    "agent": "osint",
-    "memo": "**Verdict: \"LuxeTime Watches\" is a manufactured persona, not a business — every element of the storefront is synthetic, and its infrastructure is shared with two earlier watch shops.**\n\n- **Company registry:** Bright Star General Trading FZE, license FZ-114482 — **CANCELLED 2026-02-11**, months before the victim's payments. Never held an e-commerce permit; flexi-desk only. Authorized signatory: **Imran K. Baig**.\n- **Phone (+971 52 884 7719):** prepaid SIM activated 2026-05-02 under \"M. Rahman\" (suspected false registration); appears as seller contact for **two different shops** (@luxetime.ae, @prestigehours_uae); 3 public scam reports.\n- **Instagram @luxetime.ae:** created 2026-06-10; +20,100 followers in 72 hours (purchased); 0.1% engagement; comments disabled; product photos reverse-image-match a Singapore retailer. Deactivated ~27 Aug — two days after the victim was blocked.\n- **Website luxetime-ae.com:** registered 2026-06-21 behind a privacy proxy, offshore VPS, cloned template — **same subnet as timevault-dxb.com and prestige-hours.com**, both now offline.\n- **Scam reports:** 5 public reports describe the identical \"customs deposit\" script.\n\n**Key identifiers**\n- Imran K. Baig — signatory, Bright Star General Trading FZE (license FZ-114482, cancelled)\n- Phone +971 52 884 7719 — shared across shop personas\n- Related storefronts: @timevault.dxb, @prestigehours_uae; domains timevault-dxb.com, prestige-hours.com\n- IBAN ending 901 referenced in public scam reports"
-   }
-  },
-  {
-   "delay": 0.4,
-   "event": {
-    "type": "agent_done",
-    "agent": "osint",
-    "elapsed": 14.2
-   }
-  },
-  {
-   "delay": 0.7,
-   "event": {
-    "type": "agent_start",
-    "agent": "crossref"
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "crossref",
-    "tool": "search_intelligence",
-    "args": {
-     "query": "AE47 0331 0000 0234 5678 901"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "crossref",
-    "tool": "search_intelligence",
-    "summary": "2 prior cases matched: CASE-2026-03310 (AED 21,900) and CASE-2026-07214 (AED 14,300) — same beneficiary IBAN. Entity ENT-ACC-001."
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "crossref",
-    "tool": "search_intelligence",
-    "args": {
-     "query": "+971 52 884 7719"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "crossref",
-    "tool": "search_intelligence",
-    "summary": "1 prior case matched: CASE-2026-05127 (AED 9,750) — same seller phone, persona 'Khalid'. Entity ENT-PHN-001."
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "crossref",
-    "tool": "search_intelligence",
-    "args": {
-     "query": "Bright Star General Trading"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "crossref",
-    "tool": "search_intelligence",
-    "summary": "Entity ENT-ORG-001 linked to CASE-2026-03310 and CASE-2026-07214; signatory Imran K. Baig (ENT-PER-001) linked to all three prior cases."
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "crossref",
-    "tool": "get_case_details",
-    "args": {
-     "case_id": "CASE-2026-03310"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "crossref",
-    "tool": "get_case_details",
-    "summary": "Mar 2026, victim Omar H., AED 21,900, 'TimeVault Collectibles'. Same IBAN. Funds cashed out within 48h; AED 6,000 to a virtual-asset exchange."
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "crossref",
-    "tool": "get_case_details",
-    "args": {
-     "case_id": "CASE-2026-05127"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "crossref",
-    "tool": "get_case_details",
-    "summary": "May 2026, victim Lena P., AED 9,750, 'Prestige Hours', same phone. Payment to mule account of Farid Mustafa (recruited via Telegram, AED 500/week). Cooperative witness."
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "crossref",
-    "tool": "get_case_details",
-    "args": {
-     "case_id": "CASE-2026-07214"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "crossref",
-    "tool": "get_case_details",
-    "summary": "Jul 2026, victim Ahmed S., AED 14,300 via prestige-hours.com, same IBAN. Refused the AED 2,600 'customs deposit' and was blocked — identical script."
-   }
-  },
-  {
-   "delay": 1.0,
-   "event": {
-    "type": "tool_call",
-    "agent": "crossref",
-    "tool": "expand_entity_network",
-    "args": {
-     "entity_id": "ENT-PER-001"
-    }
-   }
-  },
-  {
-   "delay": 0.9,
-   "event": {
-    "type": "tool_result",
-    "agent": "crossref",
-    "tool": "expand_entity_network",
-    "summary": "Imran K. Baig: signatory of ENT-ORG-001, suspected user of ENT-PHN-001, recruited mule ENT-PER-002 (Farid Mustafa → ENT-ACC-002). Hub of the network."
-   }
-  },
-  {
-   "delay": 4.0,
-   "event": {
-    "type": "agent_memo",
-    "agent": "crossref",
-    "memo": "**Verdict: NOT a first offence. This complaint is the fourth known strike of one serial fraud network — combined losses now AED 67,200.**\n\n| Case | Filed | Storefront | Loss | Matched on |\n|---|---|---|---|---|\n| CASE-2026-03310 | 19 Mar | TimeVault Collectibles | AED 21,900 | **Same IBAN**, same beneficiary company |\n| CASE-2026-05127 | 30 May | Prestige Hours | AED 9,750 | **Same phone**, persona \"Khalid\" |\n| CASE-2026-07214 | 22 Jul | Prestige Hours (web) | AED 14,300 | **Same IBAN**, same customs-deposit script |\n| **FCU-2026-08812** | 2 Sep | LuxeTime Watches | **AED 21,250** | current complaint |\n\n**Network resolution:** all four cases converge on **Imran K. Baig** (ENT-PER-001) — authorized signatory of Bright Star General Trading FZE (ENT-ORG-001), holder of the Gulf Trust Bank account (ENT-ACC-001), suspected operator of the seller phone (ENT-PHN-001) and recruiter of money mule **Farid Mustafa** (ENT-PER-002, cooperative witness). Modus operandi is identical across cases: disposable Instagram storefront → company-account payment → fabricated \"customs deposit\" → ghosting → storefront deleted. Prior bank records show cash-out within 48h and transfers to a virtual-asset exchange.\n\n**Key identifiers**\n- Linked cases: CASE-2026-03310, CASE-2026-05127, CASE-2026-07214 (all open)\n- Combined losses: AED 67,200 across 4 victims\n- Hub entities: ENT-PER-001 (Imran K. Baig), ENT-ORG-001, ENT-ACC-001, ENT-PHN-001\n- Mule: Farid Mustafa, IBAN AE12 0440 0000 0987 6543 210 (Al Madar Bank)"
-   }
-  },
-  {
-   "delay": 0.4,
-   "event": {
-    "type": "agent_done",
-    "agent": "crossref",
-    "elapsed": 16.8
-   }
-  },
-  {
-   "delay": 0.7,
-   "event": {
-    "type": "agent_start",
-    "agent": "lead"
-   }
-  },
-  {
-   "delay": 5.5,
-   "event": {
-    "type": "agent_done",
-    "agent": "lead",
-    "elapsed": 12.4
-   }
-  },
-  {
-   "delay": 0.3,
-   "event": {
-    "type": "report",
-    "report": {
-     "case_ref": "FCU-2026-08812",
-     "classification": "Online purchase fraud (non-delivery) with advance-fee escalation",
-     "typology": "Serial e-commerce fraud — disposable storefront network with corporate account layering",
-     "risk_score": 87,
-     "risk_level": "CRITICAL",
-     "confidence": "high",
-     "executive_summary": "Complaint FCU-2026-08812 (Sara Al Mansouri, confirmed loss AED 21,250) is not an isolated incident: intelligence cross-reference links it to three open cases from March–July 2026 through the same beneficiary IBAN, the same seller phone and an identical \"customs deposit\" script, bringing combined known losses to AED 67,200 across four victims. The network operates disposable Instagram watch shops (TimeVault, Prestige Hours, LuxeTime) backed by purchased followers and cloned websites, and collects payments through Bright Star General Trading FZE — a company whose trade license was cancelled in February 2026 — plus one recruited money mule. All threads converge on Imran K. Baig, the company's authorized signatory, who may have left the country on 29 August. Funds are cashed out within 48 hours with partial layering into a virtual-asset exchange, so an immediate freeze and bank disclosure are the priority, alongside consolidation of the four cases into one investigation.",
-     "key_findings": [
-      {
-       "title": "Serial fraud network — 4 linked complaints",
-       "detail": "The beneficiary IBAN and seller phone in this complaint match three open cases (CASE-2026-03310, CASE-2026-05127, CASE-2026-07214). Combined confirmed losses: AED 67,200 across four victims since March 2026.",
-       "severity": "critical",
-       "source": "Intelligence Cross-Reference"
-      },
-      {
-       "title": "Payments collected on a cancelled trade license",
-       "detail": "Bright Star General Trading FZE (license FZ-114482) was cancelled on 2026-02-11 — every payment it received in this series post-dates cancellation, and it never held an e-commerce permit.",
-       "severity": "critical",
-       "source": "OSINT"
-      },
-      {
-       "title": "Rapid layering of proceeds",
-       "detail": "Bank records from the March case show victim funds withdrawn in cash within 48 hours, with AED 6,000 forwarded to a virtual-asset exchange — speed of the freeze request is decisive.",
-       "severity": "critical",
-       "source": "Intelligence Cross-Reference"
-      },
-      {
-       "title": "Identical advance-fee script across cases",
-       "detail": "The fabricated refundable \"customs clearance deposit\" (AED 2,750 here; AED 2,600 in CASE-2026-07214; AED 1,900 attempted in CASE-2026-03310) is the network's signature second-strike monetization.",
-       "severity": "warning",
-       "source": "Conversation Forensics"
-      },
-      {
-       "title": "Manufactured storefront",
-       "detail": "@luxetime.ae: created 2026-06-10, 20,100 purchased followers in 72 hours, comments disabled, stock photos from a Singapore retailer, cloned website on the same offshore subnet as the two earlier scam shops.",
-       "severity": "warning",
-       "source": "OSINT"
-      },
-      {
-       "title": "Suspect may have exited the country",
-       "detail": "Last known border movement for Imran K. Baig is an outbound stamp on 2026-08-29, four days after the victim was blocked.",
-       "severity": "warning",
-       "source": "Intelligence Cross-Reference"
-      },
-      {
-       "title": "Cooperative mule witness available",
-       "detail": "Farid Mustafa (CASE-2026-05127) admitted renting his account for AED 500/week after Telegram recruitment and is cooperative — a direct line into the recruitment channel.",
-       "severity": "info",
-       "source": "Intelligence Cross-Reference"
-      }
-     ],
-     "entities": [
-      {
-       "id": "ENT-VIC-000",
-       "label": "Sara Al Mansouri",
-       "type": "person",
-       "role": "Complainant / victim (FCU-2026-08812), loss AED 21,250",
-       "flagged": false
-      },
-      {
-       "id": "ENT-PER-001",
-       "label": "Imran K. Baig",
-       "type": "person",
-       "role": "Suspected network controller — signatory of Bright Star FZE, operator of seller personas 'Khalid'/'Abu Faisal'",
-       "flagged": true
-      },
-      {
-       "id": "ENT-PER-002",
-       "label": "Farid Mustafa",
-       "type": "person",
-       "role": "Money mule (CASE-2026-05127), cooperative witness",
-       "flagged": true
-      },
-      {
-       "id": "ENT-ORG-001",
-       "label": "Bright Star General Trading FZE",
-       "type": "organization",
-       "role": "Beneficiary company — license cancelled 2026-02-11, received payments in 3 of 4 cases",
-       "flagged": true
-      },
-      {
-       "id": "ENT-ACC-001",
-       "label": "IBAN AE47 0331 0000 0234 5678 901 — Gulf Trust Bank",
-       "type": "account",
-       "role": "Primary collection account (this case + 2 prior cases)",
-       "flagged": true
-      },
-      {
-       "id": "ENT-ACC-002",
-       "label": "IBAN AE12 0440 0000 0987 6543 210 — Al Madar Bank",
-       "type": "account",
-       "role": "Mule account (Farid Mustafa, CASE-2026-05127)",
-       "flagged": true
-      },
-      {
-       "id": "ENT-PHN-001",
-       "label": "+971 52 884 7719",
-       "type": "phone",
-       "role": "Seller contact in this case and CASE-2026-05127 — prepaid SIM under suspected false identity 'M. Rahman'",
-       "flagged": true
-      },
-      {
-       "id": "ENT-SOC-000",
-       "label": "@luxetime.ae — LuxeTime Watches",
-       "type": "social",
-       "role": "Current scam storefront (deactivated ~2026-08-27)",
-       "flagged": true
-      },
-      {
-       "id": "ENT-SOC-001",
-       "label": "@timevault.dxb — TimeVault Collectibles",
-       "type": "social",
-       "role": "Storefront in CASE-2026-03310 (deleted)",
-       "flagged": true
-      },
-      {
-       "id": "ENT-SOC-002",
-       "label": "@prestigehours_uae — Prestige Hours",
-       "type": "social",
-       "role": "Storefront in CASE-2026-05127 / CASE-2026-07214 (deleted)",
-       "flagged": true
-      },
-      {
-       "id": "ENT-WEB-000",
-       "label": "luxetime-ae.com",
-       "type": "website",
-       "role": "Cloned storefront site, offshore hosting shared with prior scam domains",
-       "flagged": true
-      }
-     ],
-     "timeline": [
-      {
-       "date": "2026-02-11",
-       "event": "Bright Star General Trading FZE trade license cancelled — all later payments received unlawfully",
-       "source": "OSINT"
-      },
-      {
-       "date": "2026-03-19",
-       "event": "CASE-2026-03310 filed: Omar H. loses AED 21,900 to 'TimeVault Collectibles' — same IBAN",
-       "source": "Intelligence"
-      },
-      {
-       "date": "2026-05-02",
-       "event": "Seller SIM +971 52 884 7719 activated under suspected false identity",
-       "source": "OSINT"
-      },
-      {
-       "date": "2026-05-30",
-       "event": "CASE-2026-05127 filed: Lena P. loses AED 9,750 to 'Prestige Hours' — same phone, mule account used",
-       "source": "Intelligence"
-      },
-      {
-       "date": "2026-06-10",
-       "event": "@luxetime.ae created; 20,100 followers purchased within 72 hours on 14 Jun",
-       "source": "OSINT"
-      },
-      {
-       "date": "2026-06-21",
-       "event": "luxetime-ae.com registered via privacy proxy on the network's offshore subnet",
-       "source": "OSINT"
-      },
-      {
-       "date": "2026-07-22",
-       "event": "CASE-2026-07214 filed: Ahmed S. loses AED 14,300 via prestige-hours.com — same IBAN, same customs script",
-       "source": "Intelligence"
-      },
-      {
-       "date": "2026-08-11",
-       "event": "Victim contacts 'Khalid' about a Rolex Datejust 36 after an Instagram ad",
-       "source": "Conversation"
-      },
-      {
-       "date": "2026-08-14",
-       "event": "Victim transfers AED 18,500 to Bright Star FZE (REF: ORDER LT-2214)",
-       "source": "Bank statement"
-      },
-      {
-       "date": "2026-08-19",
-       "event": "Fabricated 'customs deposit' demanded and paid: AED 2,750 (REF: CUSTOMS LT-2214)",
-       "source": "Bank statement"
-      },
-      {
-       "date": "2026-08-25",
-       "event": "Victim's calls blocked; storefront disappears over the following 48 hours",
-       "source": "Conversation / OSINT"
-      },
-      {
-       "date": "2026-08-29",
-       "event": "Last known border movement of Imran K. Baig (outbound)",
-       "source": "Intelligence"
-      },
-      {
-       "date": "2026-09-02",
-       "event": "Complaint FCU-2026-08812 filed via e-Crime Portal",
-       "source": "Complaint"
-      }
-     ],
-     "financial_flow": [
-      {
-       "date": "2026-03-16",
-       "from": "Omar H. (victim, CASE-2026-03310)",
-       "to": "Bright Star FZE — AE47 …901",
-       "amount": 21900,
-       "currency": "AED",
-       "note": "Prior case — same collection account"
-      },
-      {
-       "date": "2026-03-18",
-       "from": "Bright Star FZE — AE47 …901",
-       "to": "Cash withdrawals",
-       "amount": 15900,
-       "currency": "AED",
-       "note": "Cashed out within 48h (bank disclosure, CASE-2026-03310)"
-      },
-      {
-       "date": "2026-03-18",
-       "from": "Bright Star FZE — AE47 …901",
-       "to": "Virtual-asset exchange",
-       "amount": 6000,
-       "currency": "AED",
-       "note": "Layering into crypto (bank disclosure, CASE-2026-03310)"
-      },
-      {
-       "date": "2026-05-27",
-       "from": "Lena P. (victim, CASE-2026-05127)",
-       "to": "Farid Mustafa (mule) — AE12 …210",
-       "amount": 9750,
-       "currency": "AED",
-       "note": "Prior case — mule account, cashed out same day"
-      },
-      {
-       "date": "2026-07-19",
-       "from": "Ahmed S. (victim, CASE-2026-07214)",
-       "to": "Bright Star FZE — AE47 …901",
-       "amount": 14300,
-       "currency": "AED",
-       "note": "Prior case — same collection account"
-      },
-      {
-       "date": "2026-08-14",
-       "from": "Sara Al Mansouri (victim)",
-       "to": "Bright Star FZE — AE47 …901",
-       "amount": 18500,
-       "currency": "AED",
-       "note": "THIS CASE — REF: ORDER LT-2214"
-      },
-      {
-       "date": "2026-08-19",
-       "from": "Sara Al Mansouri (victim)",
-       "to": "Bright Star FZE — AE47 …901",
-       "amount": 2750,
-       "currency": "AED",
-       "note": "THIS CASE — fabricated customs deposit, REF: CUSTOMS LT-2214"
-      }
-     ],
-     "prior_cases": [
-      {
-       "case_id": "CASE-2026-03310",
-       "filed_date": "2026-03-19",
-       "victim": "Omar H. (Sharjah)",
-       "amount": 21900,
-       "currency": "AED",
-       "matched_on": [
-        "IBAN AE47 0331 0000 0234 5678 901",
-        "Beneficiary: Bright Star General Trading FZE",
-        "Modus operandi: customs-deposit script (attempted)"
-       ],
-       "summary": "Rolex Submariner never delivered by 'TimeVault Collectibles'. Funds cashed out within 48h, AED 6,000 to a virtual-asset exchange.",
-       "status": "Open — beneficiary bank response received"
-      },
-      {
-       "case_id": "CASE-2026-05127",
-       "filed_date": "2026-05-30",
-       "victim": "Lena P. (Dubai)",
-       "amount": 9750,
-       "currency": "AED",
-       "matched_on": [
-        "Phone +971 52 884 7719",
-        "Seller persona 'Khalid'"
-       ],
-       "summary": "Cartier Tank never delivered by 'Prestige Hours'. Paid into the mule account of Farid Mustafa, recruited via Telegram.",
-       "status": "Open"
-      },
-      {
-       "case_id": "CASE-2026-07214",
-       "filed_date": "2026-07-22",
-       "victim": "Ahmed S. (Abu Dhabi)",
-       "amount": 14300,
-       "currency": "AED",
-       "matched_on": [
-        "IBAN AE47 0331 0000 0234 5678 901",
-        "Beneficiary: Bright Star General Trading FZE",
-        "Identical customs-deposit script (AED 2,600 demanded)"
-       ],
-       "summary": "Omega Speedmaster ordered via prestige-hours.com never delivered; victim refused the extra fee and was blocked.",
-       "status": "Open — pending bank disclosure"
-      }
-     ],
-     "recommended_actions": [
-      {
-       "action": "Issue an urgent freeze request to Gulf Trust Bank for IBAN AE47 0331 0000 0234 5678 901",
-       "priority": "immediate",
-       "rationale": "The network cashes out within 48 hours; the victim's AED 21,250 was received 14–19 Aug and any residual balance is at imminent risk."
-      },
-      {
-       "action": "Consolidate FCU-2026-08812 with CASE-2026-03310, CASE-2026-05127 and CASE-2026-07214 into a single serial-fraud investigation",
-       "priority": "immediate",
-       "rationale": "Four complaints, one network, one controller — separate handling loses the pattern evidence and duplicates effort."
-      },
-      {
-       "action": "Obtain full bank disclosure for both collection accounts (Gulf Trust Bank and Al Madar Bank): KYC files, signatory records, statements, onward transfer details",
-       "priority": "high",
-       "rationale": "Confirms the account mandate of Imran K. Baig, quantifies total throughput and identifies the virtual-asset exchange accounts used for layering."
-      },
-      {
-       "action": "Serve a telecom data request for +971 52 884 7719 (registration documents, IMEI history, cell-site data)",
-       "priority": "high",
-       "rationale": "The SIM was registered under a suspected false identity; device and location data can tie the number to the suspect."
-      },
-      {
-       "action": "Send preservation requests to Instagram (@luxetime.ae, @timevault.dxb, @prestigehours_uae), WhatsApp and the domain registrars",
-       "priority": "high",
-       "rationale": "Storefronts are deleted after each strike; platform records (registration email/phone, IP logs, ad payment instruments) are the strongest identification evidence."
-      },
-      {
-       "action": "Run border-movement checks on Imran K. Baig and prepare an arrest/lookout notice; liaise internationally if the 2026-08-29 exit is confirmed",
-       "priority": "high",
-       "rationale": "The suspected controller may have left the jurisdiction days after the last strike."
-      },
-      {
-       "action": "Re-interview cooperative mule Farid Mustafa on the Telegram recruitment channel; request KYC from the virtual-asset exchange",
-       "priority": "routine",
-       "rationale": "The recruitment channel and exchange KYC are paths to the wider network and to asset recovery."
-      }
-     ],
-     "vi_case_summary": "Create one consolidated network case in SAS Visual Investigator containing: suspect Imran K. Baig (controller), Bright Star General Trading FZE, both collection accounts, the seller phone, three storefront personas and one website as linked entities; merge the four complaints (FCU-2026-08812, CASE-2026-03310, CASE-2026-05127, CASE-2026-07214) as related cases with victim records; attach the WhatsApp export, bank statement and OSINT findings as source documents; and set relationship links per the network map so the full modus operandi — disposable storefront, corporate collection account, advance-fee script, 48-hour cash-out — is visible on one canvas."
-    }
-   }
-  }
- ]
+  "description": "Recorded simulation of a full analysis run (Complaint #002 — online product trading fraud). Used when no ANTHROPIC_API_KEY is configured or when simulation mode is selected. The UI labels this mode clearly.",
+  "events": [
+    {"delay": 0.6, "event": {"type": "agent_start", "agent": "intake"}},
+    {"delay": 3.2, "event": {"type": "agent_memo", "agent": "intake", "memo": "**Verdict: valid complaint of online product trading fraud (non-delivery) — evidence set is strong and fully analyzable.**\n\nThe victim reports paying AED 12,500 for an electronics bundle advertised by \"Prime Gulf Electronics\" on social media, to a **personal** beneficiary account provided over WhatsApp. Delivery never happened; the seller ghosted and the page disappeared. Evidence: 3 WhatsApp screenshots, the bank transfer confirmation, and the victim's bank statement. OSINT and complaint-history cross-reference will run automatically.\n\n**Priorities for downstream agents**\n- *Conversation forensics:* extract seller identifiers, payment instructions and manipulation sequence; read the transfer confirmation precisely.\n- *Financial analysis:* reconcile chat ↔ receipt ↔ statement; confirm the beneficiary account details for a freeze request.\n- *OSINT:* verify the company identity, phone, social page and website.\n- *Cross-reference:* the beneficiary account and IBAN are the strongest link keys — check for previous occurrences.\n\n**Key identifiers**\n- Victim: Ahmed Hassan, +971 50 771 2094, Dubai\n- Shop: Prime Gulf Electronics, Instagram @primegulf.electronics\n- Seller WhatsApp: +971 55 302 8817\n- Beneficiary: Mubarak Salem — Account 5660609 — IBAN AE600340005660609\n- Amount: AED 12,500 (2026-09-08)\n- Complaint #002, filed 2026-09-18"}},
+    {"delay": 0.4, "event": {"type": "agent_done", "agent": "intake", "elapsed": 3.8}},
+
+    {"delay": 0.7, "event": {"type": "agent_start", "agent": "conversation"}},
+    {"delay": 4.6, "event": {"type": "agent_memo", "agent": "conversation", "memo": "**Verdict: the conversation shows a scripted online-purchase fraud — and the payment trail is fully documented in the evidence images.**\n\nReconstructed from the 3 screenshots: victim contacts the seller on 30 Aug after an Instagram ad; the rep offers a bundle (iPhone 16 Pro Max + MacBook Air M3 + AirPods + iPad) at **AED 12,500** against a claimed retail of 16,800+ (-26%), refuses viewing (\"free zone, no visitors\") and COD (\"insurance rules\"), and steers to bank transfer. Payment instructions name a **personal account** — justified as \"our finance manager\" with the company account \"under maintenance\": **Mubarak Salem, Account 5660609, IBAN AE600340005660609**. The seller also volunteers an **alternative account: Abdullah Mohammed, Account 3456660, IBAN AE750340003456660** — a second collection route. After payment on 8 Sep (fake order ref **PG-1180**): phantom shipping, customs and courier excuses, a fake \"refund request\", then silence; the page is deleted by 15 Sep.\n\n**Transfer confirmation (image 4, Example Bank):** ref **TRX-2026-0918-4821**, sender Ahmed Hassan, beneficiary Mubarak Salem, account 5660609, IBAN AE600340005660609, **AED 12,500**, purpose \"Purchase of electronic devices\", dated 08 Sep 2026, status Successful.\n\n**Manipulation techniques:** discount lure, trust signals (follower count, \"official distributor\"), inspection avoidance, payment-method steering to a personal account, ghosting.\n\n**Key identifiers**\n- Seller phone +971 55 302 8817 — persona \"Prime Gulf Electronics\"\n- Instagram @primegulf.electronics\n- Beneficiary: Mubarak Salem — 5660609 — AE600340005660609\n- Alternative account: Abdullah Mohammed — 3456660 — AE750340003456660\n- Payment: AED 12,500, 08 Sep 2026, ref TRX-2026-0918-4821; order ref PG-1180"}},
+    {"delay": 0.4, "event": {"type": "agent_done", "agent": "conversation", "elapsed": 5.3}},
+
+    {"delay": 0.7, "event": {"type": "agent_start", "agent": "financial"}},
+    {"delay": 4.2, "event": {"type": "agent_memo", "agent": "financial", "memo": "**Verdict: three-way reconciliation complete — chat, transfer confirmation and bank statement all match. Confirmed loss AED 12,500.**\n\nFrom the Example Bank statement (account 7712045, IBAN AE310340007712045, period 01–18 Sep 2026):\n\n| Date | Transaction | Amount |\n|---|---|---|\n| 08/09/2026 | ONLINE TRANSFER — MUBARAK SALEM / ACC 5660609 / AE600340005660609 — REF: TRX-2026-0918-4821, PURCHASE OF ELECTRONIC DEVICES | AED 12,500.00 |\n\nThe statement entry matches the transfer confirmation **to the reference number** (TRX-2026-0918-4821) and matches the account details dictated in the chat exactly. The stated purpose (\"Purchase of electronic devices\") documents what the victim believed he was paying for.\n\nContrast: the victim's normal profile is a salary credit (AED 14,200, Future Vision Marketing LLC) and routine card spend of AED 96–520. The transfer is the single outlier — ~36% of his available balance.\n\n**For the freeze/disclosure request:** beneficiary **Mubarak Salem**, account **5660609**, IBAN **AE600340005660609**; secondary account offered in the chat: **Abdullah Mohammed**, account **3456660**, IBAN **AE750340003456660**.\n\n**Key identifiers**\n- Confirmed loss: AED 12,500.00 (2026-09-08)\n- Ref: TRX-2026-0918-4821 (receipt = statement = chat)\n- Victim account: Example Bank 7712045"}},
+    {"delay": 0.4, "event": {"type": "agent_done", "agent": "financial", "elapsed": 4.7}},
+
+    {"delay": 0.7, "event": {"type": "agent_start", "agent": "osint"}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "osint", "tool": "lookup_company_registry", "args": {"name": "Prime Gulf Electronics"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "osint", "tool": "lookup_company_registry", "summary": "NO RECORD FOUND — no trade license under this name in any UAE registry. The business identity exists only on social media."}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "osint", "tool": "lookup_phone", "args": {"number": "+971 55 302 8817"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "osint", "tool": "lookup_phone", "summary": "Prepaid SIM activated 2026-04-18, registered to 'K. Rahim' (unverified). Linked to @primegulf.electronics AND 'TechDeals UAE' marketplace listings. 2 public scam reports."}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "osint", "tool": "lookup_social", "args": {"handle": "@primegulf.electronics"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "osint", "tool": "lookup_social", "summary": "Created 2026-08-02; +15,200 followers in 48h (purchased); engagement 0.2%; comments disabled; product photos match a Hong Kong wholesaler; deactivated ~2026-09-15."}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "osint", "tool": "lookup_domain", "args": {"domain": "primegulf-electronics.com"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "osint", "tool": "lookup_domain", "summary": "Registered 2026-08-05 via privacy proxy; offshore VPS; cloned storefront; offline since 2026-09-15. Same subnet hosts globalpathways-invest.com."}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "osint", "tool": "search_scam_reports", "args": {"query": "Mubarak Salem"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "osint", "tool": "search_scam_reports", "summary": "2 hits: review naming beneficiary 'Mubarak' behind primegulf-electronics.com; thread reporting payment instructions with IBAN ending 609 and identical non-delivery."}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "osint", "tool": "search_scam_reports", "args": {"query": "+971 55 302 8817"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "osint", "tool": "search_scam_reports", "summary": "1 hit: 'TechDeals UAE' non-delivery report — same seller number, payment to a personal account."}},
+    {"delay": 3.8, "event": {"type": "agent_memo", "agent": "osint", "memo": "**Verdict: \"Prime Gulf Electronics\" is a manufactured storefront, not a business — and its infrastructure overlaps with an investment-fraud front company.**\n\n- **Company registry:** *Prime Gulf Electronics* — **no trade license exists** under this name. The identity lives only on Instagram and a website.\n- **Phone (+971 55 302 8817):** prepaid SIM activated 2026-04-18 under \"K. Rahim\" (suspected false registration). The same number is the seller contact for **two different storefronts**: @primegulf.electronics and classifieds seller **\"TechDeals UAE\"**. 2 public scam reports.\n- **Instagram @primegulf.electronics:** created 2026-08-02 — weeks before the victim's purchase; +15,200 purchased followers in 48h; 0.2% engagement; comments disabled; product and \"delivery\" photos are stolen. Deactivated ~15 Sep, immediately after the victim pressed for a refund.\n- **Website primegulf-electronics.com:** registered 2026-08-05 behind a privacy proxy on an offshore VPS — **the same subnet hosts globalpathways-invest.com**, the site of \"Global Pathways Investment Consultancy\", which a forum post links to a citizenship-by-investment scam collecting milestone payments to a personal account.\n- **Scam reports:** public reports name the beneficiary \"Mubarak\", an IBAN ending **609**, and the same phone number.\n\n**Key identifiers**\n- Prime Gulf Electronics — unregistered business identity\n- Phone +971 55 302 8817 — shared across Prime Gulf Electronics and TechDeals UAE\n- Related infrastructure: globalpathways-invest.com (Global Pathways Investment Consultancy FZE)\n- Public reports reference beneficiary 'Mubarak' / IBAN ending 609"}},
+    {"delay": 0.4, "event": {"type": "agent_done", "agent": "osint", "elapsed": 13.9}},
+
+    {"delay": 0.7, "event": {"type": "agent_start", "agent": "crossref"}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "crossref", "tool": "search_intelligence", "args": {"query": "AE600340005660609"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "crossref", "tool": "search_intelligence", "summary": "MATCH — Complaint #001 (citizenship-by-investment fraud, AED 275,000): same beneficiary account 5660609 / AE600340005660609. Entity ENT-ACC-001."}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "crossref", "tool": "search_intelligence", "args": {"query": "Mubarak Salem"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "crossref", "tool": "search_intelligence", "summary": "Entity ENT-PER-001: account holder of 5660609; authorized signatory of Global Pathways Investment Consultancy FZE (Complaint #001 front company)."}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "crossref", "tool": "search_intelligence", "args": {"query": "AE750340003456660"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "crossref", "tool": "search_intelligence", "summary": "MATCH — the 'alternative account' offered in this case's chat is a known fraud account: Complaint #003 (AED 8,900), holder Abdullah Mohammed. Entity ENT-ACC-002."}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "crossref", "tool": "search_intelligence", "args": {"query": "+971 55 302 8817"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "crossref", "tool": "search_intelligence", "summary": "MATCH — same seller phone as Complaint #003 ('TechDeals UAE'). Entity ENT-PHN-001."}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "crossref", "tool": "get_case_details", "args": {"case_id": "Complaint #001"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "crossref", "tool": "get_case_details", "summary": "Aug 2026, victim Mysmo Gamal: AED 25,000 + AED 250,000 citizenship-investment payments to account 5660609. Bank disclosure: 180k cash-out + 60k to a virtual-asset exchange within 72h. KYC address & mobile SHARED with Abdullah Mohammed."}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "crossref", "tool": "get_case_details", "args": {"case_id": "Complaint #003"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "crossref", "tool": "get_case_details", "summary": "Aug 2026, victim Rashid K.: AED 8,900 to account 3456660 (Abdullah Mohammed) for a 'TechDeals UAE' listing — same seller phone. Same-day ATM cash-out."}},
+    {"delay": 1.0, "event": {"type": "tool_call", "agent": "crossref", "tool": "expand_entity_network", "args": {"entity_id": "ENT-PER-001"}}},
+    {"delay": 0.9, "event": {"type": "tool_result", "agent": "crossref", "tool": "expand_entity_network", "summary": "Mubarak Salem: holds ACC 5660609; signatory of Global Pathways FZE; shared KYC address & contact mobile with Abdullah Mohammed (holds ACC 3456660). One network, two collection accounts."}},
+    {"delay": 4.0, "event": {"type": "agent_memo", "agent": "crossref", "memo": "**Verdict: NOT an isolated complaint. The beneficiary account has a previous occurrence in a AED 275,000 investment fraud — entity resolution connects three complaints, two accounts and two fraud typologies into ONE network. Combined losses: AED 296,400.**\n\n| Case | Filed | Typology | Loss | Matched on |\n|---|---|---|---|---|\n| Complaint #001 | 5 Aug | Citizenship-by-investment fraud | **AED 275,000** | **Same account 5660609 / AE600340005660609**, beneficiary Mubarak Salem |\n| Complaint #003 | 28 Aug | Online product fraud (TechDeals UAE) | AED 8,900 | **Same seller phone**; paid to the **'alternative account'** offered in this case's chat (AE750340003456660) |\n| **Complaint #002** | 18 Sep | Online product fraud (Prime Gulf) | **AED 12,500** | current complaint |\n\n**Entity resolution:** **Mubarak Salem** holds account 5660609 and is the authorized signatory of **Global Pathways Investment Consultancy FZE** — the front company in Complaint #001. **Abdullah Mohammed** holds account 3456660. Bank KYC (Complaint #001 disclosure) shows the two account holders **share a registered address and contact mobile** — separate complaints, separate accounts, one network. Proceeds pattern: AED 180,000 cash-out + AED 60,000 to a virtual-asset exchange within 72 hours of the largest payment.\n\n**Key identifiers**\n- Linked cases: Complaint #001 (AED 275,000), Complaint #003 (AED 8,900) — both open\n- Combined network losses: AED 296,400 across 3 victims\n- Hub entities: Mubarak Salem (ENT-PER-001), Abdullah Mohammed (ENT-PER-002), accounts 5660609 & 3456660, phone +971 55 302 8817, Global Pathways FZE"}},
+    {"delay": 0.4, "event": {"type": "agent_done", "agent": "crossref", "elapsed": 16.2}},
+
+    {"delay": 0.7, "event": {"type": "agent_start", "agent": "lead"}},
+    {"delay": 5.5, "event": {"type": "agent_done", "agent": "lead", "elapsed": 12.1}},
+    {"delay": 0.3, "event": {"type": "report", "report": {
+      "case_ref": "Complaint #002",
+      "classification": "Online product trading fraud (non-delivery)",
+      "typology": "Multi-typology serial fraud network — common beneficiary accounts across investment and e-commerce scams",
+      "risk_score": 88,
+      "risk_level": "CRITICAL",
+      "confidence": "high",
+      "executive_summary": "Complaint #002 (Ahmed Hassan, confirmed loss AED 12,500) initially presents as an independent online shopping fraud. Cross-case analysis shows otherwise: the beneficiary account 5660609 (IBAN AE600340005660609, holder Mubarak Salem) previously received AED 275,000 in a citizenship-by-investment fraud (Complaint #001), and the 'alternative account' the seller offered in this case's own chat belongs to Abdullah Mohammed — the collection account of a third fraud (Complaint #003, AED 8,900) that also shares this case's seller phone. Bank KYC shows the two account holders share an address and contact mobile: separate complaints and separate accounts resolve to one criminal network with combined known losses of AED 296,400 across three victims and two fraud typologies. Proceeds are cashed out or moved to a virtual-asset exchange within 72 hours, so immediate freezes on both accounts, consolidated investigation of the three complaints, and identification of both account holders are the priorities.",
+      "key_findings": [
+        {"title": "Beneficiary account matches a AED 275,000 investment fraud", "detail": "Account 5660609 / IBAN AE600340005660609 (Mubarak Salem) is identical to the collection account in Complaint #001, a citizenship-by-investment fraud with payments of AED 25,000 and AED 250,000.", "severity": "critical", "source": "Complaint-History Cross-Reference"},
+        {"title": "The chat's 'alternative account' is a known fraud account", "detail": "The seller volunteered a backup account — Abdullah Mohammed, 3456660, AE750340003456660 — which is the collection account of Complaint #003 (AED 8,900, 'TechDeals UAE'), a case that also shares this complaint's seller phone number.", "severity": "critical", "source": "Conversation Forensics + Cross-Reference"},
+        {"title": "Entity resolution: one network behind two typologies", "detail": "Bank KYC (Complaint #001 disclosure) shows Mubarak Salem and Abdullah Mohammed share a registered address and contact mobile, and Mubarak Salem is the authorized signatory of the Complaint #001 front company — investment fraud and product fraud are the same operation.", "severity": "critical", "source": "Complaint-History Cross-Reference"},
+        {"title": "Rapid dissipation of proceeds", "detail": "After the AED 250,000 milestone payment, AED 180,000 was withdrawn in cash and AED 60,000 sent to a virtual-asset exchange within 72 hours — the freeze window on the current AED 12,500 (received 8 Sep) is closing.", "severity": "critical", "source": "Complaint #001 bank disclosure"},
+        {"title": "Unregistered business identity and manufactured storefront", "detail": "No trade license exists for 'Prime Gulf Electronics'; the Instagram page was created on 2026-08-02 with 15,200 purchased followers, stolen product photos, and was deleted immediately after the victim demanded a refund.", "severity": "warning", "source": "OSINT"},
+        {"title": "Payment steered to a personal account", "detail": "A 'company' purchase was paid to a personal beneficiary, justified as the 'finance manager' with the corporate account 'under maintenance' — a hallmark of collection-account fraud.", "severity": "warning", "source": "Conversation Forensics"},
+        {"title": "Three-way payment reconciliation complete", "detail": "The WhatsApp payment instructions, the Example Bank transfer confirmation (ref TRX-2026-0918-4821) and the victim's bank statement match exactly — amount, beneficiary, account, IBAN, date and reference.", "severity": "info", "source": "Financial Analysis"}
+      ],
+      "entities": [
+        {"id": "ENT-VIC-000", "label": "Ahmed Hassan", "type": "person", "role": "Complainant / victim (Complaint #002), loss AED 12,500", "flagged": false},
+        {"id": "ENT-PER-001", "label": "Mubarak Salem", "type": "person", "role": "Holder of account 5660609; authorized signatory of the Complaint #001 front company; suspected network controller", "flagged": true},
+        {"id": "ENT-PER-002", "label": "Abdullah Mohammed", "type": "person", "role": "Holder of account 3456660 — secondary collection account; shares KYC address & mobile with Mubarak Salem", "flagged": true},
+        {"id": "ENT-ACC-001", "label": "Account 5660609 — IBAN AE600340005660609", "type": "account", "role": "Primary collection account: this case (AED 12,500) + Complaint #001 (AED 275,000)", "flagged": true},
+        {"id": "ENT-ACC-002", "label": "Account 3456660 — IBAN AE750340003456660", "type": "account", "role": "Secondary collection account: Complaint #003 (AED 8,900); offered as 'alternative account' in this case's chat", "flagged": true},
+        {"id": "ENT-PHN-001", "label": "+971 55 302 8817", "type": "phone", "role": "Seller WhatsApp in this case and Complaint #003 — prepaid SIM under suspected false identity 'K. Rahim'", "flagged": true},
+        {"id": "ENT-ORG-001", "label": "Global Pathways FZE", "type": "organization", "role": "Front company of Complaint #001 (Global Pathways Investment Consultancy FZE, license FZ-102284 cancelled 2026-04-30; signatory: Mubarak Salem)", "flagged": true},
+        {"id": "ENT-SOC-000", "label": "@primegulf.electronics — Prime Gulf Electronics", "type": "social", "role": "Current scam storefront (created 2026-08-02, deactivated ~2026-09-15)", "flagged": true},
+        {"id": "ENT-SOC-001", "label": "TechDeals UAE — classifieds seller profile", "type": "social", "role": "Storefront of Complaint #003 (deleted); same contact phone", "flagged": true},
+        {"id": "ENT-WEB-000", "label": "primegulf-electronics.com", "type": "website", "role": "Cloned storefront site — same offshore subnet as globalpathways-invest.com", "flagged": true}
+      ],
+      "timeline": [
+        {"date": "2026-04-18", "event": "Seller SIM +971 55 302 8817 activated under suspected false identity", "source": "OSINT"},
+        {"date": "2026-04-30", "event": "Global Pathways Investment Consultancy FZE license cancelled — never licensed for immigration services", "source": "OSINT"},
+        {"date": "2026-06-10", "event": "Complaint #001 victim pays AED 25,000 'citizenship processing fee' to account 5660609", "source": "Intelligence"},
+        {"date": "2026-07-14", "event": "Complaint #001 milestone 2: AED 250,000 to the same account (ref TRX-2026-10482)", "source": "Intelligence"},
+        {"date": "2026-07-17", "event": "AED 180,000 cash-out + AED 60,000 to a virtual-asset exchange within 72h of the milestone payment", "source": "Bank disclosure (Complaint #001)"},
+        {"date": "2026-08-02", "event": "@primegulf.electronics created; 15,200 followers purchased within 48 hours", "source": "OSINT"},
+        {"date": "2026-08-05", "event": "Complaint #001 filed; primegulf-electronics.com registered the same week", "source": "Intelligence / OSINT"},
+        {"date": "2026-08-20", "event": "Complaint #003 victim pays AED 8,900 to account 3456660 ('TechDeals UAE', same seller phone)", "source": "Intelligence"},
+        {"date": "2026-08-30", "event": "Victim contacts 'Prime Gulf Electronics' about an electronics bundle after an Instagram ad", "source": "Conversation"},
+        {"date": "2026-09-05", "event": "Payment instructions name the personal account of Mubarak Salem; 'alternative account' of Abdullah Mohammed volunteered", "source": "Conversation"},
+        {"date": "2026-09-08", "event": "Victim transfers AED 12,500 (ref TRX-2026-0918-4821, 'Purchase of electronic devices')", "source": "Bank records"},
+        {"date": "2026-09-14", "event": "Seller stops responding; Instagram page and website taken down over the next 48 hours", "source": "Conversation / OSINT"},
+        {"date": "2026-09-18", "event": "Complaint #002 filed via e-Crime Portal", "source": "Complaint"}
+      ],
+      "financial_flow": [
+        {"date": "2026-06-10", "from": "Mysmo Gamal (victim, Complaint #001)", "to": "Account 5660609 (Mubarak Salem)", "amount": 25000, "currency": "AED", "note": "Prior case — 'citizenship application processing fee'"},
+        {"date": "2026-07-14", "from": "Mysmo Gamal (victim, Complaint #001)", "to": "Account 5660609 (Mubarak Salem)", "amount": 250000, "currency": "AED", "note": "Prior case — 'Citizenship by Investment – Milestone 2' (ref TRX-2026-10482)"},
+        {"date": "2026-07-16", "from": "Account 5660609 (Mubarak Salem)", "to": "Cash withdrawals", "amount": 180000, "currency": "AED", "note": "Cash-out within 72h (bank disclosure, Complaint #001)"},
+        {"date": "2026-07-17", "from": "Account 5660609 (Mubarak Salem)", "to": "Virtual-asset exchange", "amount": 60000, "currency": "AED", "note": "Layering into crypto (bank disclosure, Complaint #001)"},
+        {"date": "2026-08-20", "from": "Rashid K. (victim, Complaint #003)", "to": "Account 3456660 (Abdullah Mohammed)", "amount": 8900, "currency": "AED", "note": "Prior case — same-day ATM cash-out"},
+        {"date": "2026-09-08", "from": "Ahmed Hassan (victim)", "to": "Account 5660609 (Mubarak Salem)", "amount": 12500, "currency": "AED", "note": "THIS CASE — ref TRX-2026-0918-4821, 'Purchase of electronic devices'"}
+      ],
+      "prior_cases": [
+        {"case_id": "Complaint #001", "filed_date": "2026-08-05", "victim": "Mysmo Gamal (Dubai)", "amount": 275000, "currency": "AED", "matched_on": ["IBAN AE600340005660609", "Account 5660609", "Beneficiary: Mubarak Salem"], "summary": "Citizenship-by-investment fraud via 'Global Pathways Investment Consultancy': AED 25,000 processing fee + AED 250,000 milestone payment, then fabricated progress updates and silence. Proceeds cashed out / moved to crypto within 72h.", "status": "Open — bank disclosure received"},
+        {"case_id": "Complaint #003", "filed_date": "2026-08-28", "victim": "Rashid K. (Sharjah)", "amount": 8900, "currency": "AED", "matched_on": ["IBAN AE750340003456660 (alt account in this chat)", "Phone +971 55 302 8817", "Shared KYC: Abdullah Mohammed ↔ Mubarak Salem"], "summary": "Online product fraud via classifieds seller 'TechDeals UAE' — discounted gaming bundle never delivered; paid to Abdullah Mohammed's account; same seller phone as this case.", "status": "Open"}
+      ],
+      "recommended_actions": [
+        {"action": "Issue urgent freeze requests for account 5660609 (AE600340005660609, Mubarak Salem) and account 3456660 (AE750340003456660, Abdullah Mohammed)", "priority": "immediate", "rationale": "The network dissipates proceeds within 72 hours; the victim's AED 12,500 was credited on 8 September and any residual balance is at imminent risk on both collection accounts."},
+        {"action": "Consolidate Complaints #001, #002 and #003 into a single serial-fraud investigation", "priority": "immediate", "rationale": "Three complaints, two fraud typologies, one resolved network — separate handling loses the pattern evidence and duplicates effort."},
+        {"action": "Obtain full KYC and statement disclosure for both accounts, including onward transfers and the virtual-asset exchange accounts", "priority": "high", "rationale": "Confirms the identities behind both accounts, quantifies total criminal throughput and opens the asset-recovery trail at the exchange."},
+        {"action": "Serve a telecom data request for +971 55 302 8817 (registration documents, IMEI history, cell-site data)", "priority": "high", "rationale": "The SIM was registered under a suspected false identity and connects both storefront personas; device and location data can tie the number to the operators."},
+        {"action": "Send preservation requests to Instagram (@primegulf.electronics), the classifieds platform (TechDeals UAE), WhatsApp and the domain registrars", "priority": "high", "rationale": "Storefronts are deleted after each strike; platform records (registration email/phone, IP logs, ad payment instruments) are the strongest identification evidence."},
+        {"action": "Locate and summon Mubarak Salem and Abdullah Mohammed; screen for further accounts opened under the same identity documents", "priority": "high", "rationale": "Bank KYC already names both account holders and shows a shared address and mobile — and the same identities may be operating additional collection accounts."},
+        {"action": "Take formal victim statements with exhibits (chat export, transfer confirmation TRX-2026-0918-4821, statements) and notify bank compliance of the mule-account indicators", "priority": "routine", "rationale": "Secures the evidential chain for prosecution and helps the banks detect related accounts proactively."}
+      ],
+      "vi_case_summary": "Open one consolidated network case containing: suspects Mubarak Salem and Abdullah Mohammed (shared KYC address and mobile), collection accounts 5660609 (AE600340005660609) and 3456660 (AE750340003456660), seller phone +971 55 302 8817, front company Global Pathways Investment Consultancy FZE, and the storefront personas 'Prime Gulf Electronics' and 'TechDeals UAE'; merge Complaints #001, #002 and #003 as related cases with their victims; attach the WhatsApp screenshots, the Example Bank transfer confirmation, the bank statement and the OSINT findings as source documents. Total known exposure: AED 296,400 across two fraud typologies — one connected fraud network."
+    }}}
+  ]
 }

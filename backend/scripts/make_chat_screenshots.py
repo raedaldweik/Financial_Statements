@@ -37,16 +37,19 @@ EMOJI_RE = re.compile(r"[\U0001F000-\U0001FAFF☀-➿⬀-⯿️⏳✅🙏😊]")
 
 def parse() -> list[dict]:
     msgs = []
-    for raw in (BASE / "conversation.txt").read_text(encoding="utf-8").splitlines():
+    for i, raw in enumerate((BASE / "conversation.txt").read_text(encoding="utf-8").splitlines()):
         m = LINE_RE.match(raw.strip())
         if not m:
+            # continuation line of a multi-line message (skip the file header)
+            if msgs and i > 1 and raw.strip():
+                msgs[-1]["text"] += "\n" + EMOJI_RE.sub("", raw.strip())
             continue
         date, time, sender, text = m.groups()
         text = EMOJI_RE.sub("", text).strip()
         if "(file attached)" in text:
-            text = "[ Photo — transfer receipt ]"
+            text = "[ Photo — transfer confirmation ]"
         msgs.append({"date": date, "time": time,
-                     "out": sender.startswith("Sara"), "text": text})
+                     "out": sender.startswith("Ahmed"), "text": text})
     return msgs
 
 
@@ -129,10 +132,10 @@ def render(msgs: list[dict], out: Path, contact: str, number: str) -> None:
 def main() -> None:
     msgs = parse()
     # split into 3 screenshots at natural narrative breaks
-    cuts = [0, 12, 23, len(msgs)]
+    cuts = [0, 10, 18, len(msgs)]
     for i in range(3):
         render(msgs[cuts[i]:cuts[i + 1]], BASE / f"chat_{i + 1}.png",
-               "LuxeTime Khalid", "+971 52 884 7719")
+               "Prime Gulf Electronics", "+971 55 302 8817")
 
 
 if __name__ == "__main__":

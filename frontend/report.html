@@ -175,7 +175,7 @@ function render(r){
     {l:'Fraud Risk Score', v:r.risk_score+'<span style="font-size:11px;font-weight:600;color:var(--text-faint)"> /100</span>', cls:lvlCls, tr:r.risk_level+' RISK'},
     {l:'Confirmed Loss — This Case', v:'AED '+fmt(confirmed), cls:'gold', tr:thisCase.length+' transfers verified'},
     {l:'Linked Prior Complaints', v:String(r.prior_cases.length), cls:'red', tr:'same network identifiers'},
-    {l:'Combined Network Losses', v:'AED '+fmt(confirmed+priorTotal), cls:'gold', tr:(r.prior_cases.length+1)+' complaints since March'},
+    {l:'Combined Network Losses', v:'AED '+fmt(confirmed+priorTotal), cls:'gold', tr:(r.prior_cases.length+1)+' complaints, one network'},
     {l:'Flagged Entities', v:String(flagged), cls:'amber', tr:'of '+r.entities.length+' entities resolved'},
     {l:'AI Confidence', v:esc(r.confidence).toUpperCase(), cls:'green', tr:'traceable to evidence'},
   ].map(k=>`<div class="kpi"><div class="kpi-lbl">${k.l}</div><div class="kpi-val ${k.cls}">${k.v}</div><div class="kpi-tr">${k.tr}</div></div>`).join('');

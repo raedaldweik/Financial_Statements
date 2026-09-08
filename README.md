@@ -11,14 +11,19 @@ screenshot images**, one or more **bank/financial statement PDFs**, automatic
 OSINT collection and the unit's own complaint history — into one investigation
 report and action plan.
 
-**The storyline:** a victim pays an Instagram watch shop AED 18,500, is
-squeezed for a fake AED 2,750 "customs deposit", gets ghosted, and files a
-complaint with 3 WhatsApp screenshots and her bank statement. On **Run AI
-Analysis**, six AI agents work the case live on screen — and the
-complaint-history cross-reference reveals it's the **fourth strike of one
-serial fraud network** (same IBAN, same phone, same script — combined losses
-AED 67,200). The report closes with a step-2 hand-off: the consolidated
-network case continues in SAS Visual Investigator (not part of this demo).
+**The storyline (from the client scenario pack):** Ahmed Hassan pays AED 12,500
+for an electronics bundle advertised by "Prime Gulf Electronics" on Instagram,
+transfers to the personal account the seller dictates on WhatsApp — Mubarak
+Salem, account 5660609, IBAN AE600340005660609 — and gets ghosted. He files
+Complaint #002 with 3 WhatsApp screenshots, the transfer confirmation and his
+bank statement. On **Run AI Analysis**, six AI agents work the case live — and
+the complaint-history cross-reference reveals the **same account previously
+received AED 275,000 in a citizenship-by-investment fraud (Complaint #001)**,
+while the "alternative account" offered in the chat belongs to a third fraud
+(Complaint #003). Entity resolution (shared KYC address & mobile) resolves
+separate complaints, separate accounts and two fraud typologies into **one
+connected fraud network** — combined losses AED 296,400. The report closes
+with a step-2 hand-off to SAS Visual Investigator.
 
 ## Pages (same structure as the dashboards on `main`)
 
@@ -78,6 +83,7 @@ lives in `backend/demo_data/`:
 
 - `conversation.txt` → rendered into `chat_1..3.png` by
   `backend/scripts/make_chat_screenshots.py` (WhatsApp-style screenshots)
+- `receipt.jpg` — the Example Bank transfer confirmation (watermarked demo document)
 - `bank_statement.pdf` ← `backend/scripts/make_statement_pdf.py`
 - `osint.json`, `intel_db.json` — the OSINT sources and prior-complaint data
   the agent tools query

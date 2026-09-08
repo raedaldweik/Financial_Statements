@@ -18,27 +18,22 @@ GOLD = colors.HexColor("#c8a44a")
 GREY = colors.HexColor("#5a6472")
 
 TXNS = [
-    ("01/08/2026", "OPENING BALANCE", "", "", "24,310.55"),
-    ("02/08/2026", "CARD PURCHASE — SPINNEYS AL WASL, DUBAI", "412.35", "", "23,898.20"),
-    ("03/08/2026", "CARD PURCHASE — CAREEM RIDES", "58.00", "", "23,840.20"),
-    ("05/08/2026", "SALARY CREDIT — MERIDIAN CONSULTING DMCC", "", "16,400.00", "40,240.20"),
-    ("07/08/2026", "CARD PURCHASE — NOON.COM ORDER 8842-1190", "289.90", "", "39,950.30"),
-    ("09/08/2026", "ATM CASH WITHDRAWAL — JBR BRANCH", "1,000.00", "", "38,950.30"),
-    ("12/08/2026", "UTILITY PAYMENT — DEWA", "643.20", "", "38,307.10"),
-    ("14/08/2026",
-     "ONLINE TRANSFER — BRIGHT STAR GENERAL TRADING FZE / GULF TRUST BANK / "
-     "AE47 0331 0000 0234 5678 901 / REF: ORDER LT-2214 LUXETIME WATCH",
-     "18,500.00", "", "19,807.10"),
-    ("15/08/2026", "CARD PURCHASE — LIFE PHARMACY MARINA", "86.50", "", "19,720.60"),
-    ("17/08/2026", "CARD PURCHASE — STARBUCKS DIFC", "34.00", "", "19,686.60"),
-    ("19/08/2026",
-     "ONLINE TRANSFER — BRIGHT STAR GENERAL TRADING FZE / GULF TRUST BANK / "
-     "AE47 0331 0000 0234 5678 901 / REF: CUSTOMS LT-2214",
-     "2,750.00", "", "16,936.60"),
-    ("22/08/2026", "CARD PURCHASE — CARREFOUR MALL OF THE EMIRATES", "523.75", "", "16,412.85"),
-    ("25/08/2026", "TELECOM PAYMENT — DU MONTHLY PLAN", "199.00", "", "16,213.85"),
-    ("28/08/2026", "CARD PURCHASE — AMAZON.AE 402-99812", "164.99", "", "16,048.86"),
-    ("31/08/2026", "CLOSING BALANCE", "", "", "16,048.86"),
+    ("01/09/2026", "OPENING BALANCE", "", "", "21,340.55"),
+    ("02/09/2026", "CARD PURCHASE — LULU HYPERMARKET, DUBAI", "214.30", "", "21,126.25"),
+    ("03/09/2026", "CARD PURCHASE — ADNOC FUEL STATION", "180.00", "", "20,946.25"),
+    ("05/09/2026", "SALARY CREDIT — FUTURE VISION MARKETING LLC", "", "14,200.00", "35,146.25"),
+    ("06/09/2026", "CARD PURCHASE — NOON.COM ORDER 5521-8830", "329.50", "", "34,816.75"),
+    ("08/09/2026",
+     "ONLINE TRANSFER — MUBARAK SALEM / ACC 5660609 / AE600340005660609 / "
+     "REF: TRX-2026-0918-4821 PURCHASE OF ELECTRONIC DEVICES",
+     "12,500.00", "", "22,316.75"),
+    ("09/09/2026", "CARD PURCHASE — CARREFOUR MALL OF THE EMIRATES", "412.80", "", "21,903.95"),
+    ("11/09/2026", "UTILITY PAYMENT — DEWA", "518.60", "", "21,385.35"),
+    ("12/09/2026", "ATM CASH WITHDRAWAL — DEIRA BRANCH", "800.00", "", "20,585.35"),
+    ("14/09/2026", "CARD PURCHASE — TALABAT ORDER", "96.50", "", "20,488.85"),
+    ("16/09/2026", "TELECOM PAYMENT — DU MONTHLY PLAN", "189.00", "", "20,299.85"),
+    ("17/09/2026", "CARD PURCHASE — AMAZON.AE 771-20455", "145.75", "", "20,154.10"),
+    ("18/09/2026", "CLOSING BALANCE", "", "", "20,154.10"),
 ]
 
 
@@ -53,15 +48,15 @@ def build() -> None:
                             leftMargin=16 * mm, rightMargin=16 * mm,
                             topMargin=16 * mm, bottomMargin=16 * mm)
     story = [
-        Paragraph("AL NOOR NATIONAL BANK", h1),
-        Paragraph("This is a fictional bank statement generated for a product demonstration.", sub),
+        Paragraph("EXAMPLE BANK", h1),
+        Paragraph("People. Progress. Together. — FOR DEMO / TRAINING PURPOSES ONLY. Not a real bank document.", sub),
         Spacer(1, 6 * mm),
     ]
 
     meta = Table([
-        ["Account holder", "SARA AL MANSOURI", "Statement period", "01/08/2026 – 31/08/2026"],
-        ["Account number", "012-345678-01", "Currency", "AED"],
-        ["IBAN", "AE21 0260 0000 1234 5678 901", "Branch", "Jumeirah, Dubai"],
+        ["Account holder", "AHMED HASSAN", "Statement period", "01/09/2026 – 18/09/2026"],
+        ["Account number", "7712045", "Currency", "AED"],
+        ["IBAN", "AE310340007712045", "Branch", "Deira, Dubai"],
     ], colWidths=[30 * mm, 62 * mm, 32 * mm, 54 * mm])
     meta.setStyle(TableStyle([
         ("FONTSIZE", (0, 0), (-1, -1), 8.5),
@@ -99,7 +94,7 @@ def build() -> None:
     story.append(table)
     story += [
         Spacer(1, 6 * mm),
-        Paragraph("End of statement. For queries contact Al Noor National Bank (fictional entity — demo only).", sub),
+        Paragraph("End of statement. For queries contact Example Bank. Example Bank is a fictional institution — demo/training use only.", sub),
     ]
     doc.build(story)
     print(f"Wrote {OUT}")
