@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complaint Intake — Financial Crime Complaint Analyzer</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%23191100' stroke='%23C8A44A' stroke-width='1.6'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav class="nav">
+  <div class="nav-left"><span class="nav-title">Financial Crime Unit</span></div>
+  <div class="nav-tabs">
+    <a href="index.html" class="tab">Landing Page</a>
+    <a href="intake.html" class="tab active">Complaint Intake</a>
+    <a href="analysis.html" class="tab">AI Analysis</a>
+    <a href="report.html" class="tab">Investigation Report</a>
+  </div>
+  <div class="nav-right"><span class="mode-pill" id="modePill">…</span></div>
+</nav>
+
+<div class="pw">
+  <div class="ph">
+    <div class="ph-left">
+      <h1>Complaint Intake</h1>
+      <p>Register the complaint and attach the evidence — the AI investigation team takes it from there.</p>
+    </div>
+    <div class="ph-actions">
+      <button class="btn btn-glass" id="btnDemo">⚡ Load Sample Case</button>
+      <select class="fs" id="modeSel">
+        <option value="auto">Mode · Auto</option>
+        <option value="live">Mode · Live Agents</option>
+        <option value="replay">Mode · Simulation</option>
+      </select>
+      <button class="btn btn-primary" id="btnAnalyze">Run AI Analysis <span class="btn-arrow">›</span></button>
+    </div>
+  </div>
+
+  <div class="g2-eq">
+    <!-- ── Complaint details ── -->
+    <div class="card">
+      <div class="ch">
+        <div class="ch-left">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <h3>Complaint Details</h3>
+        </div>
+        <span class="ch-badge gold" id="refBadge">New</span>
+      </div>
+      <div class="cb">
+        <div class="fgrid">
+          <div><label class="fl">Complaint Ref</label><input class="fi" id="f_ref" placeholder="FCU-2026-…"></div>
+          <div><label class="fl">Filed Date</label><input class="fi" id="f_date" placeholder="YYYY-MM-DD"></div>
+          <div class="full"><label class="fl">Category</label><input class="fi" id="f_cat" placeholder="e.g. Online purchase fraud (non-delivery)"></div>
+          <div><label class="fl">Complainant Name</label><input class="fi" id="f_vname"></div>
+          <div><label class="fl">Complainant Phone</label><input class="fi" id="f_vphone"></div>
+          <div><label class="fl">City / Emirate</label><input class="fi" id="f_vcity"></div>
+          <div><label class="fl">Claimed Loss (AED)</label><input class="fi" id="f_loss" type="number"></div>
+          <div class="full"><label class="fl">Complainant Statement</label><textarea class="fa" id="f_narr" placeholder="What happened, in the complainant's words…"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Evidence ── -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="ch">
+          <div class="ch-left">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            <h3>Complaint Evidence — Conversation Screenshots</h3>
+          </div>
+          <span class="ch-badge gold" id="imgBadge">0 files</span>
+        </div>
+        <div class="cb">
+          <div class="ev-note">Screenshots of the chat with the seller (PNG / JPG), as submitted by the complainant. The Conversation Forensics agent reads them directly. Text or PDF exports also accepted.</div>
+          <div class="thumbs" id="thumbs"></div>
+          <button class="btn btn-glass upload-btn" data-kind="complaint">＋ Add Screenshots</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ch">
+          <div class="ch-left">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l9-4 9 4M4 10h16M6 10v8m4-8v8m4-8v8m4-8v8M3 21h18"/></svg>
+            <h3>Financial Statements</h3>
+          </div>
+          <span class="ch-badge gold" id="stmtBadge">0 files</span>
+        </div>
+        <div class="cb">
+          <div class="ev-note">Bank or financial statements (PDF / CSV). The Financial Analysis agent isolates the transfers connected to the complaint. <a class="hint" id="lnkStmt" href="/api/demo/statement.pdf" target="_blank" style="display:none">view sample statement ↗</a></div>
+          <div id="stmtRows" style="margin-top:8px"></div>
+          <button class="btn btn-glass upload-btn" data-kind="statement">＋ Add Statement</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ch">
+          <div class="ch-left">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zM3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 010 18"/></svg>
+            <h3>OSINT Collection</h3>
+          </div>
+          <span class="ch-badge green">Automatic</span>
+        </div>
+        <div class="cb"><div class="ev-note">Company registries · telecom intelligence · domain records · social profiling · public scam-report databases. Collected by the OSINT agent during analysis.</div></div>
+      </div>
+
+      <div class="card">
+        <div class="ch">
+          <div class="ch-left">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            <h3>Complaint History Cross-Reference</h3>
+          </div>
+          <span class="ch-badge green">Automatic</span>
+        </div>
+        <div class="cb"><div class="ev-note">Every identifier is checked against the unit's prior complaints and known entities — is this a first offence or part of a series?</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" hidden>
+<div class="toast" id="toast"></div>
+
+<script src="assets/theme.js"></script>
+<script>
+"use strict";
+let caseId = null, uploadKind = null;
+
+(async function boot(){
+  const h = await initModePill();
+  if(sessionStorage.getItem('fcuLoadDemo')==='1'){
+    sessionStorage.removeItem('fcuLoadDemo');
+    loadDemo();
+  }
+})();
+
+$('btnDemo').onclick = loadDemo;
+async function loadDemo(){
+  try{
+    const r = await (await fetch('/api/case/demo',{method:'POST'})).json();
+    caseId = r.case_id;
+    fillComplaint(r.complaint);
+    renderDemoEvidence(r.evidence);
+    toast('Sample case loaded — complaint, 3 chat screenshots and a bank statement attached.', false);
+  }catch(e){ toast('Could not load sample case: '+e.message); }
+}
+
+function fillComplaint(c){
+  $('f_ref').value=c.complaint_ref||''; $('f_date').value=c.filed_date||'';
+  $('f_cat').value=c.category||'';
+  $('f_vname').value=c.victim?.name||''; $('f_vphone').value=c.victim?.phone||'';
+  $('f_vcity').value=c.victim?.emirate||'';
+  $('f_loss').value=c.claimed_loss||''; $('f_narr').value=c.narrative||'';
+  $('refBadge').textContent=c.complaint_ref||'New';
+}
+
+function renderDemoEvidence(ev){
+  $('thumbs').innerHTML = ev.complaint_images.map((n,i)=>
+    `<img class="thumb" src="/api/demo/chat/${i+1}.png" title="${esc(n)}">`).join('');
+  $('imgBadge').textContent = ev.complaint_images.length+' files';
+  renderStmts(ev.statements);
+  $('lnkStmt').style.display='inline';
+}
+function renderStmts(names){
+  $('stmtRows').innerHTML = names.map(n=>
+    `<div class="file-row"><span class="ok">✔</span><span class="fname">${esc(n)}</span></div>`).join('');
+  $('stmtBadge').textContent = names.length+' files';
+}
+
+document.querySelectorAll('[data-kind]').forEach(b=>b.onclick=()=>{
+  uploadKind=b.dataset.kind;
+  const fi=$('fileInput');
+  fi.accept = uploadKind==='complaint' ? '.png,.jpg,.jpeg,.webp,.txt,.pdf' : '.pdf,.csv,.txt';
+  fi.multiple = true;
+  fi.click();
+});
+$('fileInput').onchange = async e=>{
+  const files=[...e.target.files]; e.target.value='';
+  if(!files.length) return;
+  if(!caseId){ const r=await (await fetch('/api/case/new',{method:'POST'})).json(); caseId=r.case_id; }
+  let ev=null;
+  for(const f of files){
+    const fd=new FormData(); fd.append('case_id',caseId); fd.append('kind',uploadKind); fd.append('file',f);
+    try{
+      const res=await fetch('/api/upload',{method:'POST',body:fd});
+      if(!res.ok) throw new Error((await res.json()).detail||res.statusText);
+      ev=(await res.json()).evidence;
+      if(uploadKind==='complaint' && f.type.startsWith('image/')){
+        const fr=new FileReader();
+        fr.onload=()=>{ const img=document.createElement('img'); img.className='thumb';
+                        img.src=fr.result; img.title=f.name; $('thumbs').appendChild(img); };
+        fr.readAsDataURL(f);
+      }
+    }catch(err){ toast(`Upload failed (${f.name}): `+err.message); }
+  }
+  if(ev){ $('imgBadge').textContent=ev.complaint_images.length+(ev.complaint_text?'+txt':'')+' files';
+          renderStmts(ev.statements); }
+  toast('Evidence attached.', false);
+};
+
+$('btnAnalyze').onclick = async ()=>{
+  if(!caseId){ toast('Load the sample case or attach evidence first.'); return; }
+  const complaint={
+    complaint_ref:$('f_ref').value, filed_date:$('f_date').value, category:$('f_cat').value,
+    channel:'e-Crime Portal', claimed_loss:Number($('f_loss').value)||0, currency:'AED',
+    victim:{name:$('f_vname').value, phone:$('f_vphone').value, emirate:$('f_vcity').value},
+    narrative:$('f_narr').value };
+  let res;
+  try{
+    res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({case_id:caseId, mode:$('modeSel').value, complaint})});
+    if(!res.ok) throw new Error((await res.json()).detail||res.statusText);
+  }catch(err){ toast(err.message); return; }
+  const d=await res.json();
+  sessionStorage.setItem('fcuCase',caseId);
+  sessionStorage.setItem('fcuRun',d.run_id);
+  sessionStorage.setItem('fcuMode',d.mode);
+  sessionStorage.removeItem('fcuReport');
+  location.href='analysis.html';
+};
+</script>
+</body>
+</html>

@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import base64
 import io
-import json
 import uuid
 from dataclasses import dataclass, field
 from typing import Any, Optional
@@ -13,31 +12,35 @@ from pypdf import PdfReader
 from config import DEMO_DIR
 
 MAX_EVIDENCE_CHARS = 40000
+MAX_FILES_PER_KIND = 8
+
+import json
 
 
 @dataclass
 class Case:
     case_id: str
     complaint: dict = field(default_factory=dict)
-    conversation_text: str = ""
-    conversation_image_b64: str = ""
-    conversation_image_media: str = ""
-    conversation_name: str = ""
-    statement_text: str = ""
-    statement_name: str = ""
+    # Complaint evidence — the conversation/complaint comes in as screenshots
+    complaint_images: list[dict] = field(default_factory=list)   # {name, b64, media}
+    complaint_text: str = ""                                     # optional txt/pdf fallback
+    # Financial statements — one or more PDFs/CSVs (text extracted)
+    statements: list[dict] = field(default_factory=list)         # {name, text}
     is_demo: bool = False
     memos: dict[str, str] = field(default_factory=dict)
     report: Optional[dict] = None
     qa_history: list[dict] = field(default_factory=list)
 
+    def has_evidence(self) -> bool:
+        return bool(self.complaint_images or self.complaint_text or self.statements)
+
     def evidence_summary(self) -> dict:
         return {
-            "conversation": bool(self.conversation_text or self.conversation_image_b64),
-            "conversation_name": self.conversation_name,
-            "conversation_preview": self.conversation_text[:400],
-            "statement": bool(self.statement_text),
-            "statement_name": self.statement_name,
-            "statement_preview": self.statement_text[:400],
+            "complaint_images": [i["name"] for i in self.complaint_images],
+            "complaint_text": bool(self.complaint_text),
+            "complaint_text_preview": self.complaint_text[:300],
+            "statements": [s["name"] for s in self.statements],
+            "statement_preview": self.statements[0]["text"][:300] if self.statements else "",
         }
 
 
@@ -59,10 +62,20 @@ def load_demo_case() -> Case:
     case = new_case()
     case.is_demo = True
     case.complaint = json.loads((DEMO_DIR / "complaint.json").read_text(encoding="utf-8"))
-    case.conversation_text = (DEMO_DIR / "conversation.txt").read_text(encoding="utf-8")
-    case.conversation_name = "WhatsApp chat export — victim & seller.txt"
-    case.statement_text = extract_pdf_text((DEMO_DIR / "bank_statement.pdf").read_bytes())
-    case.statement_name = "Al Noor National Bank statement — Aug 2026.pdf"
+    for i in (1, 2, 3):
+        p = DEMO_DIR / f"chat_{i}.png"
+        if p.exists():
+            case.complaint_images.append({
+                "name": f"WhatsApp screenshot {i} of 3.png",
+                "b64": base64.standard_b64encode(p.read_bytes()).decode(),
+                "media": "image/png",
+            })
+    if not case.complaint_images:  # fallback if screenshots are missing
+        case.complaint_text = (DEMO_DIR / "conversation.txt").read_text(encoding="utf-8")
+    case.statements.append({
+        "name": "Al Noor National Bank statement — Aug 2026.pdf",
+        "text": extract_pdf_text((DEMO_DIR / "bank_statement.pdf").read_bytes()),
+    })
     return case
 
 
@@ -76,29 +89,33 @@ def extract_pdf_text(data: bytes) -> str:
 
 def attach_evidence(case: Case, kind: str, filename: str, data: bytes,
                     content_type: str) -> dict:
-    """Attach an uploaded file to the case. Returns a summary for the UI."""
+    """Attach an uploaded file to the case (appends). Returns a UI summary."""
     name = filename or "upload"
     lowered = name.lower()
-    if kind == "conversation":
+    if kind == "complaint":
+        if len(case.complaint_images) >= MAX_FILES_PER_KIND:
+            raise ValueError(f"Maximum {MAX_FILES_PER_KIND} complaint images")
         if content_type.startswith("image/") or lowered.endswith((".png", ".jpg", ".jpeg", ".webp")):
             media = content_type if content_type.startswith("image/") else (
                 "image/png" if lowered.endswith(".png") else "image/jpeg")
-            case.conversation_image_b64 = base64.standard_b64encode(data).decode()
-            case.conversation_image_media = media
-            case.conversation_text = ""
+            case.complaint_images.append({
+                "name": name,
+                "b64": base64.standard_b64encode(data).decode(),
+                "media": media,
+            })
         elif lowered.endswith(".pdf"):
-            case.conversation_text = extract_pdf_text(data)
-            case.conversation_image_b64 = ""
+            case.complaint_text += ("\n\n" if case.complaint_text else "") + extract_pdf_text(data)
         else:
-            case.conversation_text = data.decode("utf-8", errors="replace")[:MAX_EVIDENCE_CHARS]
-            case.conversation_image_b64 = ""
-        case.conversation_name = name
+            text = data.decode("utf-8", errors="replace")[:MAX_EVIDENCE_CHARS]
+            case.complaint_text += ("\n\n" if case.complaint_text else "") + text
     elif kind == "statement":
+        if len(case.statements) >= MAX_FILES_PER_KIND:
+            raise ValueError(f"Maximum {MAX_FILES_PER_KIND} statements")
         if lowered.endswith(".pdf") or content_type == "application/pdf":
-            case.statement_text = extract_pdf_text(data)
+            text = extract_pdf_text(data)
         else:
-            case.statement_text = data.decode("utf-8", errors="replace")[:MAX_EVIDENCE_CHARS]
-        case.statement_name = name
+            text = data.decode("utf-8", errors="replace")[:MAX_EVIDENCE_CHARS]
+        case.statements.append({"name": name, "text": text})
     else:
         raise ValueError(f"Unknown evidence kind: {kind}")
     return case.evidence_summary()

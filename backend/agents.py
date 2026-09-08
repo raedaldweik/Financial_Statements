@@ -62,14 +62,16 @@ def _memo_context(case: Case, keys: list[str]) -> str:
 # ─── 1. Intake & Triage ──────────────────────────────────────────────
 
 def _intake_user(case: Case, ctx: dict) -> list:
-    ev = case.evidence_summary()
     inventory = []
-    if ev["conversation"]:
-        inventory.append(f"- Conversation evidence: {ev['conversation_name'] or 'uploaded'}")
-    if ev["statement"]:
-        inventory.append(f"- Bank statement: {ev['statement_name'] or 'uploaded'}")
+    if case.complaint_images:
+        inventory.append(f"- Complaint evidence: {len(case.complaint_images)} screenshot image(s) "
+                         "of the conversation with the seller")
+    if case.complaint_text:
+        inventory.append("- Complaint evidence: conversation transcript (text)")
+    for s in case.statements:
+        inventory.append(f"- Financial statement: {s['name']}")
     inventory.append("- OSINT collection: will run automatically")
-    inventory.append("- Intelligence repository cross-reference: will run automatically")
+    inventory.append("- Complaint-history cross-reference: will run automatically")
     return [{"type": "text", "text":
              _complaint_block(case) + "\n\nEvidence inventory:\n" + "\n".join(inventory) +
              "\n\nTriage this complaint."}]
@@ -94,18 +96,21 @@ INTAKE = AgentDef(
 def _conversation_user(case: Case, ctx: dict) -> list:
     blocks: list = []
     intro = _memo_context(case, ["intake"]) + "\n\n"
-    if case.conversation_image_b64:
+    for img in case.complaint_images:
         blocks.append({"type": "image",
                        "source": {"type": "base64",
-                                  "media_type": case.conversation_image_media,
-                                  "data": case.conversation_image_b64}})
+                                  "media_type": img["media"],
+                                  "data": img["b64"]}})
+    if case.complaint_images:
         blocks.append({"type": "text", "text": intro +
-                       "The image above is the conversation evidence (screenshot). "
-                       "Transcribe the relevant exchanges, then analyze."})
-    else:
-        blocks.append({"type": "text", "text": intro +
-                       "── Conversation evidence (verbatim) ──\n" +
-                       case.conversation_text + "\n\nAnalyze this conversation."})
+                       f"The {len(case.complaint_images)} image(s) above are the complaint "
+                       "evidence — screenshots of the conversation with the seller, in order. "
+                       "Read them carefully, transcribe the key exchanges, then analyze."})
+    if case.complaint_text:
+        blocks.append({"type": "text", "text":
+                       (intro if not case.complaint_images else "") +
+                       "── Additional conversation evidence (text) ──\n" +
+                       case.complaint_text + "\n\nAnalyze this conversation."})
     return blocks
 
 
@@ -126,11 +131,15 @@ CONVERSATION = AgentDef(
 # ─── 3. Financial Analysis ───────────────────────────────────────────
 
 def _financial_user(case: Case, ctx: dict) -> list:
+    if case.statements:
+        stmts = "\n\n".join(
+            f"── Statement {i}: {s['name']} (text extracted) ──\n{s['text']}"
+            for i, s in enumerate(case.statements, 1))
+    else:
+        stmts = "(no financial statements provided)"
     return [{"type": "text", "text":
              _memo_context(case, ["intake", "conversation"]) +
-             "\n\n── Bank statement (text extracted from PDF) ──\n" +
-             (case.statement_text or "(no statement provided)") +
-             "\n\nAnalyze the financial evidence."}]
+             "\n\n" + stmts + "\n\nAnalyze the financial evidence."}]
 
 
 FINANCIAL = AgentDef(
@@ -214,8 +223,6 @@ def _lead_user(case: Case, ctx: dict) -> list:
              "- entities: one entry per real-world entity, reuse ids like ENT-ORG-001 where "
              "the memos mention them; give the victim and current case entities new ids "
              "(e.g. ENT-VIC-000, ENT-SOC-000).\n"
-             "- network: nodes must reuse the entity ids (plus one node per prior case, "
-             "type 'case'); every edge's from/to must be a node id that exists.\n"
              "- timeline: merge conversation, financial, OSINT and prior-case dates into one "
              "chronological view (ISO dates).\n"
              "- financial_flow: every confirmed victim->suspect transfer in this case AND "
@@ -224,9 +231,9 @@ def _lead_user(case: Case, ctx: dict) -> list:
              "- recommended_actions: concrete police actions in priority order (account "
              "freeze, bank disclosure, telecom subpoena, platform preservation requests, "
              "case consolidation, suspect identification steps, victim communication).\n"
-             "- vi_case_summary: one paragraph describing the consolidated case object that "
-             "would be created in SAS Visual Investigator (entities, links, prior cases to "
-             "merge).\n"
+             "- vi_case_summary: one short paragraph describing the consolidated case that "
+             "should be opened in the unit's network-investigation platform in the next step "
+             "(entities, links, prior complaints to merge).\n"
              "- executive_summary: ~150 words, written for a unit commander."}]
 
 
@@ -288,12 +295,6 @@ REPORT_SCHEMA = _obj({
     "prior_cases": _arr(_obj({
         "case_id": _S, "filed_date": _S, "victim": _S, "amount": _N,
         "currency": _S, "matched_on": _arr(_S), "summary": _S, "status": _S})),
-    "network": _obj({
-        "nodes": _arr(_obj({
-            "id": _S, "label": _S,
-            "type": {"type": "string", "enum": ENTITY_TYPES},
-            "flagged": _B})),
-        "edges": _arr(_obj({"from": _S, "to": _S, "label": _S}))}),
     "recommended_actions": _arr(_obj({
         "action": _S,
         "priority": {"type": "string", "enum": ["immediate", "high", "routine"]},

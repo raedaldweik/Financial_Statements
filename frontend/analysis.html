@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Analysis — Financial Crime Complaint Analyzer</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%23191100' stroke='%23C8A44A' stroke-width='1.6'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav class="nav">
+  <div class="nav-left"><span class="nav-title">Financial Crime Unit</span></div>
+  <div class="nav-tabs">
+    <a href="index.html" class="tab">Landing Page</a>
+    <a href="intake.html" class="tab">Complaint Intake</a>
+    <a href="analysis.html" class="tab active">AI Analysis</a>
+    <a href="report.html" class="tab">Investigation Report</a>
+  </div>
+  <div class="nav-right"><span class="mode-pill" id="modePill">…</span></div>
+</nav>
+
+<div class="pw" style="max-width:1080px">
+  <div class="ph">
+    <div class="ph-left">
+      <h1>AI Investigation</h1>
+      <p id="anaStatus">Waiting for a run…</p>
+    </div>
+    <div class="ph-actions" id="doneActions" style="display:none">
+      <a class="btn btn-primary" href="report.html">Open Investigation Report <span class="btn-arrow">›</span></a>
+    </div>
+  </div>
+
+  <div class="progress"><i id="progBar"></i></div>
+
+  <div id="agentList"></div>
+
+  <div class="card" id="emptyState" style="display:none">
+    <div class="empty-state">
+      <div class="big">No analysis running</div>
+      <p>Start from the complaint intake — register a complaint, attach evidence and run the AI analysis.</p>
+      <a class="btn btn-primary" href="intake.html">Go to Complaint Intake <span class="btn-arrow">›</span></a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/theme.js"></script>
+<script>
+"use strict";
+const runId = sessionStorage.getItem('fcuRun');
+const mode  = sessionStorage.getItem('fcuMode');
+let order = [], agents = {}, doneCount = 0;
+
+(async function boot(){
+  await initModePill();
+  if(mode) setModePill(mode);
+  if(!runId){
+    if(sessionStorage.getItem('fcuReport')){
+      $('anaStatus').textContent='Analysis complete — report ready.';
+      $('progBar').style.width='100%';
+      $('doneActions').style.display='flex';
+    } else $('emptyState').style.display='block';
+    return;
+  }
+  $('anaStatus').textContent='Connecting to the investigation stream…';
+  const es=new EventSource('/api/stream/'+runId);
+  es.onmessage=ev=>{ try{ handle(JSON.parse(ev.data),es); }catch(e){ console.error(e); } };
+  es.onerror=()=>{};
+})();
+
+function agentCard(a){
+  const el=document.createElement('div');
+  el.className='card agent'; el.id='ag-'+a.key;
+  el.innerHTML=`
+    <div class="ch">
+      <div class="ch-left"><span style="font-size:15px">${a.icon}</span><h3>${esc(a.name)}</h3></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="spin"></span>
+        <span class="ch-badge gold stx">Queued</span>
+      </div>
+    </div>
+    <div class="cb" style="padding-top:10px">
+      <div class="hint" style="margin-bottom:6px">${esc(a.role)}</div>
+      <div class="tools-log"></div>
+      <div class="memo-slot"></div>
+    </div>`;
+  return el;
+}
+
+function setBadge(el,text,cls){
+  const b=el.querySelector('.stx');
+  b.textContent=text; b.className='ch-badge stx '+cls;
+}
+
+function handle(e, es){
+  if(e.type==='pipeline_start'){
+    order=e.agents.map(a=>a.key);
+    e.agents.forEach(a=>{agents[a.key]=a;$('agentList').appendChild(agentCard(a));});
+    $('progBar').style.width='2%';
+  }
+  else if(e.type==='agent_start'){
+    const el=$('ag-'+e.agent); el.classList.add('running');
+    setBadge(el,'Working','amber');
+    $('anaStatus').textContent=`Agent ${order.indexOf(e.agent)+1} of ${order.length} — ${agents[e.agent].name} working…`;
+    el.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+  else if(e.type==='tool_call'){
+    const log=$('ag-'+e.agent).querySelector('.tools-log');
+    const args=Object.values(e.args||{}).join(', ');
+    log.insertAdjacentHTML('beforeend',
+      `<div class="tline"><span>⚙</span><span class="tn">${esc(e.tool)}</span><span>${esc(args)}</span></div>`);
+  }
+  else if(e.type==='tool_result'){
+    const log=$('ag-'+e.agent).querySelector('.tools-log');
+    log.insertAdjacentHTML('beforeend',`<div class="tline res">↳ ${esc(e.summary)}</div>`);
+  }
+  else if(e.type==='agent_memo'){
+    const slot=$('ag-'+e.agent).querySelector('.memo-slot');
+    slot.innerHTML=`<div class="memo clamped">${md(e.memo)}</div><button class="memo-toggle">Show full memo ▾</button>`;
+    const btn=slot.querySelector('.memo-toggle'), m=slot.querySelector('.memo');
+    btn.onclick=()=>{const c=m.classList.toggle('clamped');btn.textContent=c?'Show full memo ▾':'Collapse ▴';};
+  }
+  else if(e.type==='agent_done'){
+    const el=$('ag-'+e.agent); el.classList.remove('running'); el.classList.add('done');
+    setBadge(el,`Done · ${e.elapsed??''}s`,'green');
+    doneCount++; $('progBar').style.width=Math.round(100*doneCount/order.length)+'%';
+  }
+  else if(e.type==='report'){
+    sessionStorage.setItem('fcuReport',JSON.stringify(e.report));
+    sessionStorage.removeItem('fcuRun');
+    $('progBar').style.width='100%';
+    $('anaStatus').textContent='Analysis complete — opening the investigation report…';
+    $('doneActions').style.display='flex';
+    setTimeout(()=>location.href='report.html', 1100);
+  }
+  else if(e.type==='error'){
+    toast(e.message);
+    $('anaStatus').textContent='Run failed: '+e.message;
+  }
+  else if(e.type==='done'){ es.close(); }
+}
+</script>
+</body>
+</html>

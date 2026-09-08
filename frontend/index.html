@@ -3,689 +3,454 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fraud Complaint Analyzer — Financial Crime Unit</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%2312213f' stroke='%234f8ff7' stroke-width='1.6'/%3E%3Cpath d='M8.5 12l2.4 2.4L15.6 9.7' stroke='%2334d399' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<title>Financial Crime Complaint Analyzer</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%23191100' stroke='%23C8A44A' stroke-width='1.6'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Barlow:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#080d18; --panel:#0e1626; --panel2:#121c30; --line:#1d2a44;
-  --text:#e6ecf7; --muted:#8fa0b8; --dim:#5d6c85;
-  --blue:#4f8ff7; --blue-dk:#2b6cd4; --green:#34d399; --amber:#f5b041;
-  --red:#f87171; --pink:#f472b6; --violet:#a78bfa; --cyan:#22d3ee;
-  --mono:'JetBrains Mono',monospace;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold:       #C8A44A;
+  --gold-hi:    #E2BC68;
+  --gold-lo:    #8A6820;
+  --gold-dim:   rgba(200,164,74,0.18);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100%}
-body{font-size:15px;line-height:1.5}
-button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-input,textarea,select{font-family:inherit;font-size:14px;color:var(--text);background:#0a1220;border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;outline:none}
-input:focus,textarea:focus,select:focus{border-color:var(--blue)}
-::placeholder{color:var(--dim)}
-a{color:var(--blue)}
 
-/* ── header ─────────────────────────────── */
-header{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0c1424,#0a101d);position:sticky;top:0;z-index:50}
-.brand{display:flex;align-items:center;gap:14px}
-.badge-shield{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#16294d,#0e1a33);border:1px solid #29416e;display:flex;align-items:center;justify-content:center}
-.brand h1{font-size:17px;font-weight:700;letter-spacing:.4px}
-.brand .sub{font-size:11.5px;color:var(--muted);letter-spacing:2.2px;text-transform:uppercase}
-.hright{display:flex;align-items:center;gap:18px}
-.mode-chip{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
-.mode-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--dim)}
-.mode-chip.live{border-color:#1d4d38;color:var(--green)} .mode-chip.live .dot{background:var(--green);box-shadow:0 0 8px var(--green)}
-.mode-chip.sim{border-color:#5c451a;color:var(--amber)} .mode-chip.sim .dot{background:var(--amber);box-shadow:0 0 8px var(--amber)}
-.powered{display:flex;align-items:center;gap:9px;font-size:11px;color:var(--muted);letter-spacing:1px}
-.powered img{height:22px;filter:brightness(0) invert(1);opacity:.9}
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #060501;
+  font-family: 'Barlow', sans-serif;
+}
 
-main{max-width:1240px;margin:0 auto;padding:26px 28px 80px}
-.view{display:none}.view.active{display:block}
+#bg {
+  position: fixed;
+  inset: 0; width: 100%; height: 100%;
+  display: block;
+}
 
-/* ── shared bits ────────────────────────── */
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
-.card h3{font-size:13px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14px;padding:10px 18px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);transition:.15s}
-.btn:hover{border-color:var(--blue);color:#fff}
-.btn.primary{background:linear-gradient(135deg,var(--blue),var(--blue-dk));border-color:transparent;color:#fff;font-size:15px;padding:12px 26px}
-.btn.primary:hover{filter:brightness(1.12)}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.chip{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.8px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);text-transform:uppercase}
-.chip.red{color:var(--red);border-color:#5b2727;background:#2a1010}
-.chip.amber{color:var(--amber);border-color:#5c451a;background:#241a06}
-.chip.green{color:var(--green);border-color:#1d4d38;background:#0a2018}
-.chip.blue{color:var(--blue);border-color:#274a80;background:#0d1a30}
-.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#2a1010;border:1px solid #5b2727;color:#fecaca;padding:12px 20px;border-radius:10px;font-size:14px;z-index:99;display:none;max-width:640px}
+.page {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+}
 
-/* ── intake ─────────────────────────────── */
-.intake-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
-.intake-top .lead-txt h2{font-size:24px;font-weight:800}
-.intake-top .lead-txt p{color:var(--muted);font-size:14px}
-.intake-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:20px}
-@media(max-width:960px){.intake-grid{grid-template-columns:1fr}}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.fgrid .full{grid-column:1/-1}
-label.fl{display:block;font-size:11.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin:0 0 4px 2px}
-textarea{resize:vertical;min-height:130px;line-height:1.55}
-.ev-stack{display:flex;flex-direction:column;gap:14px}
-.ev{border:1px dashed #2b3c5e;border-radius:12px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start;transition:.15s;background:#0b1322}
-.ev.auto{border-style:solid;border-color:var(--line)}
-.ev .ic{font-size:22px;line-height:1;margin-top:2px}
-.ev .body{flex:1;min-width:0}
-.ev .t{font-weight:700;font-size:14.5px}
-.ev .d{font-size:12.5px;color:var(--muted);margin-top:2px}
-.ev .file{margin-top:8px;font-size:12.5px;font-family:var(--mono);color:var(--green);word-break:break-all;display:none}
-.ev .prev{margin-top:6px;font-size:11.5px;font-family:var(--mono);color:var(--dim);white-space:pre-wrap;max-height:64px;overflow:hidden;display:none}
-.ev .up{margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.ev .up .btn{font-size:12.5px;padding:6px 12px}
-.ev.filled{border-color:#1d4d38}
-.okmark{color:var(--green);font-size:16px;display:none}
-.ev.filled .okmark{display:inline}
-.analyze-bar{margin-top:22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.analyze-bar select{width:auto;font-size:13px}
-.hint{font-size:12.5px;color:var(--dim)}
+nav {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 60px 0;
+}
 
-/* ── analysis ───────────────────────────── */
-.ana-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:10px}
-.ana-head h2{font-size:22px;font-weight:800}
-.progress{height:5px;background:#101a2e;border-radius:99px;overflow:hidden;margin:12px 0 22px}
-.progress i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .6s}
-.agent{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden;opacity:.55;transition:.3s}
-.agent.running{opacity:1;border-color:#2b57a0;box-shadow:0 0 0 1px #2b57a033,0 8px 30px -18px #4f8ff7aa}
-.agent.done{opacity:1}
-.agent-h{display:flex;align-items:center;gap:14px;padding:14px 18px}
-.agent-h .ic{font-size:22px}
-.agent-h .nm{font-weight:700;font-size:15.5px}
-.agent-h .rl{font-size:12.5px;color:var(--muted)}
-.agent-h .st{margin-left:auto;font-size:12px;font-weight:700;letter-spacing:1px;color:var(--dim);display:flex;align-items:center;gap:8px;white-space:nowrap}
-.spinner{width:14px;height:14px;border:2px solid #27406e;border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;display:none}
-.agent.running .spinner{display:block}
-@keyframes spin{to{transform:rotate(360deg)}}
-.agent-b{padding:0 18px 14px 54px;display:none}
-.agent.running .agent-b,.agent.done .agent-b{display:block}
-.tline{font-size:12.5px;font-family:var(--mono);color:var(--muted);padding:3px 0;display:flex;gap:8px;align-items:baseline}
-.tline .tn{color:var(--cyan);font-weight:600;white-space:nowrap}
-.tline .ta{color:var(--dim);word-break:break-all}
-.tline.res{color:var(--dim);padding-left:14px;border-left:2px solid #1d2a44;margin-left:4px}
-.memo{margin-top:10px;background:#0b1322;border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:13.5px}
-.memo-toggle{font-size:12px;color:var(--blue);font-weight:600;margin-top:8px}
-.memo.clamped{max-height:150px;overflow:hidden;position:relative}
-.memo.clamped::after{content:'';position:absolute;inset:auto 0 0 0;height:60px;background:linear-gradient(transparent,#0b1322)}
+.nav-title {
+  font-size: 12.5px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #E2BC68; opacity: .9;
+}
 
-/* ── report ─────────────────────────────── */
-.rep-head{display:flex;gap:22px;align-items:stretch;margin-bottom:20px;flex-wrap:wrap}
-.rep-title{flex:1;min-width:300px}
-.rep-title .ref{font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:1px}
-.rep-title h2{font-size:26px;font-weight:800;margin:4px 0 10px}
-.rep-title .chips{display:flex;gap:8px;flex-wrap:wrap}
-.gauge-card{display:flex;align-items:center;gap:18px;padding:16px 22px}
-.gauge{position:relative;width:104px;height:104px}
-.gauge svg{transform:rotate(-90deg)}
-.gauge .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.gauge .val b{font-size:28px;font-weight:800}
-.gauge .val span{font-size:9.5px;letter-spacing:1.5px;color:var(--muted)}
-.gauge-meta .lvl{font-size:20px;font-weight:800}
-.gauge-meta .cf{font-size:12.5px;color:var(--muted)}
-.rep-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
-.col12{grid-column:span 12}.col7{grid-column:span 7}.col6{grid-column:span 6}.col5{grid-column:span 5}
-@media(max-width:980px){.col7,.col6,.col5{grid-column:span 12}}
-.exec p{font-size:15.5px;line-height:1.65;color:#d6dfee}
-.finding{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #16223a}
-.finding:last-child{border-bottom:none}
-.finding .sev{flex:none;margin-top:3px;width:9px;height:9px;border-radius:50%}
-.sev.critical{background:var(--red);box-shadow:0 0 8px var(--red)}
-.sev.warning{background:var(--amber)}.sev.info{background:var(--blue)}
-.finding b{font-size:14.5px}
-.finding p{font-size:13px;color:var(--muted);margin-top:2px}
-.finding .src{font-size:11px;color:var(--dim);font-style:italic}
-.prior{border:1px solid #5b2727;background:linear-gradient(180deg,#1c0e12,#140a10)}
-.prior h3{color:#fca5a5}
-.prior .alert{font-size:15px;font-weight:700;color:#fecaca;margin-bottom:12px;display:flex;gap:10px;align-items:center}
-table.tbl{width:100%;border-collapse:collapse;font-size:13px}
-table.tbl th{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
-table.tbl td{padding:9px 10px;border-bottom:1px solid #16223a;vertical-align:top}
-table.tbl tr:last-child td{border-bottom:none}
-.mono{font-family:var(--mono);font-size:12px}
-.match-chip{display:inline-block;font-size:10.5px;font-family:var(--mono);background:#2a1010;border:1px solid #5b2727;color:#fca5a5;border-radius:6px;padding:2px 7px;margin:2px 3px 0 0}
-.amt{font-family:var(--mono);text-align:right;white-space:nowrap}
-tr.hl td{background:#101d3a}
-#netcanvas{width:100%;height:430px;border-radius:10px;background:#0a1120;border:1px solid var(--line)}
-.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11.5px;color:var(--muted)}
-.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
-.ent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
-.ent{background:#0b1322;border:1px solid var(--line);border-radius:10px;padding:11px 13px}
-.ent.flag{border-color:#5b2727}
-.ent .ty{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--dim)}
-.ent b{font-size:13.5px;display:block;margin:2px 0}
-.ent p{font-size:12px;color:var(--muted)}
-.tl-item{display:flex;gap:14px;padding:7px 0;border-bottom:1px solid #16223a;font-size:13.5px}
-.tl-item:last-child{border-bottom:none}
-.tl-item .dt{flex:none;width:92px;font-family:var(--mono);font-size:12px;color:var(--cyan)}
-.tl-item .src{color:var(--dim);font-size:11.5px;font-style:italic}
-.action{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #16223a}
-.action:last-child{border-bottom:none}
-.action b{font-size:14px}
-.action p{font-size:12.5px;color:var(--muted)}
-.vi-card{border-color:#274a80;background:linear-gradient(180deg,#0e1a30,#0c1426)}
-.vi-card p{font-size:13.5px;color:#c6d4ea;line-height:1.6}
-.qa-log{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;max-height:440px;overflow:auto}
-.qa-q{align-self:flex-end;background:#173058;border-radius:12px 12px 3px 12px;padding:9px 14px;font-size:14px;max-width:85%}
-.qa-a{align-self:flex-start;background:#0b1322;border:1px solid var(--line);border-radius:12px 12px 12px 3px;padding:11px 15px;font-size:13.5px;max-width:95%}
-.qa-a .tools{margin-top:8px}
-.qa-a .tools .chip{font-size:10px;margin-right:4px}
-.qa-in{display:flex;gap:10px}
-.qa-in input{flex:1}
-.rep-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+.nav-tabs {
+  display: flex;
+  gap: 40px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
 
-/* markdown */
-.md p{margin:6px 0}.md ul,.md ol{margin:6px 0 6px 20px}.md li{margin:3px 0}
-.md h1,.md h2,.md h3,.md h4{margin:10px 0 4px;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
-.md strong{color:#fff}.md code{font-family:var(--mono);font-size:12px;background:#101c33;padding:1px 5px;border-radius:5px;color:var(--cyan)}
-.md table{border-collapse:collapse;margin:8px 0;font-size:12.5px;width:100%}
-.md th{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--dim);text-align:left;padding:5px 8px;border-bottom:1px solid var(--line)}
-.md td{padding:5px 8px;border-bottom:1px solid #16223a}
+.tab {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 0;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.tab:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tab.active {
+  color: var(--gold-hi);
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--gold);
+  box-shadow: 0 0 10px rgba(200, 164, 74, 0.6);
+  border-radius: 2px;
+}
+
+.nav-right {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(200,164,74,0.55);
+}
+
+.main {
+  flex: 1;
+  display: flex; align-items: center;
+  padding: 0 60px;
+  position: relative; z-index: 5;
+}
+
+.content { max-width: 560px; }
+
+.eyebrow {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.35em; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 22px;
+  opacity: 0; animation: fadeUp .7s .1s ease forwards;
+}
+.eyebrow::before {
+  content: '';
+  display: block; width: 28px; height: 1px;
+  background: var(--gold);
+}
+
+h1 {
+  font-size: clamp(32px, 3.8vw, 58px);
+  font-weight: 200; line-height: 1.08;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+  opacity: 0; animation: fadeUp .7s .25s ease forwards;
+}
+h1 strong {
+  font-weight: 700; color: #fff;
+  display: block;
+}
+
+.gold-bar {
+  width: 44px; height: 1.5px;
+  background: linear-gradient(90deg, var(--gold-hi), transparent);
+  margin: 24px 0;
+  opacity: 0; animation: fadeUp .7s .4s ease forwards;
+}
+
+p.desc {
+  font-size: 12.5px; font-weight: 300;
+  line-height: 1.85; color: rgba(255,255,255,0.38);
+  max-width: 460px;
+  opacity: 0; animation: fadeUp .7s .52s ease forwards;
+}
+
+.btns {
+  display: flex; gap: 14px; margin-top: 40px; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp .7s .66s ease forwards;
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 13px 26px; border: none; border-radius: 2px;
+  font-family: 'Barlow', sans-serif; font-weight: 500;
+  font-size: 11px; letter-spacing: 0.09em;
+  cursor: pointer; text-decoration: none; white-space: nowrap;
+  min-width: 230px;
+  transition: all .22s ease; position: relative; overflow: hidden;
+}
+.btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background .2s;
+}
+.btn:hover::after { background: rgba(255,255,255,0.06); }
+
+.btn-primary {
+  background: linear-gradient(135deg, #96720A 0%, #C8A44A 50%, #A8841A 100%);
+  color: #0a0700;
+  box-shadow: 0 0 0 1px rgba(200,164,74,0.3), 0 8px 32px rgba(160,120,20,0.25);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 1px rgba(200,164,74,0.5), 0 12px 40px rgba(180,140,30,0.35);
+}
+
+.btn-arrow { opacity: .6; transition: transform .2s; font-size: 15px; }
+.btn:hover .btn-arrow { transform: translateX(4px); }
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(16px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.hud-labels {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 4;
+}
+.hud {
+  position: absolute;
+  font-size: 7.5px; letter-spacing: 0.12em;
+  font-family: 'Barlow', sans-serif; font-weight: 400;
+  color: rgba(200,164,74,0.3);
+  opacity: 0; animation: fadeUp .4s ease forwards;
+  white-space: nowrap;
+}
+.hud.dim { color: rgba(255,255,255,0.12); }
 </style>
 </head>
 <body>
-<header>
-  <div class="brand">
-    <div class="badge-shield">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-        <path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z" stroke="#4f8ff7" stroke-width="1.6" fill="#12213f"/>
-        <path d="M8.5 12l2.4 2.4L15.6 9.7" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <div>
-      <h1>Fraud Complaint Analyzer</h1>
-      <div class="sub">Financial Crime Unit · Agentic AI Investigation</div>
-    </div>
-  </div>
-  <div class="hright">
-    <div class="mode-chip" id="modeChip"><span class="dot"></span><span id="modeTxt">CHECKING…</span></div>
-    <div class="powered">POWERED BY <img src="sas-logo.png" alt="SAS"></div>
-  </div>
-</header>
 
-<main>
-<!-- ══════════ VIEW 1 · INTAKE ══════════ -->
-<section class="view active" id="view-intake">
-  <div class="intake-top">
-    <div class="lead-txt">
-      <h2>New complaint intake</h2>
-      <p>Register the complaint, attach the evidence, and let the AI investigation team take it from there.</p>
-    </div>
-    <div style="display:flex;gap:10px">
-      <button class="btn" id="btnDemo">⚡ Load sample case</button>
-      <button class="btn" id="btnBlank">✦ Blank case</button>
-    </div>
-  </div>
+<canvas id="bg"></canvas>
 
-  <div class="intake-grid">
-    <div class="card">
-      <h3>📋 Complaint details</h3>
-      <div class="fgrid">
-        <div><label class="fl">Complaint ref</label><input id="f_ref" placeholder="FCU-2026-…"></div>
-        <div><label class="fl">Filed date</label><input id="f_date" placeholder="YYYY-MM-DD"></div>
-        <div class="full"><label class="fl">Category</label><input id="f_cat" placeholder="e.g. Online purchase fraud (non-delivery)"></div>
-        <div><label class="fl">Victim name</label><input id="f_vname"></div>
-        <div><label class="fl">Victim phone</label><input id="f_vphone"></div>
-        <div><label class="fl">Emirate / City</label><input id="f_vcity"></div>
-        <div><label class="fl">Claimed loss (AED)</label><input id="f_loss" type="number"></div>
-        <div class="full"><label class="fl">Victim statement</label><textarea id="f_narr" placeholder="What happened, in the victim's words…"></textarea></div>
-      </div>
+<div class="page">
+  <nav>
+    <div class="nav-title">Financial Crime Unit</div>
+
+    <div class="nav-tabs">
+      <a href="index.html" class="tab active">Landing Page</a>
+      <a href="intake.html" class="tab">Complaint Intake</a>
+      <a href="analysis.html" class="tab">AI Analysis</a>
+      <a href="report.html" class="tab">Investigation Report</a>
     </div>
+    <div class="nav-right">Agentic&nbsp;AI</div>
+  </nav>
 
-    <div class="card">
-      <h3>🗂 Evidence</h3>
-      <div class="ev-stack">
-        <div class="ev" id="ev-conversation">
-          <div class="ic">💬</div>
-          <div class="body">
-            <div class="t">Conversation evidence <span class="okmark">✔</span></div>
-            <div class="d">WhatsApp / chat export (.txt), screenshot (.png .jpg) or PDF — the Conversation Forensics agent will reconstruct it</div>
-            <div class="file"></div><div class="prev"></div>
-            <div class="up"><button class="btn" data-up="conversation">Upload file</button><a class="hint" id="lnkConv" href="/api/demo/conversation.txt" target="_blank" style="display:none">view sample ↗</a></div>
-          </div>
-        </div>
-        <div class="ev" id="ev-statement">
-          <div class="ic">🏦</div>
-          <div class="body">
-            <div class="t">Bank statement <span class="okmark">✔</span></div>
-            <div class="d">PDF or CSV — the Financial Analysis agent will isolate the fraud transfers</div>
-            <div class="file"></div><div class="prev"></div>
-            <div class="up"><button class="btn" data-up="statement">Upload file</button><a class="hint" id="lnkStmt" href="/api/demo/statement.pdf" target="_blank" style="display:none">view sample ↗</a></div>
-          </div>
-        </div>
-        <div class="ev auto">
-          <div class="ic">🌐</div>
-          <div class="body">
-            <div class="t">OSINT collection <span style="color:var(--green);font-size:12px;font-weight:700">AUTOMATIC</span></div>
-            <div class="d">Company registries · telecom intelligence · domain records · social profiling · scam-report databases</div>
-          </div>
-        </div>
-        <div class="ev auto">
-          <div class="ic">🕸️</div>
-          <div class="body">
-            <div class="t">Intelligence repository <span style="color:var(--green);font-size:12px;font-weight:700">AUTOMATIC</span></div>
-            <div class="d">Prior complaints & entity network cross-reference — SAS Visual Investigator in production</div>
-          </div>
-        </div>
-      </div>
-      <input type="file" id="fileInput" hidden>
-    </div>
-  </div>
+  <div class="main">
+    <div class="content">
+      <div class="eyebrow">Agentic AI Investigation Platform</div>
+      <h1>Financial Crime<strong>Complaint Analyzer</strong></h1>
+      <div class="gold-bar"></div>
+      <p class="desc">A unified investigation platform for financial crime units. Citizen fraud complaints — chat screenshots, bank statements and supporting documents — are fused with open-source intelligence and the unit's complaint history by a team of specialist AI agents, producing a complete investigation file in minutes: confirmed losses, linked prior complaints, flagged entities and a prioritized action plan for investigators.</p>
 
-  <div class="analyze-bar">
-    <button class="btn primary" id="btnAnalyze">▶&nbsp; Run AI analysis</button>
-    <select id="modeSel">
-      <option value="auto">Mode: auto</option>
-      <option value="live">Mode: live agents</option>
-      <option value="replay">Mode: simulation</option>
-    </select>
-    <span class="hint" id="modeHint"></span>
-  </div>
-</section>
-
-<!-- ══════════ VIEW 2 · ANALYSIS ══════════ -->
-<section class="view" id="view-analysis">
-  <div class="ana-head">
-    <h2>AI investigation in progress</h2>
-    <span class="chip" id="anaMode"></span>
-  </div>
-  <div class="hint" id="anaStatus">Initializing agents…</div>
-  <div class="progress"><i id="progBar"></i></div>
-  <div id="agentList"></div>
-  <div style="margin-top:18px;display:none" id="reportReady">
-    <button class="btn primary" onclick="showReport()">📄 Open investigation report</button>
-  </div>
-</section>
-
-<!-- ══════════ VIEW 3 · REPORT ══════════ -->
-<section class="view" id="view-report">
-  <div class="rep-toolbar">
-    <button class="btn" onclick="switchView('view-analysis')">← Agent activity</button>
-    <div style="display:flex;gap:10px;align-items:center">
-      <span class="chip" id="repMode"></span>
-      <button class="btn" onclick="location.reload()">✦ New case</button>
-    </div>
-  </div>
-
-  <div class="rep-head">
-    <div class="rep-title">
-      <div class="ref" id="r_ref"></div>
-      <h2 id="r_class"></h2>
-      <div class="chips">
-        <span class="chip blue" id="r_typ"></span>
-        <span class="chip" id="r_conf"></span>
-      </div>
-    </div>
-    <div class="card gauge-card">
-      <div class="gauge">
-        <svg width="104" height="104">
-          <circle cx="52" cy="52" r="45" stroke="#16223a" stroke-width="9" fill="none"/>
-          <circle id="gaugeArc" cx="52" cy="52" r="45" stroke="#f87171" stroke-width="9" fill="none"
-                  stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="283"/>
-        </svg>
-        <div class="val"><b id="r_score">–</b><span>RISK SCORE</span></div>
-      </div>
-      <div class="gauge-meta">
-        <div class="lvl" id="r_level"></div>
-        <div class="cf">AI fraud-risk assessment<br>across all evidence sources</div>
+      <div class="btns">
+        <a href="intake.html" class="btn btn-primary">New Complaint Intake <span class="btn-arrow">›</span></a>
+        <a href="intake.html" class="btn btn-primary" onclick="sessionStorage.setItem('fcuLoadDemo','1')">Run the Sample Case <span class="btn-arrow">›</span></a>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="rep-grid">
-    <div class="card col7 exec"><h3>⭐ Executive summary</h3><p id="r_exec"></p></div>
-    <div class="card col5"><h3>🚩 Key findings</h3><div id="r_findings"></div></div>
-
-    <div class="card col12 prior">
-      <h3>🕸️ Intelligence match — linked prior complaints</h3>
-      <div class="alert" id="r_priorAlert"></div>
-      <div style="overflow-x:auto"><table class="tbl" id="r_priorTbl"></table></div>
-    </div>
-
-    <div class="card col7"><h3>🔗 Entity network</h3>
-      <canvas id="netcanvas"></canvas>
-      <div class="legend" id="netLegend"></div>
-    </div>
-    <div class="card col5"><h3>⏱ Case timeline</h3><div id="r_timeline" style="max-height:470px;overflow:auto"></div></div>
-
-    <div class="card col7"><h3>💸 Financial flow</h3>
-      <div style="overflow-x:auto"><table class="tbl" id="r_flow"></table></div>
-    </div>
-    <div class="card col5"><h3>👤 Entities</h3><div class="ent-grid" id="r_entities" style="max-height:470px;overflow:auto"></div></div>
-
-    <div class="card col6"><h3>✅ Recommended actions</h3><div id="r_actions"></div></div>
-    <div class="card col6 vi-card"><h3>🧭 Next step — SAS Visual Investigator</h3>
-      <p id="r_vi"></p>
-      <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <button class="btn" onclick="toast('Step 2 of this demo: pushes the consolidated case object to SAS Visual Investigator via its REST API.', false)">⬈ Create case in Visual Investigator</button>
-        <span class="hint">Integration hook — step 2</span>
-      </div>
-    </div>
-
-    <div class="card col12"><h3>🤖 Ask the investigation assistant</h3>
-      <div class="qa-log" id="qaLog"></div>
-      <div class="qa-in">
-        <input id="qaInput" placeholder="e.g. Which bank should receive the freeze request, and what exactly do we ask for?">
-        <button class="btn primary" id="qaSend">Ask</button>
-      </div>
-      <div class="hint" id="qaHint" style="margin-top:8px"></div>
-    </div>
-  </div>
-</section>
-</main>
-
-<div class="toast" id="toast"></div>
+<div class="hud-labels">
+  <span class="hud"     style="right:42%; top:28%; animation-delay:1.1s">1.AA</span>
+  <span class="hud"     style="right:36%; top:22%; animation-delay:1.4s">AO · 010</span>
+  <span class="hud dim" style="right:29%; top:18%; animation-delay:1.7s">— —</span>
+  <span class="hud"     style="right:46%; top:33%; animation-delay:1.9s">00.1</span>
+  <span class="hud"     style="right:22%; top:21%; animation-delay:1.3s">A.11111101</span>
+  <span class="hud"     style="right:38%; top:42%; animation-delay:1.6s">00.100</span>
+  <span class="hud"     style="right:18%; top:30%; animation-delay:1.8s">1.45</span>
+  <span class="hud"     style="right:12%; top:44%; animation-delay:2.1s">20.100</span>
+  <span class="hud"     style="right:44%; top:62%; animation-delay:2.3s">OO · 1101</span>
+  <span class="hud"     style="right:28%; top:72%; animation-delay:2.5s">AA0.1101111</span>
+  <span class="hud"     style="right:14%; top:78%; animation-delay:2.6s">10.11CC01</span>
+  <span class="hud dim" style="right:8%;  top:35%; animation-delay:2.0s">00</span>
+</div>
 
 <script>
-"use strict";
-/* ── state ─────────────────────────────── */
-const S = { caseId:null, health:null, agents:{}, order:[], doneCount:0, report:null, uploadKind:null, mode:null };
-const $ = id => document.getElementById(id);
+const C   = document.getElementById('bg');
+const ctx = C.getContext('2d');
+let W, H;
 
-function toast(msg, isErr=true){
-  const t=$('toast'); t.textContent=msg;
-  t.style.background=isErr?'#2a1010':'#0e1a30'; t.style.borderColor=isErr?'#5b2727':'#274a80'; t.style.color=isErr?'#fecaca':'#c6d4ea';
-  t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none', 6000);
+function resize() {
+  W = C.width  = window.innerWidth  * devicePixelRatio;
+  H = C.height = window.innerHeight * devicePixelRatio;
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  W = window.innerWidth; H = window.innerHeight;
 }
-function switchView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$(id).classList.add('active');window.scrollTo(0,0);}
-function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+resize();
 
-/* ── tiny markdown renderer (headings, bold/italic/code, lists, tables) ── */
-function md(src){
-  const lines=String(src??'').split('\n'); let out=[],list=null,tbl=null;
-  const inline=s=>esc(s)
-    .replace(/`([^`]+)`/g,'<code>$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*([^*]+)\*/g,'<em>$1</em>');
-  const flushList=()=>{if(list){out.push(`<${list.t}>`+list.items.map(i=>`<li>${i}</li>`).join('')+`</${list.t}>`);list=null;}};
-  const flushTbl=()=>{if(tbl){
-    let h='<table><thead><tr>'+tbl.head.map(c=>`<th>${inline(c)}</th>`).join('')+'</tr></thead><tbody>';
-    h+=tbl.rows.map(r=>'<tr>'+r.map(c=>`<td>${inline(c)}</td>`).join('')+'</tr>').join('');
-    out.push(h+'</tbody></table>');tbl=null;}};
-  for(const raw of lines){
-    const line=raw.trimEnd();
-    if(/^\s*\|.*\|\s*$/.test(line)){
-      const cells=line.trim().replace(/^\||\|$/g,'').split('|').map(c=>c.trim());
-      if(cells.every(c=>/^:?-{2,}:?$/.test(c))) continue;           // separator row
-      if(!tbl) tbl={head:cells,rows:[]}; else tbl.rows.push(cells);
-      continue;
-    } else flushTbl();
-    const h=line.match(/^(#{1,4})\s+(.*)/);
-    const li=line.match(/^\s*[-*]\s+(.*)/); const ni=line.match(/^\s*\d+[.)]\s+(.*)/);
-    if(h){flushList();out.push(`<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`);}
-    else if(li){if(!list||list.t!=='ul'){flushList();list={t:'ul',items:[]};}list.items.push(inline(li[1]));}
-    else if(ni){if(!list||list.t!=='ol'){flushList();list={t:'ol',items:[]};}list.items.push(inline(ni[1]));}
-    else if(!line.trim()){flushList();}
-    else {flushList();out.push(`<p>${inline(line)}</p>`);}
-  }
-  flushList();flushTbl();
-  return `<div class="md">${out.join('')}</div>`;
-}
+const WAVES = [
+  { yF:.50, aF:.16, spd:.44, rgb:[255,255,255], al:.78, lw:1.8,
+    h:[{f:1,a:1,p:0},{f:2.1,a:.36,p:.9},{f:3.4,a:.13,p:1.8},{f:5.2,a:.05,p:2.5}],
+    pulse:{spd:.85,w:.16,str:2.8,col:[255,242,210]} },
+  { yF:.535,aF:.13, spd:.32, rgb:[222,174,56],  al:.70, lw:1.5,
+    h:[{f:1,a:1,p:1.2},{f:2,a:.30,p:2.1},{f:3.2,a:.12,p:.6}],
+    pulse:{spd:.60,w:.19,str:2.2,col:[255,212,88]} },
+  { yF:.465,aF:.08, spd:.54, rgb:[242,208,112], al:.40, lw:.85,
+    h:[{f:1,a:1,p:2.5},{f:2.7,a:.38,p:1.1},{f:4.9,a:.16,p:3.1}],
+    pulse:{spd:1.05,w:.11,str:1.8,col:[255,232,145]} },
+  { yF:.435,aF:.05, spd:.22, rgb:[210,210,210], al:.18, lw:.7,
+    h:[{f:1,a:1,p:3.6},{f:2,a:.43,p:.4}],
+    pulse:{spd:.38,w:.24,str:1.4,col:[230,230,230]} },
+  { yF:.615,aF:.07, spd:.18, rgb:[175,128,28],  al:.25, lw:1.1,
+    h:[{f:1,a:1,p:4.3},{f:3,a:.20,p:1.9}],
+    pulse:{spd:.48,w:.21,str:1.6,col:[218,162,48]} },
+  { yF:.49, aF:.04, spd:.70, rgb:[240,220,150], al:.22, lw:.5,
+    h:[{f:1,a:1,p:.7},{f:3,a:.55,p:2.0},{f:6,a:.28,p:.3}],
+    pulse:{spd:1.4,w:.08,str:1.5,col:[255,245,200]} },
+];
 
-/* ── boot ──────────────────────────────── */
-(async function boot(){
-  try{
-    S.health=await (await fetch('/api/health')).json();
-    const live=S.health.llm_configured;
-    setModeChip(S.health.default_mode);
-    $('modeHint').textContent=live
-      ? `Live agents ready — model ${S.health.model}. Simulation mode also available.`
-      : 'No ANTHROPIC_API_KEY configured — runs use the built-in simulation. Add the key on Railway for live agents.';
-    $('qaHint').textContent=live?'':'Follow-up Q&A needs live mode (ANTHROPIC_API_KEY).';
-  }catch(e){ toast('Backend unreachable: '+e.message); }
-})();
-function setModeChip(mode){
-  const chip=$('modeChip');chip.classList.remove('live','sim');
-  if(mode==='live'){chip.classList.add('live');$('modeTxt').textContent='LIVE AGENTS';}
-  else {chip.classList.add('sim');$('modeTxt').textContent='SIMULATION';}
+const pPh = WAVES.map((_,i) => i * 1.19);
+
+const PARTS = Array.from({length:700}, (_,i) => ({
+  xF:  .38 + Math.random() * .62,
+  byF: .30 + Math.random() * .52,
+  r:   i<580 ? .3+Math.random()*.8 : 1.0+Math.random()*1.6,
+  spd: .10 + Math.random() * .48,
+  ph:  Math.random() * Math.PI * 2,
+  al:  i<580 ? .03+Math.random()*.13 : .12+Math.random()*.28,
+  col: i<420 ? [192,148,34] : [255,255,255],
+  spark: i>=580,
+}));
+
+/* Use a fixed time value so the snapshot looks like a mid-animation frame */
+const T = 2.5;
+
+function waveY(wv, xFrac) {
+  let y = 0;
+  for (const h of wv.h)
+    y += h.a * Math.sin(wv.spd * h.f * xFrac * Math.PI * 7 + T * wv.spd * h.f * 1.1 + h.p);
+  return y;
 }
 
-/* ── intake actions ────────────────────── */
-$('btnDemo').onclick=async()=>{
-  try{
-    const r=await (await fetch('/api/case/demo',{method:'POST'})).json();
-    S.caseId=r.case_id; fillComplaint(r.complaint); fillEvidence(r.evidence,true);
-    toast('Sample case loaded: complaint, WhatsApp export and bank statement attached.',false);
-  }catch(e){toast('Could not load sample case: '+e.message);}
-};
-$('btnBlank').onclick=async()=>{
-  const r=await (await fetch('/api/case/new',{method:'POST'})).json();
-  S.caseId=r.case_id;
-  ['f_ref','f_date','f_cat','f_vname','f_vphone','f_vcity','f_loss','f_narr'].forEach(i=>$(i).value='');
-  fillEvidence({conversation:false,statement:false},false);
-};
-function fillComplaint(c){
-  $('f_ref').value=c.complaint_ref||'';$('f_date').value=c.filed_date||'';$('f_cat').value=c.category||'';
-  $('f_vname').value=c.victim?.name||'';$('f_vphone').value=c.victim?.phone||'';$('f_vcity').value=c.victim?.emirate||'';
-  $('f_loss').value=c.claimed_loss||'';$('f_narr').value=c.narrative||'';
-}
-function fillEvidence(ev,isDemo){
-  const set=(id,on,name,prev)=>{
-    const el=$(id);el.classList.toggle('filled',!!on);
-    el.querySelector('.file').style.display=on?'block':'none';
-    el.querySelector('.file').textContent=name||'';
-    el.querySelector('.prev').style.display=(on&&prev)?'block':'none';
-    el.querySelector('.prev').textContent=prev||'';
-  };
-  set('ev-conversation',ev.conversation,ev.conversation_name,ev.conversation_preview);
-  set('ev-statement',ev.statement,ev.statement_name,ev.statement_preview);
-  $('lnkConv').style.display=isDemo?'inline':'none';
-  $('lnkStmt').style.display=isDemo?'inline':'none';
-}
-document.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{
-  S.uploadKind=b.dataset.up;
-  $('fileInput').accept=S.uploadKind==='conversation'?'.txt,.png,.jpg,.jpeg,.webp,.pdf':'.pdf,.csv,.txt';
-  $('fileInput').click();
-});
-$('fileInput').onchange=async e=>{
-  const f=e.target.files[0]; if(!f)return; e.target.value='';
-  if(!S.caseId){const r=await (await fetch('/api/case/new',{method:'POST'})).json();S.caseId=r.case_id;}
-  const fd=new FormData();fd.append('case_id',S.caseId);fd.append('kind',S.uploadKind);fd.append('file',f);
-  try{
-    const res=await fetch('/api/upload',{method:'POST',body:fd});
-    if(!res.ok) throw new Error((await res.json()).detail||res.statusText);
-    fillEvidence((await res.json()).evidence,false);
-    toast(`${f.name} attached.`,false);
-  }catch(err){toast('Upload failed: '+err.message);}
-};
-
-/* ── run analysis ──────────────────────── */
-$('btnAnalyze').onclick=async()=>{
-  if(!S.caseId){toast('Load the sample case or create a case first.');return;}
-  const complaint={
-    complaint_ref:$('f_ref').value,filed_date:$('f_date').value,category:$('f_cat').value,
-    channel:'e-Crime Portal',claimed_loss:Number($('f_loss').value)||0,currency:'AED',
-    victim:{name:$('f_vname').value,phone:$('f_vphone').value,emirate:$('f_vcity').value},
-    narrative:$('f_narr').value};
-  let res;
-  try{
-    res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({case_id:S.caseId,mode:$('modeSel').value,complaint})});
-    if(!res.ok) throw new Error((await res.json()).detail||res.statusText);
-  }catch(err){toast(err.message);return;}
-  const {run_id,mode}=await res.json();
-  S.mode=mode; setModeChip(mode);
-  $('anaMode').textContent=mode==='live'?'LIVE AGENTIC RUN':'SIMULATION';
-  $('anaMode').className='chip '+(mode==='live'?'green':'amber');
-  $('agentList').innerHTML='';$('progBar').style.width='2%';$('reportReady').style.display='none';
-  S.agents={};S.order=[];S.doneCount=0;
-  switchView('view-analysis');
-  const es=new EventSource('/api/stream/'+run_id);
-  es.onmessage=ev=>{try{handleEvent(JSON.parse(ev.data),es);}catch(e){console.error(e);}};
-  es.onerror=()=>{/* stream closes at end; ignore */};
-};
-
-function agentCard(a){
-  const el=document.createElement('div');el.className='agent';el.id='ag-'+a.key;
-  el.innerHTML=`<div class="agent-h"><div class="ic">${a.icon}</div>
-    <div><div class="nm">${esc(a.name)}</div><div class="rl">${esc(a.role)}</div></div>
-    <div class="st"><div class="spinner"></div><span class="stx">QUEUED</span></div></div>
-    <div class="agent-b"><div class="tools-log"></div><div class="memo-slot"></div></div>`;
-  return el;
-}
-function handleEvent(e,es){
-  if(e.type==='pipeline_start'){
-    S.order=e.agents.map(a=>a.key);
-    e.agents.forEach(a=>{S.agents[a.key]=a;$('agentList').appendChild(agentCard(a));});
+function drawGrid() {
+  const x0 = W * 0.36;
+  for (let gx = x0; gx < W; gx += W * .055) {
+    const fade = Math.min(1,(gx-x0)/(W*.08));
+    ctx.strokeStyle = `rgba(200,164,74,${.020*fade})`;
+    ctx.lineWidth = .5;
+    ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke();
   }
-  else if(e.type==='agent_start'){
-    const el=$('ag-'+e.agent);el.classList.add('running');
-    el.querySelector('.stx').textContent='WORKING';
-    $('anaStatus').textContent=`Agent ${S.order.indexOf(e.agent)+1} of ${S.order.length} — ${S.agents[e.agent].name} working…`;
-    el.scrollIntoView({behavior:'smooth',block:'nearest'});
+  for (let gy = 0; gy < H; gy += H * .09) {
+    ctx.strokeStyle = `rgba(200,164,74,0.016)`;
+    ctx.lineWidth = .5;
+    ctx.beginPath(); ctx.moveTo(x0,gy); ctx.lineTo(W,gy); ctx.stroke();
   }
-  else if(e.type==='tool_call'){
-    const log=$('ag-'+e.agent).querySelector('.tools-log');
-    const args=Object.values(e.args||{}).join(', ');
-    log.insertAdjacentHTML('beforeend',`<div class="tline"><span>⚙</span><span class="tn">${esc(e.tool)}</span><span class="ta">${esc(args)}</span></div>`);
-  }
-  else if(e.type==='tool_result'){
-    const log=$('ag-'+e.agent).querySelector('.tools-log');
-    log.insertAdjacentHTML('beforeend',`<div class="tline res">↳ ${esc(e.summary)}</div>`);
-  }
-  else if(e.type==='agent_memo'){
-    const slot=$('ag-'+e.agent).querySelector('.memo-slot');
-    slot.innerHTML=`<div class="memo clamped">${md(e.memo)}</div><button class="memo-toggle">Show full memo ▾</button>`;
-    const btn=slot.querySelector('.memo-toggle'),m=slot.querySelector('.memo');
-    btn.onclick=()=>{const c=m.classList.toggle('clamped');btn.textContent=c?'Show full memo ▾':'Collapse ▴';};
-  }
-  else if(e.type==='agent_done'){
-    const el=$('ag-'+e.agent);el.classList.remove('running');el.classList.add('done');
-    el.querySelector('.stx').textContent=`DONE · ${e.elapsed??''}s`;
-    S.doneCount++;$('progBar').style.width=Math.round(100*S.doneCount/S.order.length)+'%';
-  }
-  else if(e.type==='report'){
-    S.report=e.report;$('progBar').style.width='100%';
-    $('anaStatus').textContent='Analysis complete — report ready.';
-    $('reportReady').style.display='block';
-    setTimeout(showReport,900);
-  }
-  else if(e.type==='error'){ toast(e.message); $('anaStatus').textContent='Run failed: '+e.message; }
-  else if(e.type==='done'){ es.close(); }
 }
 
-/* ── report rendering ──────────────────── */
-function showReport(){
-  const r=S.report; if(!r)return;
-  switchView('view-report');
-  $('repMode').textContent=S.mode==='live'?'LIVE AGENTIC RUN':'SIMULATION';
-  $('repMode').className='chip '+(S.mode==='live'?'green':'amber');
-  $('r_ref').textContent=r.case_ref+' · investigation report';
-  $('r_class').textContent=r.classification;
-  $('r_typ').textContent=r.typology;
-  $('r_conf').textContent='confidence: '+r.confidence;
-  $('r_exec').textContent=r.executive_summary;
-  const lvlColor={LOW:'#34d399',MEDIUM:'#f5b041',HIGH:'#fb923c',CRITICAL:'#f87171'}[r.risk_level]||'#f87171';
-  $('r_score').textContent=r.risk_score;
-  $('r_level').textContent=r.risk_level;$('r_level').style.color=lvlColor;
-  const arc=$('gaugeArc');arc.style.stroke=lvlColor;
-  setTimeout(()=>{arc.style.transition='stroke-dashoffset 1.2s ease';arc.style.strokeDashoffset=283*(1-r.risk_score/100);},60);
-
-  $('r_findings').innerHTML=r.key_findings.map(f=>`
-    <div class="finding"><div class="sev ${f.severity}"></div>
-      <div><b>${esc(f.title)}</b><p>${esc(f.detail)}</p><span class="src">${esc(f.source)}</span></div></div>`).join('');
-
-  const total=r.prior_cases.reduce((s,c)=>s+c.amount,0);
-  $('r_priorAlert').innerHTML=`⚠️ &nbsp;Not a first offence — ${r.prior_cases.length} prior complaint${r.prior_cases.length===1?'':'s'} linked to the same network (prior losses ${fmt(total)} AED)`;
-  $('r_priorTbl').innerHTML=`<thead><tr><th>Case</th><th>Filed</th><th>Victim</th><th>Loss</th><th>Matched on</th><th>Status</th></tr></thead><tbody>`+
-    r.prior_cases.map(c=>`<tr><td class="mono">${esc(c.case_id)}</td><td class="mono">${esc(c.filed_date)}</td>
-      <td>${esc(c.victim)}<div class="hint">${esc(c.summary)}</div></td>
-      <td class="amt">${fmt(c.amount)} ${esc(c.currency)}</td>
-      <td>${c.matched_on.map(m=>`<span class="match-chip">${esc(m)}</span>`).join('')}</td>
-      <td class="hint">${esc(c.status)}</td></tr>`).join('')+'</tbody>';
-
-  $('r_timeline').innerHTML=r.timeline.map(t=>`
-    <div class="tl-item"><div class="dt">${esc(t.date)}</div><div>${esc(t.event)} <span class="src">— ${esc(t.source)}</span></div></div>`).join('');
-
-  $('r_flow').innerHTML=`<thead><tr><th>Date</th><th>From</th><th>To</th><th style="text-align:right">Amount</th><th>Note</th></tr></thead><tbody>`+
-    r.financial_flow.map(f=>{
-      const hl=/THIS CASE/i.test(f.note)?' class="hl"':'';
-      return `<tr${hl}><td class="mono">${esc(f.date)}</td><td>${esc(f.from)}</td><td>${esc(f.to)}</td>
-        <td class="amt">${fmt(f.amount)} ${esc(f.currency)}</td><td class="hint">${esc(f.note)}</td></tr>`;}).join('')+'</tbody>';
-
-  const tyIcon={person:'👤',organization:'🏢',account:'💳',phone:'📱',social:'📣',website:'🌐',case:'📁',location:'📍',other:'▪️'};
-  $('r_entities').innerHTML=r.entities.map(en=>`
-    <div class="ent ${en.flagged?'flag':''}"><div class="ty">${tyIcon[en.type]||''} ${esc(en.type)} ${en.flagged?' · <span style="color:var(--red)">FLAGGED</span>':''}</div>
-      <b>${esc(en.label)}</b><p>${esc(en.role)}</p></div>`).join('');
-
-  $('r_actions').innerHTML=r.recommended_actions.map(a=>{
-    const cls={immediate:'red',high:'amber',routine:''}[a.priority]||'';
-    return `<div class="action"><span class="chip ${cls}" style="height:fit-content">${esc(a.priority)}</span>
-      <div><b>${esc(a.action)}</b><p>${esc(a.rationale)}</p></div></div>`;}).join('');
-
-  $('r_vi').textContent=r.vi_case_summary;
-  drawNetwork(r.network);
+function textAlpha(xFrac) {
+  if (xFrac > 0.38) return 1.0;
+  return 0.12 + (xFrac / 0.38) * 0.88;
 }
-function fmt(n){return Number(n).toLocaleString('en-US');}
 
-/* ── network graph (canvas force layout) ── */
-const TYPE_COLOR={person:'#60a5fa',organization:'#f5b041',account:'#34d399',phone:'#a78bfa',social:'#f472b6',website:'#22d3ee',case:'#94a3b8',location:'#fbbf24',other:'#8fa0b8'};
-function drawNetwork(net){
-  const cv=$('netcanvas'),dpr=window.devicePixelRatio||1;
-  const W=cv.clientWidth||800,H=430;cv.width=W*dpr;cv.height=H*dpr;
-  const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
-  const nodes=net.nodes.map((n,i)=>({...n,
-    x:W/2+Math.cos(2*Math.PI*i/net.nodes.length)*Math.min(W,H)*.32,
-    y:H/2+Math.sin(2*Math.PI*i/net.nodes.length)*H*.32,vx:0,vy:0}));
-  const idx=Object.fromEntries(nodes.map((n,i)=>[n.id,i]));
-  const edges=net.edges.filter(e=>idx[e.from]!=null&&idx[e.to]!=null);
-  const deg={};edges.forEach(e=>{deg[e.from]=(deg[e.from]||0)+1;deg[e.to]=(deg[e.to]||0)+1;});
-  for(let it=0;it<260;it++){
-    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
-      const a=nodes[i],b=nodes[j];let dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy||1,d=Math.sqrt(d2);
-      const f=Math.min(3900/d2,6);dx/=d;dy/=d;
-      a.vx+=dx*f;a.vy+=dy*f;b.vx-=dx*f;b.vy-=dy*f;}
-    edges.forEach(e=>{const a=nodes[idx[e.from]],b=nodes[idx[e.to]];
-      let dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)||1;
-      const f=(d-125)*.012;dx/=d;dy/=d;
-      a.vx+=dx*f*d*.02;a.vy+=dy*f*d*.02;b.vx-=dx*f*d*.02;b.vy-=dy*f*d*.02;});
-    nodes.forEach(n=>{n.vx+=(W/2-n.x)*.004;n.vy+=(H/2-n.y)*.004;
-      n.x+=Math.max(-8,Math.min(8,n.vx));n.y+=Math.max(-8,Math.min(8,n.vy));n.vx*=.55;n.vy*=.55;
-      n.x=Math.max(30,Math.min(W-30,n.x));n.y=Math.max(24,Math.min(H-24,n.y));});
+function drawWave(wv, idx) {
+  const x0    = W * 0.28;
+  const xSpan = W - x0;
+  const yC    = wv.yF * H;
+  const amp   = wv.aF * H;
+  const STEP  = 1.4;
+
+  const pts = [];
+  for (let sx = 0; sx <= xSpan; sx += STEP) {
+    const xFrac = sx / xSpan;
+    const y = yC + waveY(wv, xFrac) * amp;
+    const edgeFd = Math.min(1, sx / (xSpan * .04));
+    pts.push({x: x0 + sx, y, xFrac, edgeFd});
   }
+
+  ctx.save();
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+
+  /* Outer glow pass */
+  ctx.beginPath();
+  pts.forEach(({x,y},i) => i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y));
+  ctx.shadowColor = `rgba(${wv.rgb},.5)`;
+  ctx.shadowBlur  = 28;
+  ctx.strokeStyle = `rgba(${wv.rgb},${wv.al*.08})`;
+  ctx.lineWidth   = wv.lw + 12;
+  ctx.stroke();
+  ctx.shadowBlur  = 0;
+
+  /* Mid glow pass */
+  ctx.beginPath();
+  pts.forEach(({x,y},i) => i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y));
+  ctx.strokeStyle = `rgba(${wv.rgb},${wv.al*.22})`;
+  ctx.lineWidth   = wv.lw + 4;
+  ctx.stroke();
+
+  /* Per-segment core line */
+  for (let i = 0; i < pts.length-1; i++) {
+    const {x:x0p, y:y0, xFrac, edgeFd} = pts[i];
+    const {x:x1p, y:y1} = pts[i+1];
+    const dev   = Math.abs(y0 - yC) / (amp||1);
+    const lw    = wv.lw * (.4 + dev * 1.3);
+    const tA    = textAlpha(xFrac);
+    const alpha = wv.al * edgeFd * tA;
+    ctx.beginPath();
+    ctx.moveTo(x0p,y0); ctx.lineTo(x1p,y1);
+    ctx.strokeStyle = `rgba(${wv.rgb},${alpha.toFixed(3)})`;
+    ctx.lineWidth   = lw;
+    ctx.stroke();
+  }
+
+  /* Pulse highlight */
+  const p    = wv.pulse;
+  const pPos = ((T * p.spd * .15 + pPh[idx]) % 1.0);
+  for (let i = 0; i < pts.length-1; i++) {
+    const {x:px0,y:py0,xFrac} = pts[i];
+    const {x:px1,y:py1}       = pts[i+1];
+    const dist = Math.abs(xFrac - pPos);
+    if (dist > p.w) continue;
+    const str = Math.pow(Math.cos((dist/p.w)*Math.PI*.5), 2);
+    const tA  = textAlpha(xFrac);
+    ctx.beginPath(); ctx.moveTo(px0,py0); ctx.lineTo(px1,py1);
+    ctx.shadowColor = `rgba(${p.col},.7)`;
+    ctx.shadowBlur  = 10 * str;
+    ctx.strokeStyle = `rgba(${p.col},${(wv.al * str * .85 * tA).toFixed(3)})`;
+    ctx.lineWidth   = wv.lw * (.8 + str * p.str);
+    ctx.stroke();
+  }
+  ctx.shadowBlur = 0;
+  ctx.restore();
+}
+
+function draw() {
   ctx.clearRect(0,0,W,H);
-  ctx.strokeStyle='#22314f';ctx.lineWidth=1;
-  ctx.font='9.5px JetBrains Mono';
-  edges.forEach(e=>{const a=nodes[idx[e.from]],b=nodes[idx[e.to]];
-    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
-    ctx.fillStyle='#4c5c78';ctx.textAlign='center';
-    ctx.fillText(e.label,(a.x+b.x)/2,(a.y+b.y)/2-3);});
-  nodes.forEach(n=>{
-    const r=7+Math.min(6,(deg[n.id]||1)*1.1);
-    if(n.flagged){ctx.beginPath();ctx.arc(n.x,n.y,r+3.5,0,7);ctx.strokeStyle='#ef4444';ctx.lineWidth=1.6;ctx.stroke();}
-    ctx.beginPath();ctx.arc(n.x,n.y,r,0,7);
-    ctx.fillStyle=TYPE_COLOR[n.type]||'#8fa0b8';ctx.fill();
-    ctx.beginPath();ctx.arc(n.x,n.y,r,0,7);ctx.strokeStyle='#0a1120';ctx.lineWidth=1.5;ctx.stroke();
-    ctx.fillStyle='#dbe4f3';ctx.font='600 10.5px Barlow';ctx.textAlign='center';
-    ctx.fillText(n.label.length>26?n.label.slice(0,25)+'…':n.label,n.x,n.y+r+11);});
-  $('netLegend').innerHTML=Object.entries(TYPE_COLOR)
-    .filter(([t])=>nodes.some(n=>n.type===t))
-    .map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')
-    +`<span><i style="background:none;border:1.6px solid #ef4444"></i>flagged</span>`;
+
+  const bg = ctx.createRadialGradient(W*.72, H*.5, 0, W*.72, H*.5, W*.72);
+  bg.addColorStop(0,   '#0F0C02');
+  bg.addColorStop(.45, '#090700');
+  bg.addColorStop(1,   '#050400');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,W,H);
+
+  const leftDim = ctx.createLinearGradient(0,0,W*.55,0);
+  leftDim.addColorStop(0,   'rgba(2,2,0,.55)');
+  leftDim.addColorStop(.7,  'rgba(0,0,0,0)');
+  ctx.fillStyle = leftDim;
+  ctx.fillRect(0,0,W,H);
+
+  const glow = ctx.createRadialGradient(W*.72,H*.5,0, W*.72,H*.5,W*.42);
+  glow.addColorStop(0,   'rgba(55,40,5,.15)');
+  glow.addColorStop(.65, 'rgba(20,14,2,.05)');
+  glow.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0,0,W,H);
+
+  drawGrid();
+
+  /* Particles at fixed time T */
+  for (const p of PARTS) {
+    const py  = (p.byF + .05*Math.sin(T*p.spd+p.ph+p.xF*5))*H;
+    const px  = p.xF * W;
+    const xF  = Math.min(1,(p.xF-.38)/.07);
+    const al  = p.al * Math.max(0,xF);
+    if (al < .01) continue;
+    if (p.spark) { ctx.shadowColor=`rgba(${p.col},.6)`; ctx.shadowBlur=5; }
+    ctx.beginPath(); ctx.arc(px,py,p.r,0,Math.PI*2);
+    ctx.fillStyle = `rgba(${p.col},${al.toFixed(3)})`;
+    ctx.fill();
+    if (p.spark) ctx.shadowBlur=0;
+  }
+
+  for (let i = WAVES.length-1; i >= 0; i--) drawWave(WAVES[i], i);
+
+  const bleed = ctx.createLinearGradient(W*.22, 0, W*.58, 0);
+  bleed.addColorStop(0,    'rgba(5,4,1,1)');
+  bleed.addColorStop(.30,  'rgba(5,4,1,.82)');
+  bleed.addColorStop(.62,  'rgba(5,4,1,.22)');
+  bleed.addColorStop(1,    'rgba(0,0,0,0)');
+  ctx.fillStyle = bleed;
+  ctx.fillRect(0,0,W*.58,H);
 }
 
-/* ── Q&A ───────────────────────────────── */
-$('qaSend').onclick=askQ;
-$('qaInput').addEventListener('keydown',e=>{if(e.key==='Enter')askQ();});
-async function askQ(){
-  const q=$('qaInput').value.trim();if(!q)return;
-  $('qaInput').value='';
-  const log=$('qaLog');
-  log.insertAdjacentHTML('beforeend',`<div class="qa-q">${esc(q)}</div>`);
-  const w=document.createElement('div');w.className='qa-a';w.innerHTML='<em style="color:var(--muted)">Investigating…</em>';
-  log.appendChild(w);log.scrollTop=log.scrollHeight;
-  try{
-    const res=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({case_id:S.caseId,question:q})});
-    if(!res.ok) throw new Error((await res.json()).detail||res.statusText);
-    const d=await res.json();
-    w.innerHTML=md(d.answer)+(d.tools_used.length?
-      `<div class="tools">${[...new Set(d.tools_used)].map(t=>`<span class="chip blue">${esc(t)}</span>`).join('')}</div>`:'');
-  }catch(err){w.innerHTML=`<span style="color:var(--red)">${esc(err.message)}</span>`;}
-  log.scrollTop=log.scrollHeight;
-}
+/* Render once on load */
+draw();
+
+/* Re-render only on resize (debounced) */
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { resize(); draw(); }, 150);
+});
 </script>
 </body>
 </html>

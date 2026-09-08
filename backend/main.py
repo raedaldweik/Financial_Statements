@@ -75,10 +75,10 @@ async def analyze(req: AnalyzeRequest) -> dict:
     if mode == "live" and not config.llm_configured():
         raise HTTPException(400, "Live mode requires ANTHROPIC_API_KEY. "
                                  "Use simulation mode or configure the key.")
-    if mode == "live" and not (case.conversation_text or case.conversation_image_b64
-                               or case.statement_text):
+    if mode == "live" and not case.has_evidence():
         raise HTTPException(400, "Attach at least one piece of evidence "
-                                 "(conversation or bank statement) before analyzing.")
+                                 "(complaint screenshots or a financial statement) "
+                                 "before analyzing.")
     case.memos.clear()
     case.report = None
     run_id = pipeline.start_run(case, mode)
@@ -120,6 +120,13 @@ def demo_statement() -> FileResponse:
 def demo_conversation() -> FileResponse:
     return FileResponse(config.DEMO_DIR / "conversation.txt",
                         media_type="text/plain; charset=utf-8")
+
+
+@app.get("/api/demo/chat/{n}.png")
+def demo_chat_image(n: int) -> FileResponse:
+    if n not in (1, 2, 3):
+        raise HTTPException(404, "No such screenshot")
+    return FileResponse(config.DEMO_DIR / f"chat_{n}.png", media_type="image/png")
 
 
 app.mount("/", StaticFiles(directory=config.FRONTEND_DIR, html=True), name="frontend")
