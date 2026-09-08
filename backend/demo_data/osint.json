@@ -1,0 +1,110 @@
+{
+  "company_registry": [
+    {
+      "name": "BRIGHT STAR GENERAL TRADING FZE",
+      "license_no": "FZ-114482",
+      "authority": "Northern Emirates Free Zone Authority",
+      "status": "CANCELLED",
+      "issued": "2023-11-02",
+      "expired": "2026-02-11",
+      "activities": ["General trading"],
+      "authorized_signatory": "Imran K. Baig",
+      "registered_address": "Flexi-desk package, Free Zone Business Centre",
+      "notes": "License lapsed and cancelled 2026-02-11. No e-commerce permit was ever issued. Flexi-desk (no physical premises). Company continued to receive commercial payments after cancellation."
+    }
+  ],
+  "phone_intel": [
+    {
+      "number": "+971 52 884 7719",
+      "type": "Prepaid SIM",
+      "activated": "2026-05-02",
+      "registered_name": "M. Rahman (identity unverified — suspected false registration)",
+      "status": "Active, not accepting inbound calls since 2026-08-25",
+      "linked_handles": ["@luxetime.ae", "@prestigehours_uae"],
+      "public_scam_reports": 3,
+      "notes": "Number appears in seller contact details of at least two different online watch shops. WhatsApp Business profile deleted 2026-08-27."
+    }
+  ],
+  "domains": [
+    {
+      "domain": "luxetime-ae.com",
+      "registered": "2026-06-21",
+      "registrar": "Offshore reseller registrar",
+      "whois": "Privacy-proxy (registrant hidden)",
+      "hosting": "Bulletproof VPS provider, Eastern Europe",
+      "ssl": "Free DV certificate only",
+      "site": "Cloned storefront template; product photos reverse-image-match a Singapore retailer",
+      "status": "Offline since 2026-08-26"
+    },
+    {
+      "domain": "timevault-dxb.com",
+      "registered": "2026-01-12",
+      "whois": "Privacy-proxy (registrant hidden)",
+      "hosting": "Same VPS subnet as luxetime-ae.com",
+      "status": "Offline since 2026-04-02"
+    },
+    {
+      "domain": "prestige-hours.com",
+      "registered": "2026-04-18",
+      "whois": "Privacy-proxy (registrant hidden)",
+      "hosting": "Same VPS subnet as luxetime-ae.com",
+      "status": "Offline since 2026-07-30"
+    }
+  ],
+  "social_profiles": [
+    {
+      "handle": "@luxetime.ae",
+      "platform": "Instagram",
+      "display_name": "LuxeTime Watches UAE",
+      "created": "2026-06-10",
+      "followers": 24800,
+      "follower_anomaly": "+20,100 followers within 72 hours on 2026-06-14 (consistent with purchased followers)",
+      "engagement_rate": "0.1% (extremely low for follower count)",
+      "comments": "Disabled on all posts",
+      "tagged_posts": 0,
+      "content": "Product photos reverse-image-match stock photography from a Singapore watch retailer",
+      "status": "Deactivated on or around 2026-08-27"
+    },
+    {
+      "handle": "@timevault.dxb",
+      "platform": "Instagram",
+      "display_name": "TimeVault Collectibles",
+      "created": "2026-01-15",
+      "status": "Deleted (archived snapshots show identical post templates and caption style to @luxetime.ae)"
+    },
+    {
+      "handle": "@prestigehours_uae",
+      "platform": "Instagram",
+      "display_name": "Prestige Hours",
+      "created": "2026-04-20",
+      "status": "Deleted (contact number in bio matched +971 52 884 7719)"
+    }
+  ],
+  "scam_reports": [
+    {
+      "source": "ScamWatch Gulf forum",
+      "date": "2026-07-04",
+      "report": "User warns: paid @prestigehours_uae for a watch, seller 'Khalid' on +971 52 884 7719, never delivered, asked extra money for 'customs'."
+    },
+    {
+      "source": "RedFlag UAE Telegram group",
+      "date": "2026-07-28",
+      "report": "Screenshot thread: Prestige Hours and an older shop TimeVault Collectibles use the same bank beneficiary 'Bright Star General Trading'."
+    },
+    {
+      "source": "TrustScan reviews",
+      "date": "2026-08-21",
+      "report": "1-star review on luxetime-ae.com: 'Classic advance fee scam. They invent a customs deposit after you pay. Do not send money.'"
+    },
+    {
+      "source": "ScamWatch Gulf forum",
+      "date": "2026-08-24",
+      "report": "Two more users report @luxetime.ae non-delivery, both paid to a Gulf Trust Bank IBAN ending 901."
+    },
+    {
+      "source": "Instagram comment archive",
+      "date": "2026-08-19",
+      "report": "Archived comment (before deletion): 'This page scammed my brother, same guy as Prestige Hours.'"
+    }
+  ]
+}

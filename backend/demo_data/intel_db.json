@@ -1,0 +1,146 @@
+{
+  "description": "Internal financial-crime intelligence repository (demo stand-in for SAS Visual Investigator). Contains prior complaints, resolved entities and relationship links.",
+  "cases": [
+    {
+      "case_id": "CASE-2026-03310",
+      "filed_date": "2026-03-19",
+      "status": "Open — beneficiary bank response received",
+      "category": "Online purchase fraud (non-delivery)",
+      "victim": "Omar H. (male, 34, Sharjah)",
+      "amount": 21900,
+      "currency": "AED",
+      "summary": "Victim purchased a Rolex Submariner from Instagram shop 'TimeVault Collectibles' (@timevault.dxb, website timevault-dxb.com). Seller used name 'Abu Faisal'. Payment by bank transfer to BRIGHT STAR GENERAL TRADING FZE, IBAN AE47 0331 0000 0234 5678 901 (Gulf Trust Bank). Watch never delivered; a follow-up 'insurance deposit' of AED 1,900 was also demanded but not paid. Bank records show funds withdrawn in cash within 48 hours and AED 6,000 forwarded to a virtual-asset exchange.",
+      "identifiers": {
+        "shop": "TimeVault Collectibles",
+        "instagram": "@timevault.dxb",
+        "website": "timevault-dxb.com",
+        "beneficiary": "BRIGHT STAR GENERAL TRADING FZE",
+        "iban": "AE47 0331 0000 0234 5678 901",
+        "bank": "Gulf Trust Bank"
+      },
+      "assigned_to": "Insp. R. Haddad"
+    },
+    {
+      "case_id": "CASE-2026-05127",
+      "filed_date": "2026-05-30",
+      "status": "Open",
+      "category": "Online purchase fraud (non-delivery)",
+      "victim": "Lena P. (female, 41, Dubai)",
+      "amount": 9750,
+      "currency": "AED",
+      "summary": "Victim purchased a Cartier Tank from Instagram shop 'Prestige Hours' (@prestigehours_uae). Seller identified himself as 'Khalid', contact number +971 52 884 7719. Payment to IBAN AE12 0440 0000 0987 6543 210 (Al Madar Bank), account holder FARID MUSTAFA — a 22-year-old student who, when interviewed, stated he was recruited via a Telegram ad to 'rent' his bank account for AED 500/week. Suspected money mule. Funds cashed out same day.",
+      "identifiers": {
+        "shop": "Prestige Hours",
+        "instagram": "@prestigehours_uae",
+        "phone": "+971 52 884 7719",
+        "beneficiary": "FARID MUSTAFA",
+        "iban": "AE12 0440 0000 0987 6543 210",
+        "bank": "Al Madar Bank"
+      },
+      "assigned_to": "Insp. R. Haddad"
+    },
+    {
+      "case_id": "CASE-2026-07214",
+      "filed_date": "2026-07-22",
+      "status": "Open — pending bank disclosure",
+      "category": "Online purchase fraud (non-delivery)",
+      "victim": "Ahmed S. (male, 29, Abu Dhabi)",
+      "amount": 14300,
+      "currency": "AED",
+      "summary": "Victim ordered an Omega Speedmaster via website prestige-hours.com after seeing an Instagram ad. Paid AED 14,300 by transfer to BRIGHT STAR GENERAL TRADING FZE, IBAN AE47 0331 0000 0234 5678 901. After payment, seller requested an additional AED 2,600 'customs clearance deposit'; victim refused and was blocked. Same customs-deposit script as CASE-2026-03310.",
+      "identifiers": {
+        "shop": "Prestige Hours",
+        "website": "prestige-hours.com",
+        "beneficiary": "BRIGHT STAR GENERAL TRADING FZE",
+        "iban": "AE47 0331 0000 0234 5678 901",
+        "bank": "Gulf Trust Bank"
+      },
+      "assigned_to": "Sgt. N. Aziz"
+    }
+  ],
+  "entities": [
+    {
+      "id": "ENT-ORG-001",
+      "type": "organization",
+      "label": "BRIGHT STAR GENERAL TRADING FZE",
+      "attributes": {
+        "license": "FZ-114482 (CANCELLED 2026-02-11)",
+        "authorized_signatory": "Imran K. Baig",
+        "role": "Beneficiary company receiving victim payments in 3 known cases"
+      },
+      "linked_cases": ["CASE-2026-03310", "CASE-2026-07214"]
+    },
+    {
+      "id": "ENT-PER-001",
+      "type": "person",
+      "label": "Imran K. Baig",
+      "attributes": {
+        "role": "Authorized signatory of Bright Star General Trading FZE; suspected controller of the fraud network",
+        "notes": "Named on the company license and on the Gulf Trust Bank account mandate. Believed to operate seller personas 'Khalid' and 'Abu Faisal'. Whereabouts unconfirmed; last known entry stamp 2026-08-29 (outbound)."
+      },
+      "linked_cases": ["CASE-2026-03310", "CASE-2026-05127", "CASE-2026-07214"]
+    },
+    {
+      "id": "ENT-PER-002",
+      "type": "person",
+      "label": "Farid Mustafa",
+      "attributes": {
+        "role": "Money mule — account holder of IBAN AE12 0440 0000 0987 6543 210",
+        "notes": "Interviewed under CASE-2026-05127. Recruited via Telegram. Cooperative witness."
+      },
+      "linked_cases": ["CASE-2026-05127"]
+    },
+    {
+      "id": "ENT-ACC-001",
+      "type": "account",
+      "label": "IBAN AE47 0331 0000 0234 5678 901 (Gulf Trust Bank)",
+      "attributes": {
+        "holder": "BRIGHT STAR GENERAL TRADING FZE",
+        "pattern": "Rapid cash withdrawal and partial transfer to virtual-asset exchange within 48h of each victim credit"
+      },
+      "linked_cases": ["CASE-2026-03310", "CASE-2026-07214"]
+    },
+    {
+      "id": "ENT-ACC-002",
+      "type": "account",
+      "label": "IBAN AE12 0440 0000 0987 6543 210 (Al Madar Bank)",
+      "attributes": {
+        "holder": "Farid Mustafa (mule account)"
+      },
+      "linked_cases": ["CASE-2026-05127"]
+    },
+    {
+      "id": "ENT-PHN-001",
+      "type": "phone",
+      "label": "+971 52 884 7719",
+      "attributes": {
+        "registered_name": "M. Rahman (suspected false identity)",
+        "role": "Seller contact number in CASE-2026-05127; persona 'Khalid'"
+      },
+      "linked_cases": ["CASE-2026-05127"]
+    },
+    {
+      "id": "ENT-SOC-001",
+      "type": "social",
+      "label": "@timevault.dxb (Instagram — TimeVault Collectibles)",
+      "linked_cases": ["CASE-2026-03310"]
+    },
+    {
+      "id": "ENT-SOC-002",
+      "type": "social",
+      "label": "@prestigehours_uae (Instagram — Prestige Hours)",
+      "linked_cases": ["CASE-2026-05127", "CASE-2026-07214"]
+    }
+  ],
+  "links": [
+    {"from": "ENT-PER-001", "to": "ENT-ORG-001", "relation": "authorized signatory of"},
+    {"from": "ENT-ORG-001", "to": "ENT-ACC-001", "relation": "holds account"},
+    {"from": "ENT-PER-001", "to": "ENT-PHN-001", "relation": "suspected user of"},
+    {"from": "ENT-PER-001", "to": "ENT-PER-002", "relation": "recruited (via Telegram ad)"},
+    {"from": "ENT-PER-002", "to": "ENT-ACC-002", "relation": "account holder"},
+    {"from": "ENT-SOC-001", "to": "ENT-ORG-001", "relation": "payments routed to"},
+    {"from": "ENT-SOC-002", "to": "ENT-PHN-001", "relation": "contact number in bio"},
+    {"from": "ENT-SOC-002", "to": "ENT-ACC-002", "relation": "payments routed to (CASE-2026-05127)"},
+    {"from": "ENT-SOC-002", "to": "ENT-ACC-001", "relation": "payments routed to (CASE-2026-07214)"}
+  ]
+}

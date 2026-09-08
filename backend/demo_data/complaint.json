@@ -1,0 +1,17 @@
+{
+  "complaint_ref": "FCU-2026-08812",
+  "filed_date": "2026-09-02",
+  "channel": "e-Crime Portal",
+  "category": "Online purchase fraud (non-delivery)",
+  "status": "New — pending triage",
+  "victim": {
+    "name": "Sara Al Mansouri",
+    "phone": "+971 50 442 8113",
+    "email": "sara.m@example.ae",
+    "emirate": "Dubai",
+    "id_masked": "784-19XX-XXXXXXX-1"
+  },
+  "claimed_loss": 21250,
+  "currency": "AED",
+  "narrative": "On 11 August 2026 I found an Instagram shop called LuxeTime Watches (@luxetime.ae) advertising luxury watches at good prices. I spoke with a seller called 'Khalid' on WhatsApp (+971 52 884 7719). I agreed to buy a Rolex Datejust 36 for AED 18,500 and transferred the money by bank transfer on 14 August to a company account he gave me (Bright Star General Trading FZE). The watch never arrived. On 19 August he asked for another AED 2,750 for a 'customs clearance deposit' which he said was refundable, and I paid it. After that he kept delaying, then stopped answering. By 25 August my calls were blocked and the Instagram shop disappeared. I have the full WhatsApp conversation and my bank statement showing both transfers. I want my money back and I want this seller stopped — I don't think I am the only victim."
+}
