@@ -122,6 +122,7 @@
 </div>
 
 <input type="file" id="fileInput" hidden>
+<div class="lightbox" id="lightbox"><img id="lightboxImg" alt="evidence"></div>
 <div class="toast" id="toast"></div>
 
 <script src="assets/theme.js"></script>
@@ -136,6 +137,14 @@ let caseId = null, uploadKind = null;
     loadDemo();
   }
 })();
+
+/* click a screenshot thumbnail to view it full size */
+$('thumbs').addEventListener('click', e=>{
+  if(e.target.tagName!=='IMG') return;
+  $('lightboxImg').src=e.target.src;
+  $('lightbox').classList.add('open');
+});
+$('lightbox').onclick=()=>$('lightbox').classList.remove('open');
 
 $('btnDemo').onclick = loadDemo;
 async function loadDemo(){

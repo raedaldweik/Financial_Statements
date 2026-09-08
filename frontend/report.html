@@ -74,6 +74,14 @@
       </div>
     </div>
 
+    <div class="card" style="margin-bottom:16px">
+      <div class="ch">
+        <div class="ch-left"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><h3>Cross-Case Network Analysis — Entity Resolution &amp; Link Analysis</h3></div>
+        <span class="ch-badge red" id="netBadge"></span>
+      </div>
+      <div class="cb" style="overflow-x:auto"><div id="netDiagram" style="min-width:1080px"></div></div>
+    </div>
+
     <div class="g3-eq">
       <div class="card">
         <div class="ch"><div class="ch-left"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><h3>Losses by Complaint</h3></div></div>
@@ -216,7 +224,91 @@ function render(r){
 
   $('r_vi').textContent=r.vi_case_summary;
 
+  buildDiagram(r, confirmed);
   drawChart(r, confirmed);
+}
+
+/* ── Cross-case network diagram: separate complaints → entity resolution →
+     one connected fraud network (storytelling graphic, data-driven) ── */
+function buildDiagram(r, confirmed){
+  const t=(s,n)=>{s=String(s??'');return s.length>n?s.slice(0,n-1)+'…':s;};
+  const shortAcc=s=>String(s).replace(/IBAN\s*/i,'').replace(/(AE\d{2})[\d\s]+(\d{3})\b/,'$1 …$2');
+
+  const curTo=(r.financial_flow.find(f=>/THIS CASE/i.test(f.note))||{}).to||'beneficiary account';
+  const complaints=[
+    ...r.prior_cases.map(c=>({id:c.case_id,
+      who:`${t(c.victim.split('(')[0].trim(),18)} — AED ${fmt(c.amount)}`,
+      acc:t(shortAcc(c.matched_on.find(m=>/AE\d|IBAN|Beneficiary/i.test(m))||c.matched_on[0]||''),34), cur:false})),
+    {id:r.case_ref, who:`This complaint — AED ${fmt(confirmed)}`, acc:t(shortAcc(curTo),34), cur:true},
+  ].slice(0,4);
+
+  const flagged=r.entities.filter(e=>e.flagged);
+  const icons={phone:'📱',organization:'🏢',person:'👤',account:'💳',website:'🌐'};
+  const socials=flagged.filter(e=>e.type==='social');
+  let ring=flagged.filter(e=>icons[e.type]).map(e=>({icon:icons[e.type],
+    label:t(shortAcc(e.label.split('—')[0].trim())
+            .replace(/\s*General Trading\s*/i,' ').replace(/\s+/g,' '),22)}));
+  if(socials.length>1) ring.push({icon:'📣',label:socials.length+' storefront personas'});
+  else if(socials.length===1) ring.push({icon:'📣',label:t(socials[0].label.split('—')[0].trim(),22)});
+  ring=ring.slice(0,8);
+
+  const nAcc=flagged.filter(e=>e.type==='account').length||1;
+  $('netBadge').textContent=`${complaints.length} complaints · ${nAcc} accounts · 1 network`;
+
+  const GOLD='rgba(184,146,42,1)', GOLD_SOFT='rgba(200,164,74,0.45)', DIM='rgba(138,122,80,1)';
+  const CX=742,CY=272,RING=152,NR=25;
+  let s='';
+  const box=(x,y,w,h,cur)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="9"
+    fill="rgba(255,255,255,0.88)" stroke="${cur?'rgba(192,57,43,0.6)':GOLD_SOFT}" stroke-width="${cur?1.8:1.2}"/>`;
+
+  /* complaint column */
+  complaints.forEach((c,i)=>{
+    const y=18+i*112, yc=y+46;
+    s+=box(8,y,220,92,c.cur);
+    s+=`<text x="22" y="${y+26}" font-size="11.5" font-weight="800" fill="${c.cur?'#C0392B':'#1A1400'}" font-family="ui-monospace,Menlo,monospace">${esc(t(c.id,24))}</text>`;
+    s+=`<text x="22" y="${y+47}" font-size="10.5" fill="#5A4A20">${esc(c.who)}</text>`;
+    s+=`<text x="22" y="${y+70}" font-size="9.5" font-weight="700" fill="${GOLD}" font-family="ui-monospace,Menlo,monospace">${esc(c.acc)}</text>`;
+    s+=`<path d="M228 ${yc} C 266 ${yc}, 266 ${CY+(i-1.5)*12}, 302 ${CY+(i-1.5)*12}" fill="none" stroke="${GOLD_SOFT}" stroke-width="1.3"/>`;
+  });
+  s+=`<text x="118" y="500" font-size="10" font-style="italic" fill="${DIM}" text-anchor="middle">At first, each complaint appears unrelated</text>`;
+
+  /* analysis stage */
+  s+=box(302,206,166,132,false);
+  s+=`<text x="385" y="248" font-size="20" text-anchor="middle">🔍</text>`;
+  s+=`<text x="385" y="278" font-size="12.5" font-weight="800" fill="#1A1400" text-anchor="middle">Cross-case analysis</text>`;
+  s+=`<text x="385" y="296" font-size="9.5" fill="${DIM}" text-anchor="middle">Entity resolution +</text>`;
+  s+=`<text x="385" y="309" font-size="9.5" fill="${DIM}" text-anchor="middle">link analysis</text>`;
+  s+=`<line x1="468" y1="${CY}" x2="512" y2="${CY}" stroke="${GOLD}" stroke-width="1.6" marker-end="url(#arr)"/>`;
+
+  /* network hub */
+  s+=`<rect x="522" y="52" width="440" height="446" rx="12" fill="rgba(255,255,255,0.55)" stroke="${GOLD_SOFT}" stroke-width="1.2"/>`;
+  ring.forEach((n,i)=>{
+    const a=(-67.5+i*(360/ring.length))*Math.PI/180;
+    const nx=CX+Math.cos(a)*RING, ny=CY+Math.sin(a)*RING;
+    const lx=CX+Math.cos(a)*(RING+NR+14), ly=CY+Math.sin(a)*(RING+NR+14);
+    s+=`<line x1="${CX+Math.cos(a)*64}" y1="${CY+Math.sin(a)*64}" x2="${nx-Math.cos(a)*NR}" y2="${ny-Math.sin(a)*NR}" stroke="rgba(200,164,74,0.4)" stroke-width="1.1"/>`;
+    s+=`<circle cx="${nx}" cy="${ny}" r="${NR}" fill="#fff" stroke="${GOLD}" stroke-width="1.4"/>`;
+    s+=`<text x="${nx}" y="${ny+5.5}" font-size="15" text-anchor="middle">${n.icon}</text>`;
+    s+=`<text x="${lx}" y="${ly+4}" font-size="9" font-weight="700" fill="#5A4A20" text-anchor="middle">${esc(n.label)}</text>`;
+  });
+  s+=`<circle cx="${CX}" cy="${CY}" r="62" fill="#241A06" stroke="${GOLD}" stroke-width="1.8"/>`;
+  s+=`<text x="${CX}" y="${CY-12}" font-size="11.5" font-weight="800" fill="#F2DFAE" text-anchor="middle">Same criminal</text>`;
+  s+=`<text x="${CX}" y="${CY+4}" font-size="11.5" font-weight="800" fill="#F2DFAE" text-anchor="middle">network</text>`;
+  s+=`<text x="${CX}" y="${CY+20}" font-size="11.5" font-weight="800" fill="#F2DFAE" text-anchor="middle">identified</text>`;
+  s+=`<line x1="962" y1="${CY}" x2="1000" y2="${CY}" stroke="${GOLD}" stroke-width="1.6" marker-end="url(#arr)"/>`;
+
+  /* outcome */
+  s+=`<rect x="1004" y="192" width="164" height="160" rx="9" fill="rgba(255,255,255,0.92)" stroke="${GOLD}" stroke-width="1.6"/>`;
+  s+=`<text x="1086" y="228" font-size="18" text-anchor="middle">📄</text>`;
+  s+=`<text x="1086" y="254" font-size="11" font-weight="800" fill="#1A1400" text-anchor="middle">${complaints.length} separate complaints</text>`;
+  s+=`<text x="1086" y="272" font-size="11" font-weight="800" fill="#1A1400" text-anchor="middle">${nAcc} separate accounts</text>`;
+  s+=`<text x="1086" y="298" font-size="11.5" font-weight="800" fill="#C0392B" text-anchor="middle">→ one connected</text>`;
+  s+=`<text x="1086" y="314" font-size="11.5" font-weight="800" fill="#C0392B" text-anchor="middle">fraud network</text>`;
+
+  $('netDiagram').innerHTML=`<svg viewBox="0 0 1176 516" style="width:100%;display:block" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="${GOLD}"/></marker></defs>
+    <g font-family="'Plus Jakarta Sans',sans-serif">${s}</g></svg>`;
 }
 
 function drawChart(r, confirmed){

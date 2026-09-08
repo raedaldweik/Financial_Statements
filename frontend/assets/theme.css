@@ -194,6 +194,13 @@ tr.hl-row td{background:linear-gradient(90deg,rgba(192,57,43,0.06),rgba(192,57,4
 .md th{font-size:8.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-faint);text-align:left;padding:4px 8px;border-bottom:1px solid rgba(180,140,50,0.2)}
 .md td{padding:4px 8px;border-bottom:1px solid rgba(180,140,50,0.1)}
 
+/* ══ LIGHTBOX ══ */
+.thumb{cursor:zoom-in;transition:transform .15s}
+.thumb:hover{transform:scale(1.04)}
+.lightbox{position:fixed;inset:0;background:rgba(10,7,0,0.82);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:999;cursor:zoom-out}
+.lightbox.open{display:flex}
+.lightbox img{max-height:92vh;max-width:92vw;border-radius:10px;box-shadow:0 20px 80px rgba(0,0,0,0.6)}
+
 /* ══ MISC ══ */
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--red-border);color:var(--red);padding:12px 20px;border-radius:8px;font-size:12.5px;font-weight:600;z-index:999;display:none;max-width:640px;box-shadow:var(--glass-shadow-lg)}
 .toast.info{border-color:rgba(200,164,74,0.4);color:var(--gold-lo)}
