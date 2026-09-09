@@ -70,7 +70,9 @@ DEMO_IMAGES = [
 def load_demo_case() -> Case:
     case = new_case()
     case.is_demo = True
-    case.complaint = json.loads((DEMO_DIR / "complaint.json").read_text(encoding="utf-8"))
+    import registry  # local import: registry does not depend on store
+    case.complaint = json.loads(registry.fill_dates(
+        (DEMO_DIR / "complaint.json").read_text(encoding="utf-8")))
     for fname, label, media in DEMO_IMAGES:
         p = DEMO_DIR / fname
         if p.exists():

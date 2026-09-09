@@ -19,7 +19,7 @@
     <a href="cases.html" class="tab">Case Queue</a>
     <a href="#" class="tab active" id="navCase">Case File</a>
   </div>
-  <div class="nav-right"><span class="officer"><i>RH</i>Insp. R. Haddad</span><span class="mode-pill" id="modePill">…</span></div>
+  <div class="nav-right"><span class="officer"><i>RH</i>Insp. R. Haddad</span></div>
 </nav>
 
 <div class="pw">
@@ -276,6 +276,7 @@ function startProgress(){
   let i=0; const es=new EventSource('/api/stream/'+C.run_id);
   es.onmessage=async ev=>{
     const e=JSON.parse(ev.data);
+    if(e.type==='pipeline_start'){ i=0; }
     if(e.type==='agent_start'){ $('procStage').textContent=stages[i]||'Working'; $('procBar').style.width=Math.round(8+i*15)+'%'; i++; }
     if(e.type==='report'||e.type==='done'||e.type==='error'){ es.close(); $('procBar').style.width='100%';
       setTimeout(async()=>{ $('procBanner').style.display='none'; await load(); }, 700); }

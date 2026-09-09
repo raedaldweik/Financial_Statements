@@ -149,9 +149,17 @@ document.querySelectorAll('[data-ic]').forEach(el=>el.insertAdjacentHTML('afterb
 $('icImg').innerHTML = ic('image', 22); $('icBank').innerHTML = ic('bank', 22);
 
 (async function boot(){
+  const qs = new URLSearchParams(location.search);
+  const m = qs.get('mode'); if(['auto','live','replay'].includes(m)) localStorage.setItem('fcuMode', m);
   await initModePill();
-  if(new URLSearchParams(location.search).get('sample')==='1') await prefill();
+  if(qs.get('sample')==='1') await prefill();
 })();
+
+/* browser-local "YYYY-MM-DDTHH:MM" — the filing time the complainant sees on screen */
+function localStamp(){
+  const d=new Date(), z=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`;
+}
 
 async function prefill(){
   try{
@@ -218,7 +226,7 @@ $('btnSubmit').onclick = async ()=>{
                    $('f_biban').value && `IBAN: ${$('f_biban').value}`, $('f_paydate').value && `Date of payment: ${$('f_paydate').value}`,
                    `Payment method: ${$('f_method').value}`].filter(Boolean).join(' · ');
   const complaint={
-    complaint_ref:'', filed_date:(_health&&_health.today)||'', channel:'e-Crime Portal',
+    complaint_ref:'', filed_date:localStamp().slice(0,10), channel:'e-Crime Portal',
     category:$('f_cat').value, claimed_loss:Number($('f_amount').value)||0, currency:'AED',
     victim:{name:$('f_name').value, phone:$('f_phone').value, email:$('f_email').value, emirate:$('f_emirate').value},
     narrative:$('f_desc').value.trim()+(payLine?`\n\nPayment details provided by the complainant — ${payLine}.`:''),
@@ -226,7 +234,7 @@ $('btnSubmit').onclick = async ()=>{
   };
   try{
     const res=await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({case_id:caseId, complaint, mode:localStorage.getItem('fcuMode')||'auto'})});
+      body:JSON.stringify({case_id:caseId, complaint, mode:localStorage.getItem('fcuMode')||'auto', filed_local:localStamp()})});
     if(!res.ok) throw new Error((await res.json()).detail||res.statusText);
     const d=await res.json();
     $('doneRef').textContent=d.ref;

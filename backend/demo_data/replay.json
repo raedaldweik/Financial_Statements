@@ -13,7 +13,7 @@
    "event": {
     "type": "agent_memo",
     "agent": "intake",
-    "memo": "**Verdict: valid online product trading fraud (non-delivery) — evidence set complete and analyzable.**\n\n- Victim paid AED 12,500 for an electronics bundle to a **personal** beneficiary account dictated over WhatsApp; goods never delivered, seller ghosted, page deleted.\n- Evidence on file: 3 chat screenshots, transfer confirmation, bank statement.\n- Priorities: reconcile chat ↔ receipt ↔ statement; verify the seller identity (OSINT); run the beneficiary account and IBAN through complaint history.\n\n**Key identifiers**\n- Complainant: Ahmed Hassan, +971 50 771 2094, Dubai\n- Storefront: Prime Gulf Electronics — @primegulf.electronics\n- Seller phone: +971 55 302 8817\n- Beneficiary: Mubarak Salem\n- Account: 5660609\n- IBAN: AE600340005660609\n- Amount: AED 12,500 on 2026-09-08\n- Complaint: #002, filed 2026-09-18"
+    "memo": "**Verdict: valid online product trading fraud (non-delivery) — evidence set complete and analyzable.**\n\n- Victim paid AED 12,500 for an electronics bundle to a **personal** beneficiary account dictated over WhatsApp; goods never delivered, seller ghosted, page deleted.\n- Evidence on file: 3 chat screenshots, transfer confirmation, bank statement.\n- Priorities: reconcile chat ↔ receipt ↔ statement; verify the seller identity (OSINT); run the beneficiary account and IBAN through complaint history.\n\n**Key identifiers**\n- Complainant: Ahmed Hassan, +971 50 771 2094, Dubai\n- Storefront: Prime Gulf Electronics — @primegulf.electronics\n- Seller phone: +971 55 302 8817\n- Beneficiary: Mubarak Salem\n- Account: 5660609\n- IBAN: AE600340005660609\n- Amount: AED 12,500 on 2026-08-24\n- Complaint: #002, filed {{FILED_DATE}}"
    }
   },
   {
@@ -36,7 +36,7 @@
    "event": {
     "type": "agent_memo",
     "agent": "conversation",
-    "memo": "**Verdict: scripted online-purchase fraud with payment steering to a personal account — the payment trail is fully documented in the images.**\n\n- 30 Aug: victim contacts the seller after an Instagram ad; bundle offered at AED 12,500 vs claimed retail 16,800+ (−26%).\n- Viewing refused (\"free zone, no visitors\"); COD refused (\"insurance rules\"); bank transfer only.\n- 5 Sep: payment instructions name a **personal** beneficiary, justified as \"finance manager\" with the corporate account \"under maintenance\".\n- Seller volunteers an **alternative account** (Abdullah Mohammed) — a second collection route.\n- 8 Sep: transfer confirmed; fake order ref PG-1180; customs and courier excuses; fake refund promise; blocked by 14 Sep; page deleted 15 Sep.\n- Transfer confirmation (image 4, Example Bank): ref TRX-2026-0918-4821, AED 12,500, 08 Sep 2026, purpose \"Purchase of electronic devices\", status Successful.\n- Techniques: discount lure, trust signals, inspection avoidance, payment-method steering, ghosting.\n\n**Key identifiers**\n- Seller phone: +971 55 302 8817\n- Instagram: @primegulf.electronics\n- Beneficiary: Mubarak Salem — 5660609 — AE600340005660609\n- Alternative account: Abdullah Mohammed — 3456660 — AE750340003456660\n- Transfer ref: TRX-2026-0918-4821\n- Order ref: PG-1180\n- Amount: AED 12,500 on 2026-09-08"
+    "memo": "**Verdict: scripted online-purchase fraud with payment steering to a personal account — the payment trail is fully documented in the images.**\n\n- 15 Aug: victim contacts the seller after an Instagram ad; bundle offered at AED 12,500 vs claimed retail 16,800+ (−26%).\n- Viewing refused (\"free zone, no visitors\"); COD refused (\"insurance rules\"); bank transfer only.\n- 21 Aug: payment instructions name a **personal** beneficiary, justified as \"finance manager\" with the corporate account \"under maintenance\".\n- Seller volunteers an **alternative account** (Abdullah Mohammed) — a second collection route.\n- 24 Aug: transfer confirmed; fake order ref PG-1180; customs and courier excuses; fake refund promise; blocked by 30 Aug; page deleted 31 Aug.\n- Transfer confirmation (image 4, Example Bank): ref TRX-2026-0824-4821, AED 12,500, 24 Aug 2026, purpose \"Purchase of electronic devices\", status Successful.\n- Techniques: discount lure, trust signals, inspection avoidance, payment-method steering, ghosting.\n\n**Key identifiers**\n- Seller phone: +971 55 302 8817\n- Instagram: @primegulf.electronics\n- Beneficiary: Mubarak Salem — 5660609 — AE600340005660609\n- Alternative account: Abdullah Mohammed — 3456660 — AE750340003456660\n- Transfer ref: TRX-2026-0824-4821\n- Order ref: PG-1180\n- Amount: AED 12,500 on 2026-08-24"
    }
   },
   {
@@ -59,7 +59,7 @@
    "event": {
     "type": "agent_memo",
     "agent": "financial",
-    "memo": "**Verdict: three-way reconciliation complete — chat, transfer confirmation and statement match to the reference number. Confirmed loss AED 12,500.**\n\n| Date | Statement entry | Amount |\n|---|---|---|\n| 08/09/2026 | ONLINE TRANSFER — MUBARAK SALEM / ACC 5660609 / AE600340005660609 — REF TRX-2026-0918-4821 | AED 12,500.00 |\n\n- Reference, amount, beneficiary, account and IBAN identical across all three sources.\n- Victim profile: salary AED 14,200; routine card spend AED 96–520. The transfer is the single outlier (36% of available balance).\n- Freeze/disclosure targets: account 5660609 (primary) and 3456660 (alternative offered in the chat).\n\n**Key identifiers**\n- Confirmed loss: AED 12,500.00\n- Transfer ref: TRX-2026-0918-4821\n- Beneficiary account: 5660609 — AE600340005660609\n- Secondary account: 3456660 — AE750340003456660\n- Victim account: Example Bank 7712045"
+    "memo": "**Verdict: three-way reconciliation complete — chat, transfer confirmation and statement match to the reference number. Confirmed loss AED 12,500.**\n\n| Date | Statement entry | Amount |\n|---|---|---|\n| 24/08/2026 | ONLINE TRANSFER — MUBARAK SALEM / ACC 5660609 / AE600340005660609 — REF TRX-2026-0824-4821 | AED 12,500.00 |\n\n- Reference, amount, beneficiary, account and IBAN identical across all three sources.\n- Victim profile: salary AED 14,200; routine card spend AED 96–520. The transfer is the single outlier (36% of available balance).\n- Freeze/disclosure targets: account 5660609 (primary) and 3456660 (alternative offered in the chat).\n\n**Key identifiers**\n- Confirmed loss: AED 12,500.00\n- Transfer ref: TRX-2026-0824-4821\n- Beneficiary account: 5660609 — AE600340005660609\n- Secondary account: 3456660 — AE750340003456660\n- Victim account: Example Bank 7712045"
    }
   },
   {
@@ -134,7 +134,7 @@
     "type": "tool_result",
     "agent": "osint",
     "tool": "lookup_social",
-    "summary": "Created 2026-08-02; +15,200 followers in 48h (purchased); engagement 0.2%; comments disabled; product photos match a Hong Kong wholesaler; deactivated ~2026-09-15."
+    "summary": "Created 2026-08-02; +15,200 followers in 48h (purchased); engagement 0.2%; comments disabled; product photos match a Hong Kong wholesaler; deactivated ~2026-08-31."
    }
   },
   {
@@ -154,7 +154,7 @@
     "type": "tool_result",
     "agent": "osint",
     "tool": "lookup_domain",
-    "summary": "Registered 2026-08-05 via privacy proxy; offshore VPS; cloned storefront; offline since 2026-09-15. Same subnet hosts globalpathways-invest.com."
+    "summary": "Registered 2026-08-05 via privacy proxy; offshore VPS; cloned storefront; offline since 2026-08-31. Same subnet hosts globalpathways-invest.com."
    }
   },
   {
@@ -202,7 +202,7 @@
    "event": {
     "type": "agent_memo",
     "agent": "osint",
-    "memo": "**Verdict: \"Prime Gulf Electronics\" is a manufactured storefront — unregistered, disposable, and sharing infrastructure with an investment-fraud front company.**\n\n- Registry: no trade license exists under this name.\n- Phone +971 55 302 8817: prepaid SIM (2026-04-18) under a suspected false identity; seller contact for **two** storefronts (Prime Gulf Electronics, TechDeals UAE); 2 scam reports.\n- Instagram: created 2026-08-02; +15,200 purchased followers in 48h; 0.2% engagement; stolen product photos; deactivated ~15 Sep.\n- Website: privacy-proxy registration on an offshore VPS — **same subnet as globalpathways-invest.com** (Global Pathways Investment Consultancy).\n- Public reports name beneficiary \"Mubarak\" and an IBAN ending 609.\n\n**Key identifiers**\n- Business identity: Prime Gulf Electronics — unregistered\n- Phone: +971 55 302 8817 — shared with TechDeals UAE\n- Domain: primegulf-electronics.com — offline since 2026-09-15\n- Related infrastructure: globalpathways-invest.com\n- Public reports: beneficiary 'Mubarak', IBAN ending 609"
+    "memo": "**Verdict: \"Prime Gulf Electronics\" is a manufactured storefront — unregistered, disposable, and sharing infrastructure with an investment-fraud front company.**\n\n- Registry: no trade license exists under this name.\n- Phone +971 55 302 8817: prepaid SIM (2026-04-18) under a suspected false identity; seller contact for **two** storefronts (Prime Gulf Electronics, TechDeals UAE); 2 scam reports.\n- Instagram: created 2026-08-02; +15,200 purchased followers in 48h; 0.2% engagement; stolen product photos; deactivated ~31 Aug.\n- Website: privacy-proxy registration on an offshore VPS — **same subnet as globalpathways-invest.com** (Global Pathways Investment Consultancy).\n- Public reports name beneficiary \"Mubarak\" and an IBAN ending 609.\n\n**Key identifiers**\n- Business identity: Prime Gulf Electronics — unregistered\n- Phone: +971 55 302 8817 — shared with TechDeals UAE\n- Domain: primegulf-electronics.com — offline since 2026-08-31\n- Related infrastructure: globalpathways-invest.com\n- Public reports: beneficiary 'Mubarak', IBAN ending 609"
    }
   },
   {
@@ -365,7 +365,7 @@
    "event": {
     "type": "agent_memo",
     "agent": "crossref",
-    "memo": "**Verdict: not an isolated complaint — the beneficiary account previously received AED 275,000 in an investment fraud; three complaints, two accounts and two typologies resolve to one network. Combined losses AED 296,400.**\n\n| Case | Filed | Typology | Loss | Matched on |\n|---|---|---|---|---|\n| FC-2026-0187 | 5 Aug | Citizenship-by-investment fraud | AED 275,000 | Same account 5660609 / AE600340005660609 |\n| FC-2026-0204 | 28 Aug | Online product fraud | AED 8,900 | Same seller phone; the 'alternative account' AE750340003456660 |\n| FC-2026-0231 | 18 Sep | Online product fraud | AED 12,500 | current complaint |\n\n- Mubarak Salem holds account 5660609 and signs for Global Pathways Investment Consultancy FZE (FC-2026-0187 front company).\n- Abdullah Mohammed holds account 3456660; bank KYC shows the same registered address and contact mobile as Mubarak Salem.\n- Proceeds pattern: AED 180,000 cash-out + AED 60,000 to a virtual-asset exchange within 72h of the largest payment.\n\n**Key identifiers**\n- Linked cases: FC-2026-0187 (AED 275,000), FC-2026-0204 (AED 8,900)\n- Combined losses: AED 296,400 across 3 victims\n- Controller: Mubarak Salem (ENT-PER-001)\n- Associate: Abdullah Mohammed (ENT-PER-002)\n- Accounts: 5660609, 3456660\n- Front company: Global Pathways Investment Consultancy FZE"
+    "memo": "**Verdict: not an isolated complaint — the beneficiary account previously received AED 275,000 in an investment fraud; three complaints, two accounts and two typologies resolve to one network. Combined losses AED 296,400.**\n\n| Case | Filed | Typology | Loss | Matched on |\n|---|---|---|---|---|\n| FC-2026-0187 | 5 Aug | Citizenship-by-investment fraud | AED 275,000 | Same account 5660609 / AE600340005660609 |\n| FC-2026-0204 | 28 Aug | Online product fraud | AED 8,900 | Same seller phone; the 'alternative account' AE750340003456660 |\n| FC-2026-0231 | {{FILED_SHORT}} | Online product fraud | AED 12,500 | current complaint |\n\n- Mubarak Salem holds account 5660609 and signs for Global Pathways Investment Consultancy FZE (FC-2026-0187 front company).\n- Abdullah Mohammed holds account 3456660; bank KYC shows the same registered address and contact mobile as Mubarak Salem.\n- Proceeds pattern: AED 180,000 cash-out + AED 60,000 to a virtual-asset exchange within 72h of the largest payment.\n\n**Key identifiers**\n- Linked cases: FC-2026-0187 (AED 275,000), FC-2026-0204 (AED 8,900)\n- Combined losses: AED 296,400 across 3 victims\n- Controller: Mubarak Salem (ENT-PER-001)\n- Associate: Abdullah Mohammed (ENT-PER-002)\n- Accounts: 5660609, 3456660\n- Front company: Global Pathways Investment Consultancy FZE"
    }
   },
   {
@@ -441,7 +441,7 @@
       },
       {
        "title": "Three-way payment reconciliation complete",
-       "detail": "Chat instructions, transfer confirmation TRX-2026-0918-4821 and bank statement match on amount, account, IBAN, date and reference.",
+       "detail": "Chat instructions, transfer confirmation TRX-2026-0824-4821 and bank statement match on amount, account, IBAN, date and reference.",
        "severity": "info",
        "source": "Financial analysis"
       }
@@ -500,7 +500,7 @@
        "id": "ENT-SOC-000",
        "label": "@primegulf.electronics — Prime Gulf Electronics",
        "type": "social",
-       "role": "Current storefront — created 2026-08-02, deleted 2026-09-15",
+       "role": "Current storefront — created 2026-08-02, deleted 2026-08-31",
        "flagged": true
       },
       {
@@ -560,27 +560,27 @@
        "source": "History"
       },
       {
-       "date": "2026-08-30",
+       "date": "2026-08-15",
        "event": "Victim contacts Prime Gulf Electronics after Instagram ad",
        "source": "Conversation"
       },
       {
-       "date": "2026-09-05",
+       "date": "2026-08-21",
        "event": "Personal account dictated; alternative account volunteered",
        "source": "Conversation"
       },
       {
-       "date": "2026-09-08",
-       "event": "Victim transfers AED 12,500 (TRX-2026-0918-4821)",
+       "date": "2026-08-24",
+       "event": "Victim transfers AED 12,500 (TRX-2026-0824-4821)",
        "source": "Bank records"
       },
       {
-       "date": "2026-09-14",
+       "date": "2026-08-30",
        "event": "Seller stops responding; page deleted next day",
        "source": "Conversation"
       },
       {
-       "date": "2026-09-18",
+       "date": "{{FILED_DATE}}",
        "event": "FC-2026-0231 filed via e-Crime Portal",
        "source": "Complaint"
       }
@@ -627,12 +627,12 @@
        "note": "Prior case — same-day ATM cash-out"
       },
       {
-       "date": "2026-09-08",
+       "date": "2026-08-24",
        "from": "Ahmed Hassan (victim)",
        "to": "Account 5660609 (Mubarak Salem)",
        "amount": 12500,
        "currency": "AED",
-       "note": "THIS CASE — ref TRX-2026-0918-4821, 'Purchase of electronic devices'"
+       "note": "THIS CASE — ref TRX-2026-0824-4821, 'Purchase of electronic devices'"
       }
      ],
      "prior_cases": [
@@ -678,7 +678,7 @@
        "priority": "immediate",
        "addressee": "Example Bank — Compliance / MLRO",
        "timeframe": "Today",
-       "rationale": "Proceeds leave within 72 hours; AED 12,500 credited 8 Sep."
+       "rationale": "Proceeds leave within 72 hours; AED 12,500 credited 24 Aug."
       },
       {
        "action": "Consolidate FC-2026-0187, FC-2026-0204 and FC-2026-0231 under one investigation and one lead officer",
@@ -723,7 +723,7 @@
        "rationale": "Single view of the network for the case team."
       }
      ],
-     "narrative": "Ahmed Hassan, a Dubai resident, saw an Instagram advertisement in mid-August 2026 from a page called Prime Gulf Electronics offering discounted electronics. On 30 August he messaged the seller on WhatsApp (+971 55 302 8817), who presented himself as a company sales representative and offered a bundle of an iPhone, a MacBook, AirPods and an iPad for AED 12,500. The seller refused an in-person viewing and cash on delivery, and on 5 September sent payment details for a personal account — Mubarak Salem, account 5660609, IBAN AE600340005660609 — explaining that the company account was under maintenance. He also offered a second account under the name Abdullah Mohammed. On 8 September Mr Hassan transferred AED 12,500 from his Example Bank account (reference TRX-2026-0918-4821) and sent the confirmation. The seller acknowledged receipt and gave an order number, then followed with customs and courier excuses. From 14 September messages went unanswered, the Instagram page and website were taken down, and no refund was made. Mr Hassan filed this report on 18 September with three chat screenshots, the transfer confirmation and his bank statement.",
+     "narrative": "Ahmed Hassan, a Dubai resident, saw an Instagram advertisement in early August 2026 from a page called Prime Gulf Electronics offering discounted electronics. On 15 August he messaged the seller on WhatsApp (+971 55 302 8817), who presented himself as a company sales representative and offered a bundle of an iPhone, a MacBook, AirPods and an iPad for AED 12,500. The seller refused an in-person viewing and cash on delivery, and on 21 August sent payment details for a personal account — Mubarak Salem, account 5660609, IBAN AE600340005660609 — explaining that the company account was under maintenance. He also offered a second account under the name Abdullah Mohammed. On 24 August Mr Hassan transferred AED 12,500 from his Example Bank account (reference TRX-2026-0824-4821) and sent the confirmation. The seller acknowledged receipt and gave an order number, then followed with customs and courier excuses. From 30 August messages went unanswered, the Instagram page and website were taken down, and no refund was made. Mr Hassan filed this report on {{FILED_LONG}} with three chat screenshots, the transfer confirmation and his bank statement.",
      "key_facts": [
       {
        "label": "Complainant",
@@ -743,7 +743,7 @@
       },
       {
        "label": "Payment",
-       "value": "AED 12,500 on 8 Sep 2026, online transfer"
+       "value": "AED 12,500 on 24 Aug 2026, online transfer"
       },
       {
        "label": "Beneficiary",
@@ -751,7 +751,7 @@
       },
       {
        "label": "Bank reference",
-       "value": "TRX-2026-0918-4821 (Example Bank)"
+       "value": "TRX-2026-0824-4821 (Example Bank)"
       },
       {
        "label": "Alternative account offered",
@@ -763,31 +763,31 @@
       },
       {
        "label": "Last contact from seller",
-       "value": "14 Sep 2026 — 'refund request submitted'"
+       "value": "30 Aug 2026 — 'refund request submitted'"
       },
       {
        "label": "Storefront status",
-       "value": "Instagram page and website removed ~15 Sep 2026"
+       "value": "Instagram page and website removed ~31 Aug 2026"
       },
       {
        "label": "Evidence on file",
-       "value": "3 chat screenshots · transfer confirmation · bank statement (Sep 2026)"
+       "value": "3 chat screenshots · transfer confirmation · bank statement (Aug 2026)"
       }
      ],
      "evidence_assessment": [
       {
        "item": "WhatsApp screenshots (3)",
-       "finding": "Continuous conversation 30 Aug – 18 Sep; payment instructions and both accounts visible",
+       "finding": "Continuous conversation 15 Aug – 4 Sep; payment instructions and both accounts visible",
        "status": "verified"
       },
       {
        "item": "Transfer confirmation — Example Bank",
-       "finding": "Ref TRX-2026-0918-4821, AED 12,500 to account 5660609; matches statement entry",
+       "finding": "Ref TRX-2026-0824-4821, AED 12,500 to account 5660609; matches statement entry",
        "status": "verified"
       },
       {
-       "item": "Bank statement Sep 2026",
-       "finding": "Debit of AED 12,500 on 08/09/2026 to Mubarak Salem, same reference",
+       "item": "Bank statement Aug 2026",
+       "finding": "Debit of AED 12,500 on 24/08/2026 to Mubarak Salem, same reference",
        "status": "verified"
       },
       {

@@ -9,6 +9,8 @@ import logging
 from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from typing import Optional
+
 from pydantic import BaseModel
 
 import config
@@ -25,7 +27,7 @@ app = FastAPI(title="Financial Crime Unit — Complaint Analyzer", version="2.0"
 def health() -> dict:
     return {"ok": True, "llm_configured": config.llm_configured(),
             "model": config.MODEL, "default_mode": pipeline.resolve_mode("auto"),
-            "today": registry.TODAY}
+            "today": registry.today()}
 
 
 # ─── Citizen portal ─────────────────────────────────────────────────
@@ -64,6 +66,7 @@ class SubmitRequest(BaseModel):
     case_id: str
     complaint: dict
     mode: str = "auto"          # auto | live | replay (investigator setting)
+    filed_local: Optional[str] = None   # browser local time "YYYY-MM-DDTHH:MM"
 
 
 @app.post("/api/submit")
@@ -80,7 +83,8 @@ async def submit(req: SubmitRequest) -> dict:
     case.memos.clear()
     case.report = None
     # register first so the ref is known, then start the run bound to it
-    entry = registry.register_submission(case, case.complaint, run_id="", mode=mode)
+    entry = registry.register_submission(case, case.complaint, run_id="", mode=mode,
+                                         filed=req.filed_local)
     run_id = pipeline.start_run(case, mode, ref=entry["ref"])
     entry["run_id"] = run_id
     return {"ref": entry["ref"], "filed": entry["filed"], "run_id": run_id, "mode": mode}
@@ -90,7 +94,7 @@ async def submit(req: SubmitRequest) -> dict:
 
 @app.get("/api/cases")
 def cases() -> dict:
-    return {"today": registry.TODAY, "cases": registry.list_cases()}
+    return {"today": registry.today(), "cases": registry.list_cases()}
 
 
 @app.get("/api/cases/{ref}")

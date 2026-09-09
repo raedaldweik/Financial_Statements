@@ -295,7 +295,7 @@ REPORT_SCHEMA = _obj({
     "case_ref": _S,
     "classification": _S,
     "typology": _S,
-    "risk_score": {"type": "integer", "minimum": 0, "maximum": 100},
+    "risk_score": {"type": "integer", "description": "0-100"},
     "risk_level": {"type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]},
     "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
     "narrative": _S,

@@ -18,22 +18,24 @@ GOLD = colors.HexColor("#c8a44a")
 GREY = colors.HexColor("#5a6472")
 
 TXNS = [
-    ("01/09/2026", "OPENING BALANCE", "", "", "21,340.55"),
-    ("02/09/2026", "CARD PURCHASE — LULU HYPERMARKET, DUBAI", "214.30", "", "21,126.25"),
-    ("03/09/2026", "CARD PURCHASE — ADNOC FUEL STATION", "180.00", "", "20,946.25"),
-    ("05/09/2026", "SALARY CREDIT — FUTURE VISION MARKETING LLC", "", "14,200.00", "35,146.25"),
-    ("06/09/2026", "CARD PURCHASE — NOON.COM ORDER 5521-8830", "329.50", "", "34,816.75"),
-    ("08/09/2026",
+    ("01/08/2026", "OPENING BALANCE", "", "", "19,874.10"),
+    ("02/08/2026", "CARD PURCHASE — CARREFOUR MALL OF THE EMIRATES", "386.40", "", "19,487.70"),
+    ("04/08/2026", "CARD PURCHASE — ADNOC FUEL STATION", "175.00", "", "19,312.70"),
+    ("05/08/2026", "SALARY CREDIT — FUTURE VISION MARKETING LLC", "", "14,200.00", "33,512.70"),
+    ("07/08/2026", "UTILITY PAYMENT — DEWA", "492.35", "", "33,020.35"),
+    ("09/08/2026", "CARD PURCHASE — LULU HYPERMARKET, DUBAI", "241.80", "", "32,778.55"),
+    ("12/08/2026", "ATM CASH WITHDRAWAL — DEIRA BRANCH", "1,000.00", "", "31,778.55"),
+    ("15/08/2026", "CARD PURCHASE — NOON.COM ORDER 5521-8830", "329.50", "", "31,449.05"),
+    ("17/08/2026", "TELECOM PAYMENT — DU MONTHLY PLAN", "189.00", "", "31,260.05"),
+    ("20/08/2026", "CARD PURCHASE — TALABAT ORDER", "84.00", "", "31,176.05"),
+    ("24/08/2026",
      "ONLINE TRANSFER — MUBARAK SALEM / ACC 5660609 / AE600340005660609 / "
-     "REF: TRX-2026-0918-4821 PURCHASE OF ELECTRONIC DEVICES",
-     "12,500.00", "", "22,316.75"),
-    ("09/09/2026", "CARD PURCHASE — CARREFOUR MALL OF THE EMIRATES", "412.80", "", "21,903.95"),
-    ("11/09/2026", "UTILITY PAYMENT — DEWA", "518.60", "", "21,385.35"),
-    ("12/09/2026", "ATM CASH WITHDRAWAL — DEIRA BRANCH", "800.00", "", "20,585.35"),
-    ("14/09/2026", "CARD PURCHASE — TALABAT ORDER", "96.50", "", "20,488.85"),
-    ("16/09/2026", "TELECOM PAYMENT — DU MONTHLY PLAN", "189.00", "", "20,299.85"),
-    ("17/09/2026", "CARD PURCHASE — AMAZON.AE 771-20455", "145.75", "", "20,154.10"),
-    ("18/09/2026", "CLOSING BALANCE", "", "", "20,154.10"),
+     "REF: TRX-2026-0824-4821 PURCHASE OF ELECTRONIC DEVICES",
+     "12,500.00", "", "18,676.05"),
+    ("26/08/2026", "CARD PURCHASE — AMAZON.AE 771-20455", "145.75", "", "18,530.30"),
+    ("28/08/2026", "CARD PURCHASE — CARREFOUR MALL OF THE EMIRATES", "412.80", "", "18,117.50"),
+    ("30/08/2026", "CARD PURCHASE — TALABAT ORDER", "96.50", "", "18,021.00"),
+    ("31/08/2026", "CLOSING BALANCE", "", "", "18,021.00"),
 ]
 
 
@@ -49,12 +51,12 @@ def build() -> None:
                             topMargin=16 * mm, bottomMargin=16 * mm)
     story = [
         Paragraph("EXAMPLE BANK", h1),
-        Paragraph("People. Progress. Together. — FOR DEMO / TRAINING PURPOSES ONLY. Not a real bank document.", sub),
+        Paragraph("Account statement — Personal Current Account", sub),
         Spacer(1, 6 * mm),
     ]
 
     meta = Table([
-        ["Account holder", "AHMED HASSAN", "Statement period", "01/09/2026 – 18/09/2026"],
+        ["Account holder", "AHMED HASSAN", "Statement period", "01/08/2026 – 31/08/2026"],
         ["Account number", "7712045", "Currency", "AED"],
         ["IBAN", "AE310340007712045", "Branch", "Deira, Dubai"],
     ], colWidths=[30 * mm, 62 * mm, 32 * mm, 54 * mm])
@@ -94,7 +96,7 @@ def build() -> None:
     story.append(table)
     story += [
         Spacer(1, 6 * mm),
-        Paragraph("End of statement. For queries contact Example Bank. Example Bank is a fictional institution — demo/training use only.", sub),
+        Paragraph("End of statement. This statement is generated electronically and does not require a signature. For queries contact Example Bank customer care.", sub),
     ]
     doc.build(story)
     print(f"Wrote {OUT}")

@@ -1,5 +1,4 @@
 {
- "today": "2026-09-18",
  "next_sequence": 231,
  "cases": [
   {
@@ -528,15 +527,15 @@
   },
   {
    "ref": "FC-2026-0229",
-   "filed": "2026-09-17T16:48",
+   "filed": "2026-09-08T16:48",
    "complainant": "Layla Haddad",
    "emirate": "Abu Dhabi",
    "type": "Phishing / account takeover",
    "subtype": "SMS link — banking credentials",
    "amount": 43200,
    "currency": "AED",
-   "status": "New",
-   "stage": "Analysis queued",
+   "status": "Triage",
+   "stage": "Pending assignment",
    "officer": null,
    "risk_score": null,
    "risk_level": null,
@@ -544,7 +543,7 @@
    "evidence": [
     "SMS screenshots (3)",
     "Bank transaction alerts (5)",
-    "Bank statement Sep 2026"
+    "Bank statement Aug–Sep 2026"
    ],
    "complaint_text": "I received an SMS saying my card would be blocked and clicked the link, which asked for my banking login and an OTP. Within twenty minutes five transfers totalling AED 43,200 left my account to accounts I do not know. My bank has blocked the card and asked me to file a report.",
    "linked_refs": [],
@@ -552,7 +551,7 @@
   },
   {
    "ref": "FC-2026-0226",
-   "filed": "2026-09-15T11:20",
+   "filed": "2026-09-06T11:20",
    "complainant": "Omar Saeed",
    "emirate": "Dubai",
    "type": "Rental fraud",
@@ -580,7 +579,7 @@
     "risk_score": 64,
     "risk_level": "MEDIUM",
     "confidence": "medium",
-    "narrative": "Omar Saeed responded to a listing for a two-bedroom apartment in Al Barsha on 9 September 2026. The 'agent' communicated only on WhatsApp, sent a tenancy contract bearing a real brokerage's name, and pressed for a deposit of AED 18,000 to secure the unit before a viewing. Mr Saeed transferred the deposit on 12 September to a personal account. The agent then stopped responding, and building security confirmed the apartment is occupied. Mr Saeed filed this report on 15 September.",
+    "narrative": "Omar Saeed responded to a listing for a two-bedroom apartment in Al Barsha on 31 August 2026. The 'agent' communicated only on WhatsApp, sent a tenancy contract bearing a real brokerage's name, and pressed for a deposit of AED 18,000 to secure the unit before a viewing. Mr Saeed transferred the deposit on 3 September to a personal account. The agent then stopped responding, and building security confirmed the apartment is occupied. Mr Saeed filed this report on 6 September.",
     "key_facts": [
      {
       "label": "Complainant",
@@ -596,7 +595,7 @@
      },
      {
       "label": "Payment",
-      "value": "AED 18,000 — 12 Sep 2026"
+      "value": "AED 18,000 — 3 Sep 2026"
      },
      {
       "label": "Beneficiary",
@@ -652,24 +651,24 @@
     "entities": [],
     "timeline": [
      {
-      "date": "2026-09-09",
+      "date": "2026-08-31",
       "event": "Complainant contacts listing agent",
       "source": "Statement"
      },
      {
-      "date": "2026-09-12",
+      "date": "2026-09-03",
       "event": "AED 18,000 deposit transferred",
       "source": "Bank records"
      },
      {
-      "date": "2026-09-15",
+      "date": "2026-09-06",
       "event": "Complaint filed",
       "source": "Complaint"
      }
     ],
     "financial_flow": [
      {
-      "date": "2026-09-12",
+      "date": "2026-09-03",
       "from": "Omar Saeed (complainant)",
       "to": "Beneficiary account (personal)",
       "amount": 18000,
@@ -697,7 +696,7 @@
   },
   {
    "ref": "FC-2026-0221",
-   "filed": "2026-09-12T09:05",
+   "filed": "2026-09-03T09:05",
    "complainant": "Priya Nair",
    "emirate": "Dubai",
    "type": "Employment fraud",
@@ -724,7 +723,7 @@
     "risk_score": 58,
     "risk_level": "MEDIUM",
     "confidence": "medium",
-    "narrative": "Priya Nair applied for a position through a job portal in late August 2026 and received an offer letter by email from an address resembling the company's domain. The 'recruiter' requested AED 6,400 for visa processing and medical tests, described as refundable on joining. She transferred the amount on 8 September. The email address then bounced, and the company's HR department confirmed no offer had been issued. She filed this report on 12 September.",
+    "narrative": "Priya Nair applied for a position through a job portal in late August 2026 and received an offer letter by email from an address resembling the company's domain. The 'recruiter' requested AED 6,400 for visa processing and medical tests, described as refundable on joining. She transferred the amount on 30 August. The email address then bounced, and the company's HR department confirmed no offer had been issued. She filed this report on 3 September.",
     "key_facts": [
      {
       "label": "Complainant",
@@ -736,7 +735,7 @@
      },
      {
       "label": "Payment",
-      "value": "AED 6,400 — 8 Sep 2026"
+      "value": "AED 6,400 — 30 Aug 2026"
      },
      {
       "label": "Beneficiary",
@@ -759,12 +758,12 @@
       "status": "verified"
      }
     ],
-    "investigation_summary": "Look-alike domain registered 2026-08-19. Beneficiary bank disclosure requested 14 September; no prior occurrence in complaint history.",
+    "investigation_summary": "Look-alike domain registered 2026-08-10. Beneficiary bank disclosure requested 5 September; no prior occurrence in complaint history.",
     "osint_findings": [
      {
       "subject": "Recruiter email domain",
       "source": "Domain records",
-      "finding": "Registered 2026-08-19 via privacy proxy; mimics the employer's domain",
+      "finding": "Registered 2026-08-10 via privacy proxy; mimics the employer's domain",
       "assessment": "adverse"
      }
     ],
@@ -780,24 +779,24 @@
     "entities": [],
     "timeline": [
      {
-      "date": "2026-09-01",
+      "date": "2026-08-23",
       "event": "Offer letter received",
       "source": "Evidence"
      },
      {
-      "date": "2026-09-08",
+      "date": "2026-08-30",
       "event": "AED 6,400 transferred",
       "source": "Bank records"
      },
      {
-      "date": "2026-09-12",
+      "date": "2026-09-03",
       "event": "Complaint filed",
       "source": "Complaint"
      }
     ],
     "financial_flow": [
      {
-      "date": "2026-09-08",
+      "date": "2026-08-30",
       "from": "Priya Nair (complainant)",
       "to": "Beneficiary account (personal)",
       "amount": 6400,
@@ -807,7 +806,7 @@
     ],
     "recommended_actions": [
      {
-      "action": "Follow up the bank disclosure request sent 14 Sep",
+      "action": "Follow up the bank disclosure request sent 5 Sep",
       "priority": "high",
       "addressee": "Beneficiary bank — Compliance",
       "timeframe": "48 hours",
@@ -825,7 +824,7 @@
   },
   {
    "ref": "FC-2026-0219",
-   "filed": "2026-09-11T13:42",
+   "filed": "2026-09-02T13:42",
    "complainant": "Khalid Al Mazrouei",
    "emirate": "Abu Dhabi",
    "type": "Investment fraud",
@@ -853,7 +852,7 @@
     "risk_score": 83,
     "risk_level": "HIGH",
     "confidence": "high",
-    "narrative": "Khalid Al Mazrouei was added to a Telegram trading group in July 2026 where a 'mentor' posted daily signals. He was guided to register on a trading platform, converted funds through a licensed crypto exchange and deposited the equivalent of AED 96,000 in five transfers between 22 July and 28 August. The platform displayed growing profits. When he requested a withdrawal on 3 September, he was told to pay a 20% 'tax' first; on refusal, his account was blocked and the group administrators removed him. He reported the matter on 11 September with 22 Telegram screenshots, platform screenshots and his exchange history.",
+    "narrative": "Khalid Al Mazrouei was added to a Telegram trading group in July 2026 where a 'mentor' posted daily signals. He was guided to register on a trading platform, converted funds through a licensed crypto exchange and deposited the equivalent of AED 96,000 in five transfers between 13 July and 19 August. The platform displayed growing profits. When he requested a withdrawal on 25 August, he was told to pay a 20% 'tax' first; on refusal, his account was blocked and the group administrators removed him. He reported the matter on 2 September with 22 Telegram screenshots, platform screenshots and his exchange history.",
     "key_facts": [
      {
       "label": "Complainant",
@@ -865,7 +864,7 @@
      },
      {
       "label": "Deposits",
-      "value": "5 transfers, 22 Jul – 28 Aug 2026 — AED 96,000 equivalent"
+      "value": "5 transfers, 13 Jul – 19 Aug 2026 — AED 96,000 equivalent"
      },
      {
       "label": "Route",
@@ -873,7 +872,7 @@
      },
      {
       "label": "Withdrawal block",
-      "value": "3 Sep 2026 — '20% tax' demand"
+      "value": "25 Aug 2026 — '20% tax' demand"
      }
     ],
     "evidence_assessment": [
@@ -888,12 +887,12 @@
       "status": "unverified"
      }
     ],
-    "investigation_summary": "The platform domain is 6 weeks old and the two receiving wallets consolidate to a single address flagged in two other jurisdictions' warnings. Exchange disclosure requested 12 September.",
+    "investigation_summary": "The platform domain is 6 weeks old and the two receiving wallets consolidate to a single address flagged in two other jurisdictions' warnings. Exchange disclosure requested 3 September.",
     "osint_findings": [
      {
       "subject": "Trading platform domain",
       "source": "Domain records",
-      "finding": "Registered 2026-07-28; hosted offshore; cloned interface",
+      "finding": "Registered 2026-07-19; hosted offshore; cloned interface",
       "assessment": "adverse"
      },
      {
@@ -921,29 +920,29 @@
     "entities": [],
     "timeline": [
      {
-      "date": "2026-07-22",
+      "date": "2026-07-13",
       "event": "First deposit",
       "source": "Exchange records"
      },
      {
-      "date": "2026-08-28",
+      "date": "2026-08-19",
       "event": "Fifth and final deposit",
       "source": "Exchange records"
      },
      {
-      "date": "2026-09-03",
+      "date": "2026-08-25",
       "event": "Withdrawal blocked; 'tax' demanded",
       "source": "Statement"
      },
      {
-      "date": "2026-09-11",
+      "date": "2026-09-02",
       "event": "Complaint filed",
       "source": "Complaint"
      }
     ],
     "financial_flow": [
      {
-      "date": "2026-07-22",
+      "date": "2026-07-13",
       "from": "Khalid Al Mazrouei (complainant)",
       "to": "Platform wallet A",
       "amount": 24000,
@@ -951,7 +950,7 @@
       "note": "THIS CASE — deposit 1"
      },
      {
-      "date": "2026-08-28",
+      "date": "2026-08-19",
       "from": "Khalid Al Mazrouei (complainant)",
       "to": "Platform wallet B",
       "amount": 72000,
@@ -979,7 +978,7 @@
   },
   {
    "ref": "FC-2026-0213",
-   "filed": "2026-09-06T10:15",
+   "filed": "2026-08-30T10:15",
    "complainant": "Fatima Al Ali",
    "emirate": "Dubai",
    "type": "Phishing / account takeover",
@@ -1005,7 +1004,7 @@
     "risk_score": 35,
     "risk_level": "LOW",
     "confidence": "high",
-    "narrative": "Fatima Al Ali received an SMS on 4 September 2026 claiming a parcel was held pending a small customs fee. She entered her card details on the linked page. Two online transactions totalling AED 2,150 were charged the same evening. Her bank blocked the card and reversed both transactions under chargeback on 6 September. The report was filed for record and closed.",
+    "narrative": "Fatima Al Ali received an SMS on 28 August 2026 claiming a parcel was held pending a small customs fee. She entered her card details on the linked page. Two online transactions totalling AED 2,150 were charged the same evening. Her bank blocked the card and reversed both transactions under chargeback on 30 August. The report was filed for record and closed.",
     "key_facts": [
      {
       "label": "Complainant",
@@ -1021,7 +1020,7 @@
      },
      {
       "label": "Outcome",
-      "value": "Chargeback completed 6 Sep 2026"
+      "value": "Chargeback completed 30 Aug 2026"
      }
     ],
     "evidence_assessment": [
@@ -1036,7 +1035,7 @@
      {
       "subject": "Phishing link domain",
       "source": "Domain records",
-      "finding": "Registered 2026-09-03; suspended 2026-09-05",
+      "finding": "Registered 2026-08-27; suspended 2026-08-29",
       "assessment": "adverse"
      }
     ],
@@ -1052,19 +1051,19 @@
     "entities": [],
     "timeline": [
      {
-      "date": "2026-09-04",
+      "date": "2026-08-28",
       "event": "SMS received; card details entered",
       "source": "Statement"
      },
      {
-      "date": "2026-09-06",
+      "date": "2026-08-30",
       "event": "Chargeback completed; case closed",
       "source": "Bank"
      }
     ],
     "financial_flow": [
      {
-      "date": "2026-09-04",
+      "date": "2026-08-28",
       "from": "Fatima Al Ali (complainant)",
       "to": "Online merchants (2)",
       "amount": 2150,
@@ -1085,7 +1084,7 @@
   },
   {
    "ref": "FC-2026-0208",
-   "filed": "2026-09-02T08:50",
+   "filed": "2026-08-29T08:50",
    "complainant": "Meridian Trading LLC",
    "emirate": "Dubai",
    "type": "Business email compromise",
@@ -1113,7 +1112,7 @@
     "risk_score": 88,
     "risk_level": "CRITICAL",
     "confidence": "high",
-    "narrative": "Meridian Trading LLC received an email on 19 August 2026 from an address differing from its supplier's genuine domain by one character, notifying a change of bank account for future invoices. The accounts department updated the beneficiary record and paid two genuine invoices, AED 185,000 on 24 August and AED 125,000 on 28 August, to the new account. The supplier queried non-payment on 1 September. The company's bank initiated a recall and the company filed this report on 2 September.",
+    "narrative": "Meridian Trading LLC received an email on 15 August 2026 from an address differing from its supplier's genuine domain by one character, notifying a change of bank account for future invoices. The accounts department updated the beneficiary record and paid two genuine invoices, AED 185,000 on 20 August and AED 125,000 on 24 August, to the new account. The supplier queried non-payment on 28 August. The company's bank initiated a recall and the company filed this report on 29 August.",
     "key_facts": [
      {
       "label": "Complainant",
@@ -1125,7 +1124,7 @@
      },
      {
       "label": "Payments",
-      "value": "AED 185,000 (24 Aug) + AED 125,000 (28 Aug)"
+      "value": "AED 185,000 (20 Aug) + AED 125,000 (24 Aug)"
      },
      {
       "label": "Beneficiary",
@@ -1133,13 +1132,13 @@
      },
      {
       "label": "Recall status",
-      "value": "Initiated 1 Sep 2026 — partial hold reported"
+      "value": "Initiated 28 Aug 2026 — partial hold reported"
      }
     ],
     "evidence_assessment": [
      {
       "item": "Change-of-account email",
-      "finding": "Domain registered 2026-08-15; headers show foreign mail relay",
+      "finding": "Domain registered 2026-08-11; headers show foreign mail relay",
       "status": "unverified"
      },
      {
@@ -1153,13 +1152,13 @@
      {
       "subject": "Sender domain",
       "source": "Domain records",
-      "finding": "Registered 2026-08-15; one-character variant of supplier domain",
+      "finding": "Registered 2026-08-11; one-character variant of supplier domain",
       "assessment": "adverse"
      },
      {
       "subject": "Receiving company",
       "source": "Trade license registries",
-      "finding": "Licensed 2026-07-08; general trading; flexi-desk",
+      "finding": "Licensed 2026-07-04; general trading; flexi-desk",
       "assessment": "adverse"
      }
     ],
@@ -1181,34 +1180,34 @@
     "entities": [],
     "timeline": [
      {
-      "date": "2026-08-19",
+      "date": "2026-08-15",
       "event": "Change-of-account email received",
       "source": "Evidence"
      },
      {
-      "date": "2026-08-24",
+      "date": "2026-08-20",
       "event": "AED 185,000 paid",
       "source": "Bank records"
      },
      {
-      "date": "2026-08-28",
+      "date": "2026-08-24",
       "event": "AED 125,000 paid",
       "source": "Bank records"
      },
      {
-      "date": "2026-09-01",
+      "date": "2026-08-28",
       "event": "Supplier queries non-payment; recall initiated",
       "source": "Statement"
      },
      {
-      "date": "2026-09-02",
+      "date": "2026-08-29",
       "event": "Complaint filed",
       "source": "Complaint"
      }
     ],
     "financial_flow": [
      {
-      "date": "2026-08-24",
+      "date": "2026-08-20",
       "from": "Meridian Trading LLC (complainant)",
       "to": "Receiving company account",
       "amount": 185000,
@@ -1216,7 +1215,7 @@
       "note": "THIS CASE — invoice 1"
      },
      {
-      "date": "2026-08-28",
+      "date": "2026-08-24",
       "from": "Meridian Trading LLC (complainant)",
       "to": "Receiving company account",
       "amount": 125000,
@@ -1244,7 +1243,7 @@
   },
   {
    "ref": "FC-2026-0199",
-   "filed": "2026-08-24T17:30",
+   "filed": "2026-08-18T17:30",
    "complainant": "M. R. (name withheld)",
    "emirate": "Dubai",
    "type": "Romance fraud",
@@ -1271,7 +1270,7 @@
     "risk_score": 70,
     "risk_level": "HIGH",
     "confidence": "high",
-    "narrative": "The complainant met a man on a dating application in May 2026 who described himself as an engineer on an overseas contract. Over three months he built a relationship by daily messaging and video calls he always cut short. From June he requested help with medical bills, then a customs problem with a shipment of gifts. The complainant made six transfers totalling AED 54,500 between 12 June and 15 August to three different personal accounts. After the last payment all contact stopped. The report was filed on 24 August with a 140-page chat export and the six transfer confirmations.",
+    "narrative": "The complainant met a man on a dating application in May 2026 who described himself as an engineer on an overseas contract. Over three months he built a relationship by daily messaging and video calls he always cut short. From June he requested help with medical bills, then a customs problem with a shipment of gifts. The complainant made six transfers totalling AED 54,500 between 6 June and 9 August to three different personal accounts. After the last payment all contact stopped. The report was filed on 18 August with a 140-page chat export and the six transfer confirmations.",
     "key_facts": [
      {
       "label": "Complainant",
@@ -1283,7 +1282,7 @@
      },
      {
       "label": "Payments",
-      "value": "6 transfers — AED 54,500 — 12 Jun to 15 Aug 2026"
+      "value": "6 transfers — AED 54,500 — 6 Jun to 9 Aug 2026"
      },
      {
       "label": "Beneficiaries",
@@ -1291,7 +1290,7 @@
      },
      {
       "label": "Last contact",
-      "value": "16 Aug 2026"
+      "value": "10 Aug 2026"
      }
     ],
     "evidence_assessment": [
@@ -1306,7 +1305,7 @@
       "status": "verified"
      }
     ],
-    "investigation_summary": "Profile photos are stolen from a public figure; the three receiving accounts belong to different holders, two of which have prior mule indicators with their banks. Disclosure requests sent 26 August.",
+    "investigation_summary": "Profile photos are stolen from a public figure; the three receiving accounts belong to different holders, two of which have prior mule indicators with their banks. Disclosure requests sent 20 August.",
     "osint_findings": [
      {
       "subject": "Profile photos",
@@ -1327,29 +1326,29 @@
     "entities": [],
     "timeline": [
      {
-      "date": "2026-05-20",
+      "date": "2026-05-14",
       "event": "Contact begins on dating application",
       "source": "Statement"
      },
      {
-      "date": "2026-06-12",
+      "date": "2026-06-06",
       "event": "First transfer",
       "source": "Bank records"
      },
      {
-      "date": "2026-08-15",
+      "date": "2026-08-09",
       "event": "Sixth and final transfer",
       "source": "Bank records"
      },
      {
-      "date": "2026-08-24",
+      "date": "2026-08-18",
       "event": "Complaint filed",
       "source": "Complaint"
      }
     ],
     "financial_flow": [
      {
-      "date": "2026-06-12",
+      "date": "2026-06-06",
       "from": "M. R. (complainant)",
       "to": "Personal account 1",
       "amount": 12000,
@@ -1357,7 +1356,7 @@
       "note": "THIS CASE — 'medical bills'"
      },
      {
-      "date": "2026-08-15",
+      "date": "2026-08-09",
       "from": "M. R. (complainant)",
       "to": "Personal accounts 2–3",
       "amount": 42500,
@@ -1385,7 +1384,7 @@
   },
   {
    "ref": "FC-2026-0195",
-   "filed": "2026-08-20T12:05",
+   "filed": "2026-08-14T12:05",
    "complainant": "Saeed Al Nuaimi",
    "emirate": "Ajman",
    "type": "Online purchase fraud",
@@ -1393,7 +1392,7 @@
    "amount": 25000,
    "currency": "AED",
    "status": "Awaiting complainant",
-   "stage": "Documents requested 22 Aug",
+   "stage": "Documents requested 16 Aug",
    "officer": null,
    "risk_score": 61,
    "risk_level": "MEDIUM",
@@ -1408,7 +1407,7 @@
   },
   {
    "ref": "FC-2026-0181",
-   "filed": "2026-08-02T15:22",
+   "filed": "2026-07-28T15:22",
    "complainant": "Nadia Kamal",
    "emirate": "Dubai",
    "type": "Charity fraud",
@@ -1434,7 +1433,7 @@
     "risk_score": 28,
     "risk_level": "LOW",
     "confidence": "medium",
-    "narrative": "Nadia Kamal donated AED 3,000 on 28 July 2026 to a social-media appeal for a child's medical treatment. The appeal page was removed on 31 July. The receiving bank confirmed the account had been closed following its own review, with no funds remaining. The report was filed on 2 August and closed with no further action after the platform confirmed the page had been removed for policy violation.",
+    "narrative": "Nadia Kamal donated AED 3,000 on 23 July 2026 to a social-media appeal for a child's medical treatment. The appeal page was removed on 26 July. The receiving bank confirmed the account had been closed following its own review, with no funds remaining. The report was filed on 28 July and closed with no further action after the platform confirmed the page had been removed for policy violation.",
     "key_facts": [
      {
       "label": "Complainant",
@@ -1442,7 +1441,7 @@
      },
      {
       "label": "Loss",
-      "value": "AED 3,000 — 28 Jul 2026"
+      "value": "AED 3,000 — 23 Jul 2026"
      },
      {
       "label": "Outcome",
@@ -1461,7 +1460,7 @@
      {
       "subject": "Appeal page",
       "source": "Platform",
-      "finding": "Removed 2026-07-31 for policy violation",
+      "finding": "Removed 2026-07-26 for policy violation",
       "assessment": "adverse"
      }
     ],
@@ -1477,24 +1476,24 @@
     "entities": [],
     "timeline": [
      {
-      "date": "2026-07-28",
+      "date": "2026-07-23",
       "event": "Donation transferred",
       "source": "Bank records"
      },
      {
-      "date": "2026-07-31",
+      "date": "2026-07-26",
       "event": "Appeal page removed",
       "source": "Platform"
      },
      {
-      "date": "2026-08-02",
+      "date": "2026-07-28",
       "event": "Complaint filed and closed",
       "source": "Complaint"
      }
     ],
     "financial_flow": [
      {
-      "date": "2026-07-28",
+      "date": "2026-07-23",
       "from": "Nadia Kamal (complainant)",
       "to": "Appeal account",
       "amount": 3000,

@@ -24,10 +24,10 @@
       "type": "Prepaid SIM",
       "activated": "2026-04-18",
       "registered_name": "K. Rahim (identity unverified — suspected false registration)",
-      "status": "Active, not accepting inbound calls since 2026-09-14",
+      "status": "Active, not accepting inbound calls since 2026-08-30",
       "linked_handles": ["@primegulf.electronics", "TechDeals UAE (marketplace)"],
       "public_scam_reports": 2,
-      "notes": "The same number appears as seller contact for the Prime Gulf Electronics page and for 'TechDeals UAE' classified listings. WhatsApp Business profile deleted 2026-09-15."
+      "notes": "The same number appears as seller contact for the Prime Gulf Electronics page and for 'TechDeals UAE' classified listings. WhatsApp Business profile deleted 2026-08-31."
     }
   ],
   "domains": [
@@ -39,7 +39,7 @@
       "hosting": "Bulletproof VPS provider, Eastern Europe",
       "ssl": "Free DV certificate only",
       "site": "Cloned storefront template; product photos reverse-image-match a Hong Kong wholesaler catalogue",
-      "status": "Offline since 2026-09-15"
+      "status": "Offline since 2026-08-31"
     },
     {
       "domain": "globalpathways-invest.com",
@@ -62,7 +62,7 @@
       "comments": "Disabled on all posts",
       "tagged_posts": 0,
       "content": "Product photos reverse-image-match a Hong Kong wholesaler; 'delivery photos' traced to other retailers' posts",
-      "status": "Deactivated on or around 2026-09-15"
+      "status": "Deactivated on or around 2026-08-31"
     },
     {
       "handle": "TechDeals UAE",
@@ -74,17 +74,17 @@
   "scam_reports": [
     {
       "source": "ScamWatch Gulf forum",
-      "date": "2026-09-01",
+      "date": "2026-08-17",
       "report": "User warns: paid 'TechDeals UAE' for a discounted PlayStation bundle, transferred to a personal account, never delivered, seller number +971 55 302 8817 stopped answering."
     },
     {
       "source": "TrustScan reviews",
-      "date": "2026-09-12",
+      "date": "2026-08-28",
       "report": "1-star review of primegulf-electronics.com: 'Fake shop. They take bank transfer to a personal account (Mubarak somebody) and disappear.'"
     },
     {
       "source": "RedFlag UAE Telegram group",
-      "date": "2026-09-14",
+      "date": "2026-08-30",
       "report": "Screenshot thread: Prime Gulf Electronics payment instructions name beneficiary 'Mubarak Salem', IBAN ending 609 — two users report identical non-delivery."
     },
     {

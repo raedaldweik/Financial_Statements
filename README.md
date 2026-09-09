@@ -55,20 +55,24 @@ chat. Three complaints, two accounts, one network: AED 296,400.
 
 ## The six agents
 
-1. 📋 **Intake & Triage** — classifies the complaint, briefs the specialists
-2. 💬 **Conversation Forensics** — reads the screenshots (vision), extracts identifiers, names the manipulation techniques
-3. 🏦 **Financial Analysis** — parses the statement PDFs, isolates the fraud transfers
-4. 🌐 **OSINT** — registries, telecom, domains, social, scam databases (5 tools over bundled data)
-5. 🕸️ **Complaint History Cross-Reference** — prior complaints & known entities (3 tools) — first offence or a series?
-6. 🎖️ **Lead Investigator** — synthesizes the structured report (schema-enforced JSON)
+1. **Intake & Triage** — classifies the complaint, briefs the specialists
+2. **Conversation Forensics** — reads the screenshots (vision), extracts identifiers, names the manipulation techniques
+3. **Financial Analysis** — parses the statement PDFs, isolates the fraud transfers
+4. **OSINT** — registries, telecom, domains, social, scam databases (5 tools over bundled data)
+5. **Complaint History Cross-Reference** — prior complaints & known entities (3 tools) — first offence or a series?
+6. **Lead Investigator** — synthesizes the structured report (schema-enforced JSON)
 
 ## Live mode vs. simulation mode
 
 - **Live** (`ANTHROPIC_API_KEY` set): real agentic runs — upload your own
   screenshots/statements, ask follow-up questions.
-- **Simulation** (no key, or selected in the UI): streams a bundled recorded
-  run with identical UX, labelled **Simulation** in the nav — the
-  no-internet / no-key safety net at the client site.
+- **Recorded** (no key): streams a bundled recorded run with identical UX —
+  the no-internet / no-key safety net at the client site. If a live run fails
+  for any reason (key, quota, network) the case is completed with the
+  recorded analysis automatically, so the queue never shows a failed case.
+- Force a mode for one browser with `report-fraud.html?mode=live` or
+  `?mode=replay` (`?mode=auto` resets). Nothing in the UI shows which mode
+  ran; the `error` field on `/api/cases/{ref}` records a live failure.
 
 ## Run locally
 
@@ -92,6 +96,8 @@ uvicorn main:app --reload
    | `ANTHROPIC_API_KEY` | for live mode | without it the app runs in simulation mode |
    | `MODEL` | no | default `claude-opus-5`; `claude-sonnet-5` for snappier turns |
    | `LLM_EFFORT` | no | default `medium` |
+   | `DEMO_TZ` | no | timezone for filing timestamps, default `Asia/Dubai` |
+   | `DEMO_TODAY` | no | pin "today" (`2026-09-10`) for a rehearsal; normally unset |
 
 4. Settings → Networking → **Generate Domain**.
 
@@ -102,12 +108,12 @@ lives in `backend/demo_data/`:
 
 - `conversation.txt` → rendered into `chat_1..3.png` by
   `backend/scripts/make_chat_screenshots.py` (WhatsApp-style screenshots)
-- `receipt.jpg` — the Example Bank transfer confirmation (watermarked demo document)
+- `receipt.jpg` ← `backend/scripts/make_receipt.py` (Example Bank transfer confirmation)
 - `bank_statement.pdf` ← `backend/scripts/make_statement_pdf.py`
 - `osint.json`, `intel_db.json` — the OSINT sources and prior-complaint data
   the agent tools query
-- `replay.json` — the recorded simulation run
-
+- `replay.json` — the recorded run (filing-date placeholders such as
+  `{{FILED_LONG}}` are filled with the real submission date at run time)
 - `cases.json` — the seeded case queue (11 cases with their case files)
 
 Swap these files to retheme the storyline for another client.

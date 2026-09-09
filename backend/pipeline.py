@@ -116,8 +116,14 @@ async def _run_live(case: Case, emit) -> None:
 
 # ─── Replay (simulation) execution ───────────────────────────────────
 
-async def _run_replay(case: Case, emit, speed: float = 1.0) -> None:
-    data = json.loads((config.DEMO_DIR / "replay.json").read_text(encoding="utf-8"))
+async def _run_replay(case: Case, emit, speed: float = 1.0,
+                      filed: Optional[str] = None, ref: Optional[str] = None) -> None:
+    raw = (config.DEMO_DIR / "replay.json").read_text(encoding="utf-8")
+    raw = registry.fill_dates(raw, filed or case.complaint.get("filed_date"))
+    if ref:  # the recorded run was captured for FC-2026-0231; re-key it to this case
+        raw = raw.replace("FC-2026-0231", ref)
+    data = json.loads(raw)
+    case.memos.clear()
     for item in data["events"]:
         await asyncio.sleep(min(float(item.get("delay", 0.5)), 6.0) * speed)
         event = item["event"]
@@ -144,10 +150,27 @@ def start_run(case: Case, mode: str, ref: Optional[str] = None) -> str:
             await emit({"type": "pipeline_start", "mode": mode,
                         "agents": [{"key": a.key, "name": a.name, "icon": a.icon,
                                     "role": a.role} for a in PIPELINE]})
+            entry = registry.get(ref) if ref else None
+            filed = entry["filed"] if entry else None
             if mode == "live":
-                await _run_live(case, emit)
+                try:
+                    await _run_live(case, emit)
+                except Exception as exc:
+                    # The live run failed (key, quota, network, schema, ...). The
+                    # queue must never show a dead case in front of the client:
+                    # keep the error for diagnosis, restart the log and finish
+                    # the case with the recorded analysis.
+                    logger.exception("Live run %s failed — completing with recorded analysis", run_id)
+                    RUNS[run_id]["fallback"] = f"{type(exc).__name__}: {exc}"
+                    if ref:
+                        registry.note_error(ref, f"{type(exc).__name__}: {exc}")
+                    case.report = None
+                    await emit({"type": "pipeline_start", "mode": "replay", "restart": True,
+                                "agents": [{"key": a.key, "name": a.name, "icon": a.icon,
+                                            "role": a.role} for a in PIPELINE]})
+                    await _run_replay(case, emit, speed=0.35, filed=filed, ref=ref)
             else:
-                await _run_replay(case, emit)
+                await _run_replay(case, emit, filed=filed, ref=ref)
             await emit({"type": "done"})
             RUNS[run_id]["status"] = "done"
             if ref and case.report:
@@ -218,7 +241,7 @@ def offline_answer(entry: dict, question: str) -> str:
     ref = entry["ref"]
     accts = _accounts_from(rep)
     acct_lines = "\n".join(f"- {a}" for a in accts) or "- (beneficiary account per case file)"
-    today = registry.TODAY
+    today = registry.today()
     if any(k in q for k in ("freeze", "hold", "block")):
         return (f"**Draft — request for temporary hold on beneficiary accounts**\n\n"
                 f"To: Compliance / MLRO, beneficiary bank\nRef: {ref} — {rep.get('classification','fraud complaint')}\nDate: {today}\n\n"

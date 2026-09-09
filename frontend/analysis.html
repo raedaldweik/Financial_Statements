@@ -20,7 +20,7 @@
     <a href="#" class="tab" id="navCase">Case File</a>
     <a href="#" class="tab active">Analysis Log</a>
   </div>
-  <div class="nav-right"><span class="officer"><i>RH</i>Insp. R. Haddad</span><span class="mode-pill" id="modePill">…</span></div>
+  <div class="nav-right"><span class="officer"><i>RH</i>Insp. R. Haddad</span></div>
 </nav>
 
 <div class="pw">
@@ -88,7 +88,7 @@ const STATIC_AGENTS = [
   const res=await fetch('/api/cases/'+encodeURIComponent(REF));
   if(!res.ok){ $('emptyState').style.display='block'; $('anaStatus').textContent='Case not found.'; return; }
   const c=await res.json();
-  mode=c.mode||null; if(mode) setModePill(mode); $('k_mode').textContent = mode==='live' ? 'live analysis' : (mode==='replay' ? 'recorded analysis' : '—');
+  mode=c.mode||null; $('k_mode').textContent = c.processing ? 'analysis running' : (c.report ? 'analysis complete' : '—');
   if(c.processing && c.run_id){
     runId=c.run_id;
     $('anaStatus').textContent='Connecting to the analysis stream…';
@@ -146,6 +146,10 @@ function setStatus(key, text, cls){
 
 function handle(e, es){
   if(e.type==='pipeline_start'){
+    if(order.length){ /* pipeline restarted: reset the log */
+      $('stageList').innerHTML=''; $('panels').innerHTML=''; agents={}; doneCount=0; tools=0; ids=0; matches=0;
+      $('k_tools').textContent='0'; $('k_ids').textContent='0'; $('k_matches').textContent='0';
+    }
     order=e.agents.map(a=>a.key);
     e.agents.forEach((a,i)=>{agents[a.key]=a;$('stageList').appendChild(stageRow(a,i));$('panels').appendChild(panelCard(a,i));});
     $('pipe').style.display='grid'; showPanel(order[0]);
