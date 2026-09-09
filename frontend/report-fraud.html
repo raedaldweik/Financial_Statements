@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Report a Fraud — e-Crime Reporting</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%23191100' stroke='%23C8A44A' stroke-width='1.6'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/theme.css">
+<script src="assets/i18n.js"></script>
 </head>
 <body>
 
@@ -100,7 +101,7 @@
           <div class="ch"><div class="ch-left" data-ic="shield"><h3>Before You Submit</h3></div></div>
           <div class="cb">
             <div class="hint" style="font-size:11.5px;color:var(--text-md);line-height:1.6">Reports with the full conversation, the payment confirmation and a bank statement can be processed fastest. Do not contact the seller further and do not make any additional payments.</div>
-            <label class="check"><input type="checkbox" id="consent"> I confirm the information is true to the best of my knowledge and I consent to the Financial Crime Unit obtaining records from my bank and the platforms concerned for the purpose of this investigation.</label>
+            <label class="check"><input type="checkbox" id="consent"> <span>I confirm the information is true to the best of my knowledge and I consent to the Financial Crime Unit obtaining records from my bank and the platforms concerned for the purpose of this investigation.</span></label>
             <div style="margin-top:16px;display:flex;align-items:center;gap:14px">
               <button class="btn btn-primary" id="btnSubmit" style="padding:12px 28px">Submit report</button>
               <span class="hint" id="submitHint">You will receive a reference number immediately.</span>
@@ -166,30 +167,30 @@ async function prefill(){
     const r = await (await fetch('/api/case/demo',{method:'POST'})).json();
     caseId = r.case_id;
     const c = r.complaint;
-    $('f_name').value=c.victim?.name||''; $('f_phone').value=c.victim?.phone||''; $('f_email').value=c.victim?.email||'';
+    $('f_name').value=pick(c.victim||{},'name')||''; $('f_phone').value=c.victim?.phone||''; $('f_email').value=c.victim?.email||'';
     $('f_emirate').value=c.victim?.emirate||'Dubai';
     $('f_cat').value=c.category||$('f_cat').value;
-    $('f_paydate').value='2026-09-08'; $('f_amount').value=c.claimed_loss||''; $('f_method').value='Bank transfer';
+    $('f_paydate').value='2026-08-24'; $('f_amount').value=c.claimed_loss||''; $('f_method').value='Bank transfer';
     $('f_bname').value='Mubarak Salem'; $('f_bacct').value='5660609'; $('f_biban').value='AE600340005660609';
-    $('f_desc').value=c.narrative||'';
+    $('f_desc').value=pick(c,'narrative')||'';
     EV.images = r.evidence.complaint_images.map((n,i)=>({name:n, src:`/api/demo/img/${i}`}));
     EV.statements = r.evidence.statements.map(n=>({name:n}));
     renderEvidence();
-  }catch(e){ toast('Could not load the sample submission: '+e.message); }
+  }catch(e){ toast(t('Could not load the sample submission: ')+e.message); }
 }
 
 $('thumbs').addEventListener('click', e=>{ if(e.target.tagName!=='IMG') return; $('lightboxImg').src=e.target.src; $('lightbox').classList.add('open'); });
 $('lightbox').onclick=()=>$('lightbox').classList.remove('open');
 
 function renderEvidence(){
-  $('thumbs').innerHTML = EV.images.map(im=>`<img class="thumb" src="${im.src}" title="${esc(im.name)}">`).join('');
+  $('thumbs').innerHTML = EV.images.map(im=>`<img class="thumb" src="${im.src}" title="${esc(t(im.name))}">`).join('');
   const rows=[];
-  EV.images.forEach(im=>rows.push(`<tr><td><span class="mono">${esc(im.name)}</span></td><td>Screenshot</td><td style="text-align:right"><span class="rb green">Attached</span></td></tr>`));
-  if(EV.text) rows.push(`<tr><td><span class="mono">conversation text</span></td><td>Transcript</td><td style="text-align:right"><span class="rb green">Attached</span></td></tr>`);
-  EV.statements.forEach(s=>rows.push(`<tr><td><span class="mono">${esc(s.name)}</span></td><td>Bank statement</td><td style="text-align:right"><span class="rb green">Attached</span></td></tr>`));
+  EV.images.forEach(im=>rows.push(`<tr><td><span class="mono">${esc(t(im.name))}</span></td><td>${esc(t('Screenshot'))}</td><td class="ta-r"><span class="rb green">${esc(t('Attached'))}</span></td></tr>`));
+  if(EV.text) rows.push(`<tr><td><span class="mono">conversation text</span></td><td>${esc(t('Transcript'))}</td><td class="ta-r"><span class="rb green">${esc(t('Attached'))}</span></td></tr>`);
+  EV.statements.forEach(s=>rows.push(`<tr><td><span class="mono">${esc(s.name)}</span></td><td>${esc(t('Bank statement'))}</td><td class="ta-r"><span class="rb green">${esc(t('Attached'))}</span></td></tr>`));
   const n=EV.images.length+EV.statements.length+(EV.text?1:0);
-  $('evRows').innerHTML=rows.join('')||`<tr><td colspan="3" class="hint" style="text-align:center;padding:14px">No files attached yet</td></tr>`;
-  $('evBadge').textContent=n+(n===1?' file':' files');
+  $('evRows').innerHTML=rows.join('')||`<tr><td colspan="3" class="hint" style="text-align:center;padding:14px">${esc(t('No files attached yet'))}</td></tr>`;
+  $('evBadge').textContent=tf(n===1?'{n} file':'{n} files',{n});
   $('step3').classList.toggle('on', n>0);
 }
 
@@ -212,24 +213,21 @@ $('fileInput').onchange = async e=>{
         EV.images.push({name:f.name, src});
       } else if(uploadKind==='complaint'){ EV.text=ev.complaint_text; }
       else { EV.statements=ev.statements.map(n=>({name:n})); }
-    }catch(err){ toast(`Could not attach ${f.name}: `+err.message); }
+    }catch(err){ toast(tf('Could not attach {f}: ',{f:f.name})+err.message); }
   }
   renderEvidence();
 };
 
 $('btnSubmit').onclick = async ()=>{
-  if(!$('f_name').value.trim()||!$('f_phone').value.trim()){ toast('Please enter your name and mobile number.'); return; }
-  if(!$('consent').checked){ toast('Please confirm the declaration before submitting.'); return; }
+  if(!$('f_name').value.trim()||!$('f_phone').value.trim()){ toast(t('Please enter your name and mobile number.')); return; }
+  if(!$('consent').checked){ toast(t('Please confirm the declaration before submitting.')); return; }
   if(!caseId){ const r=await (await fetch('/api/case/new',{method:'POST'})).json(); caseId=r.case_id; }
-  $('step4').classList.add('on'); $('btnSubmit').disabled=true; $('submitHint').textContent='Submitting…';
-  const payLine = [$('f_bname').value && `Beneficiary name: ${$('f_bname').value}`, $('f_bacct').value && `Account: ${$('f_bacct').value}`,
-                   $('f_biban').value && `IBAN: ${$('f_biban').value}`, $('f_paydate').value && `Date of payment: ${$('f_paydate').value}`,
-                   `Payment method: ${$('f_method').value}`].filter(Boolean).join(' · ');
+  $('step4').classList.add('on'); $('btnSubmit').disabled=true; $('submitHint').textContent=t('Submitting…');
   const complaint={
-    complaint_ref:'', filed_date:localStamp().slice(0,10), channel:'e-Crime Portal',
+    complaint_ref:'', filed_date:localStamp().slice(0,10), channel:'e-Crime Portal', lang:LANG,
     category:$('f_cat').value, claimed_loss:Number($('f_amount').value)||0, currency:'AED',
     victim:{name:$('f_name').value, phone:$('f_phone').value, email:$('f_email').value, emirate:$('f_emirate').value},
-    narrative:$('f_desc').value.trim()+(payLine?`\n\nPayment details provided by the complainant — ${payLine}.`:''),
+    narrative:$('f_desc').value.trim(),
     payment:{date:$('f_paydate').value, method:$('f_method').value, beneficiary_name:$('f_bname').value, account:$('f_bacct').value, iban:$('f_biban').value}
   };
   try{
@@ -238,9 +236,9 @@ $('btnSubmit').onclick = async ()=>{
     if(!res.ok) throw new Error((await res.json()).detail||res.statusText);
     const d=await res.json();
     $('doneRef').textContent=d.ref;
-    $('doneMeta').textContent=`Registered ${d.filed.replace('T',' at ')} · e-Crime Portal · ${$('f_name').value}`;
+    $('doneMeta').textContent=tf('Registered {d} · e-Crime Portal · {name}',{d:d.filed.replace('T',t(' at ')), name:$('f_name').value});
     $('formView').style.display='none'; $('doneView').style.display='block'; window.scrollTo(0,0);
-  }catch(err){ toast('Submission failed: '+err.message); $('btnSubmit').disabled=false; $('submitHint').textContent='Please try again.'; }
+  }catch(err){ toast(t('Submission failed: ')+err.message); $('btnSubmit').disabled=false; $('submitHint').textContent=t('Please try again.'); }
 };
 </script>
 </body>

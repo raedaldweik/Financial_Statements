@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Analysis Log — Financial Crime Unit</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%23191100' stroke='%23C8A44A' stroke-width='1.6'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/theme.css">
+<script src="assets/i18n.js"></script>
 </head>
 <body>
 
@@ -82,56 +83,56 @@ const STATIC_AGENTS = [
 
 (async function boot(){
   await initModePill();
-  if(!REF){ $('emptyState').style.display='block'; $('anaStatus').textContent='No case selected.'; return; }
+  if(!REF){ $('emptyState').style.display='block'; $('anaStatus').textContent=t('No case selected.'); return; }
   $('btnCase').href='case.html?ref='+encodeURIComponent(REF); $('navCase').href=$('btnCase').href;
-  $('anaTitle').textContent='Analysis Log — '+REF;
+  $('anaTitle').textContent=tf('Analysis Log — {ref}',{ref:REF});
   const res=await fetch('/api/cases/'+encodeURIComponent(REF));
-  if(!res.ok){ $('emptyState').style.display='block'; $('anaStatus').textContent='Case not found.'; return; }
+  if(!res.ok){ $('emptyState').style.display='block'; $('anaStatus').textContent=t('Case not found.'); return; }
   const c=await res.json();
-  mode=c.mode||null; $('k_mode').textContent = c.processing ? 'analysis running' : (c.report ? 'analysis complete' : '—');
+  mode=c.mode||null; $('k_mode').textContent = c.processing ? t('analysis running') : (c.report ? t('analysis complete') : '—');
   if(c.processing && c.run_id){
     runId=c.run_id;
-    $('anaStatus').textContent='Connecting to the analysis stream…';
+    $('anaStatus').textContent=t('Connecting to the analysis stream…');
     timer=setInterval(()=>{ $('k_elapsed').innerHTML=Math.round((Date.now()-t0)/1000)+'<small>s</small>'; },1000);
     const es=new EventSource('/api/stream/'+runId);
     es.onmessage=ev=>{ try{ handle(JSON.parse(ev.data),es); }catch(e){ console.error(e); } };
     es.onerror=()=>{};
     return;
   }
-  const memos=c.memos||{};
+  const memos=(LANG==='ar' && c.memos_ar && Object.keys(c.memos_ar).length) ? c.memos_ar : (c.memos||{});
   if(Object.keys(memos).length){
     handle({type:'pipeline_start',agents:STATIC_AGENTS});
     STATIC_AGENTS.forEach(a=>{ if(memos[a.key]) handle({type:'agent_memo',agent:a.key,memo:memos[a.key]}); handle({type:'agent_done',agent:a.key,elapsed:''}); });
-    $('k_stage').innerHTML='6<small> / 6</small>'; $('k_stageName').textContent='complete'; $('progBar').style.width='100%'; $('k_elapsed').textContent='—'; $('k_tools').textContent='—';
-    $('anaStatus').textContent='Analysis complete — '+(c.filed||'').replace('T',' ');
+    $('k_stage').innerHTML='6<small> / 6</small>'; $('k_stageName').textContent=t('complete'); $('progBar').style.width='100%'; $('k_elapsed').textContent='—'; $('k_tools').textContent='—';
+    $('anaStatus').textContent=tf('Analysis complete — {d}',{d:(c.filed||'').replace('T',' ')});
     $('k_matches').textContent=(c.report&&c.report.prior_cases)?c.report.prior_cases.length:0;
     showPanel('crossref');
     return;
   }
-  $('emptyState').style.display='block'; $('anaStatus').textContent='No analysis log retained for this case.';
+  $('emptyState').style.display='block'; $('anaStatus').textContent=t('No analysis log retained for this case.');
 })();
 
 function stageRow(a, i){
   const el=document.createElement('div'); el.className='stage'; el.id='st-'+a.key;
   el.innerHTML=`<div class="num">${i+1}</div><div style="min-width:0">
-    <div class="nm">${ic(a.icon,13)}${esc(a.name)}</div>
-    <div class="rl">${esc(a.role)}</div>
-    <div class="st"><span class="stx">Queued</span></div></div>`;
+    <div class="nm">${ic(a.icon,13)}${esc(t(a.name))}</div>
+    <div class="rl">${esc(t(a.role))}</div>
+    <div class="st"><span class="stx">${esc(t('Queued'))}</span></div></div>`;
   el.onclick=()=>showPanel(a.key);
   return el;
 }
 function panelCard(a, i){
   const el=document.createElement('div'); el.className='card panel'; el.id='pn-'+a.key;
-  el.innerHTML=`<div class="ch"><div class="ch-left">${ic(a.icon)}<h3>${i+1} · ${esc(a.name)}</h3></div><span class="ch-badge gold stx">Queued</span></div>
+  el.innerHTML=`<div class="ch"><div class="ch-left">${ic(a.icon)}<h3>${i+1} · ${esc(t(a.name))}</h3></div><span class="ch-badge gold stx">${esc(t('Queued'))}</span></div>
     <div class="cb">
       <div class="callout" style="display:none"></div>
-      <div class="sec-lbl act-lbl" style="display:none">Activity</div>
-      <table class="log act-tbl" style="display:none"><thead><tr><th style="width:26px">#</th><th>Tool</th><th>Query</th><th>Result</th></tr></thead><tbody></tbody></table>
-      <div class="sec-lbl find-lbl" style="display:none">Findings</div>
+      <div class="sec-lbl act-lbl" style="display:none">${esc(t('Activity'))}</div>
+      <table class="log act-tbl" style="display:none"><thead><tr><th style="width:26px">#</th><th>${esc(t('Tool'))}</th><th>${esc(t('Query'))}</th><th>${esc(t('Result'))}</th></tr></thead><tbody></tbody></table>
+      <div class="sec-lbl find-lbl" style="display:none">${esc(t('Findings'))}</div>
       <div class="find-body"></div>
-      <div class="sec-lbl id-lbl" style="display:none">Identifiers established</div>
+      <div class="sec-lbl id-lbl" style="display:none">${esc(t('Identifiers established'))}</div>
       <div class="id-chips"></div>
-      <div class="hint waiting" style="padding:8px 0">Agent has not started yet.</div>
+      <div class="hint waiting" style="padding:8px 0">${esc(t('Agent has not started yet.'))}</div>
     </div>`;
   return el;
 }
@@ -158,11 +159,11 @@ function handle(e, es){
   else if(e.type==='agent_start'){
     const i=order.indexOf(e.agent);
     $('st-'+e.agent).classList.add('running');
-    setStatus(e.agent, '<span class="spin"></span> Working', 'amber');
-    $('pn-'+e.agent).querySelector('.waiting').textContent='Working…';
+    setStatus(e.agent, `<span class="spin"></span> ${esc(t('Working'))}`, 'amber');
+    $('pn-'+e.agent).querySelector('.waiting').textContent=t('Working…');
     $('k_stage').innerHTML=(i+1)+'<small> / '+order.length+'</small>';
-    $('k_stageName').textContent=agents[e.agent].name;
-    $('anaStatus').textContent=`Stage ${i+1} of ${order.length} — ${agents[e.agent].name} working…`;
+    $('k_stageName').textContent=t(agents[e.agent].name);
+    $('anaStatus').textContent=tf('Stage {i} of {n} — {name} working…',{i:i+1, n:order.length, name:t(agents[e.agent].name)});
     showPanel(e.agent);
   }
   else if(e.type==='tool_call'){
@@ -171,12 +172,12 @@ function handle(e, es){
     p.querySelector('.waiting').style.display='none';
     const n=p.querySelectorAll('.act-tbl tbody tr').length+1;
     p.querySelector('.act-tbl tbody').insertAdjacentHTML('beforeend',
-      `<tr><td>${n}</td><td class="tn">${esc(e.tool)}</td><td class="tq">${esc(Object.values(e.args||{}).join(', '))}</td><td class="pending">running…</td></tr>`);
+      `<tr><td>${n}</td><td class="tn">${esc(e.tool)}</td><td class="tq">${esc(Object.values(e.args||{}).join(', '))}</td><td class="pending">${esc(t('running…'))}</td></tr>`);
   }
   else if(e.type==='tool_result'){
     const rows=$('pn-'+e.agent).querySelectorAll('.act-tbl tbody tr');
     const cell=[...rows].reverse().find(r=>r.querySelector('.pending'))?.querySelector('.pending');
-    if(cell){ cell.className=''; cell.innerHTML=(/\bMATCH\b/.test(e.summary)?`<span class="rb red" style="margin-right:6px">match</span>`:'')+esc(e.summary); }
+    if(cell){ cell.className=''; cell.innerHTML=(/\bMATCH\b/.test(e.summary)?`<span class="rb red me-6">${esc(t('match'))}</span>`:'')+esc(e.summary); }
     if(/\bMATCH\b/.test(e.summary)){ matches++; $('k_matches').textContent=matches; }
   }
   else if(e.type==='agent_memo'){
@@ -188,15 +189,15 @@ function handle(e, es){
   }
   else if(e.type==='agent_done'){
     const s=$('st-'+e.agent); s.classList.remove('running'); s.classList.add('done');
-    setStatus(e.agent, e.elapsed?`Done · ${e.elapsed}s`:'Done', 'green');
+    setStatus(e.agent, e.elapsed?tf('Done · {s}s',{s:e.elapsed}):t('Done'), 'green');
     doneCount++; $('progBar').style.width=Math.round(100*doneCount/order.length)+'%';
   }
   else if(e.type==='report'){
     clearInterval(timer);
     $('progBar').style.width='100%';
-    $('anaStatus').textContent='Analysis complete — the case file is ready.';
+    $('anaStatus').textContent=t('Analysis complete — the case file is ready.');
   }
-  else if(e.type==='error'){ toast(e.message); $('anaStatus').textContent='Run failed: '+e.message; clearInterval(timer); }
+  else if(e.type==='error'){ toast(e.message); $('anaStatus').textContent=t('Run failed: ')+e.message; clearInterval(timer); }
   else if(e.type==='done'){ es.close(); }
 }
 </script>

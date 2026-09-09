@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Case File — Financial Crime Unit</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%23191100' stroke='%23C8A44A' stroke-width='1.6'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/theme.css">
+<script src="assets/i18n.js"></script>
 </head>
 <body>
 
@@ -113,7 +114,7 @@
       <div class="card">
         <div class="ch"><div class="ch-left" data-ic="flag"><h3>Recommended Actions</h3></div><span class="ch-badge red" id="actBadge"></span></div>
         <div style="overflow-x:auto"><table class="dt" id="actions"></table></div>
-        <div class="q-hint">Use <b>Draft</b> to have the case assistant prepare the request with the exact identifiers from this file.</div>
+        <div class="q-hint" id="draftHint"></div>
       </div>
     </div>
 
@@ -138,7 +139,7 @@
 <!-- chat assistant -->
 <button class="chat-fab" id="chatFab" title="Case assistant"></button>
 <div class="chat-panel" id="chatPanel">
-  <div class="chat-head"><span>Case assistant · <span id="chatRef"></span></span><button id="chatClose">×</button></div>
+  <div class="chat-head"><span><span>Case assistant</span> · <span id="chatRef"></span></span><button id="chatClose">×</button></div>
   <div class="chat-body" id="chatBody"><div class="qa-a">Ask about this case, or ask me to draft a request. I work from the case file and the unit's complaint history.</div></div>
   <div class="chat-sugg">
     <button data-q="Draft the disclosure request to the bank for the beneficiary accounts: statements for the past 6 months and KYC.">Draft bank disclosure request</button>
@@ -155,9 +156,10 @@
 <script>
 "use strict";
 const REF = new URLSearchParams(location.search).get('ref');
-let C = null;
+let C = null, arPoll = null;
 document.querySelectorAll('[data-ic]').forEach(el=>el.insertAdjacentHTML('afterbegin', ic(el.dataset.ic)));
 $('chatFab').innerHTML = ic('chat', 24);
+$('draftHint').innerHTML = t('Use <b>Draft</b> to have the case assistant prepare the request with the exact identifiers from this file.');
 const lvlCls={LOW:'green',MEDIUM:'amber',HIGH:'red',CRITICAL:'red'};
 const stCls={'New':'amber','Triage':'amber','Under investigation':'green','Awaiting complainant':'grey','Closed':'grey'};
 
@@ -179,105 +181,126 @@ async function load(){
   $('file').style.display='block';
   renderHeader(); renderEvidence();
   if(C.processing){ startProgress(); renderPending(); }
-  else if(C.report){ renderReport(C.report); }
+  else if(C.report){ renderReport(pick(C,'report')); if(LANG==='ar' && !C.report_ar) ensureArabic(); }
   else renderPending();
 }
 
+/* Arabic case file: bundled or prepared on request — the English file shows until it is ready */
+async function ensureArabic(){
+  try{
+    const d=await (await fetch('/api/cases/'+encodeURIComponent(REF)+'/translate',{method:'POST'})).json();
+    if(d.status==='ready'){ C.report_ar=d.report_ar; C.complaint_text_ar=d.complaint_text_ar; renderHeader(); renderReport(pick(C,'report')); renderEvidence(); return; }
+    if(d.status!=='pending') return;
+    $('narrBadge').textContent=t('Preparing the Arabic case file…');
+    let tries=0; clearInterval(arPoll);
+    arPoll=setInterval(async()=>{
+      tries++;
+      try{
+        const c=await (await fetch('/api/cases/'+encodeURIComponent(REF))).json();
+        if(c.report_ar){ clearInterval(arPoll); C=c; renderHeader(); renderReport(pick(C,'report')); renderEvidence(); }
+        else if(c.translation==='failed' || tries>45){ clearInterval(arPoll); $('narrBadge').textContent=t('Case narrative'); }
+      }catch(e){ if(tries>45) clearInterval(arPoll); }
+    }, 4000);
+  }catch(e){ /* keep the English file */ }
+}
+
 function renderHeader(){
+  const R=pick(C,'report')||{};
   $('h_ref').textContent=C.ref; $('chatRef').textContent=C.ref;
-  $('h_title').textContent=C.subtype||C.type;
-  $('h_meta').textContent=`${C.type} · ${C.complainant}${C.emirate?' · '+C.emirate:''} · Filed ${C.filed.replace('T',' ')} via ${C.channel||'—'} · ${C.officer?'Assigned to '+C.officer:'Unassigned'}`;
-  $('h_status').textContent=C.status+(C.stage?' — '+C.stage:''); $('h_status').className='rb '+(stCls[C.status]||'grey');
-  if(C.risk_score!=null){ $('h_risk').textContent='Risk '+C.risk_score+' · '+C.risk_level; $('h_risk').className='rb '+(lvlCls[C.risk_level]||'grey'); }
-  else { $('h_risk').textContent=C.processing?'Analysing':'Risk pending'; $('h_risk').className='rb grey'; }
+  $('h_title').textContent=t(C.subtype||C.type);
+  $('h_meta').textContent=`${t(C.type)} · ${t(C.complainant)}${C.emirate?' · '+t(C.emirate):''} · ${tf('Filed {d} via {c}',{d:C.filed.replace('T',' '), c:t(C.channel||'—')})} · ${C.officer?tf('Assigned to {o}',{o:t(C.officer)}):t('Unassigned')}`;
+  $('h_status').textContent=t(C.status)+(C.stage?' — '+t(C.stage):''); $('h_status').className='rb '+(stCls[C.status]||'grey');
+  if(C.risk_score!=null){ $('h_risk').textContent=tf('Risk {n} · {l}',{n:C.risk_score, l:t(C.risk_level)}); $('h_risk').className='rb '+(lvlCls[C.risk_level]||'grey'); }
+  else { $('h_risk').textContent=C.processing?t('Analysing'):t('Risk pending'); $('h_risk').className='rb grey'; }
   $('btnLog').href='analysis.html?ref='+encodeURIComponent(C.ref);
   $('btnLog').style.display=(C.run_id||Object.keys(C.memos||{}).length)?'':'none';
-  const r=C.report||{}; const linked=(r.prior_cases||[]).length;
-  const loss=r.financial_flow?r.financial_flow.filter(f=>/^THIS CASE/i.test(f.note)).reduce((s,f)=>s+f.amount,0):0;
+  const linked=(R.prior_cases||[]).length;
+  const loss=R.financial_flow?R.financial_flow.filter(f=>/^THIS CASE/i.test(f.note)).reduce((s,f)=>s+f.amount,0):0;
   $('kpiStrip').innerHTML=[
-    {l:'Reported loss',v:'AED '+fmt(C.amount||0),cls:'gold',tr:loss?`AED ${fmt(loss)} reconciled`:'per complainant'},
-    {l:'Risk score',v:C.risk_score!=null?C.risk_score+'<small> /100</small>':'—',cls:lvlCls[C.risk_level]||'amber',tr:C.risk_level||(C.processing?'analysing':'pending')},
-    {l:'Linked cases',v:String(linked),cls:linked?'red':'green',tr:linked?'same accounts / identities':'no prior occurrence'},
-    {l:'Evidence items',v:String((C.evidence||[]).length),cls:'blue',tr:(r.evidence_assessment||[]).filter(e=>e.status==='verified').length+' verified'},
-    {l:'Days open',v:String(C.days_open),cls:'amber',tr:'since '+C.filed.slice(0,10)},
-    {l:'Stage',v:`<span style="font-size:13px">${esc(C.stage||C.status)}</span>`,cls:'',tr:C.officer||'unassigned'},
+    {l:t('Reported loss'),v:money(C.amount||0),cls:'gold',tr:loss?tf('{a} reconciled',{a:money(loss)}):t('per complainant')},
+    {l:t('Risk score'),v:C.risk_score!=null?C.risk_score+'<small> /100</small>':'—',cls:lvlCls[C.risk_level]||'amber',tr:C.risk_level?t(C.risk_level):(C.processing?t('analysing'):t('pending'))},
+    {l:t('Linked cases'),v:String(linked),cls:linked?'red':'green',tr:linked?t('same accounts / identities'):t('no prior occurrence')},
+    {l:t('Evidence items'),v:String((C.evidence||[]).length),cls:'blue',tr:tf('{n} verified',{n:(R.evidence_assessment||[]).filter(e=>e.status==='verified').length})},
+    {l:t('Days open'),v:String(C.days_open),cls:'amber',tr:tf('since {d}',{d:C.filed.slice(0,10)})},
+    {l:t('Stage'),v:`<span style="font-size:13px">${esc(t(C.stage||C.status))}</span>`,cls:'',tr:C.officer?t(C.officer):t('unassigned')},
   ].map(k=>`<div class="kpi"><div class="kpi-lbl">${k.l}</div><div class="kpi-val ${k.cls}">${k.v}</div><div class="kpi-tr">${k.tr}</div></div>`).join('');
 }
 
 function renderPending(){
-  $('narrBadge').textContent=C.processing?'Being prepared':'Not yet prepared';
-  $('narrative').innerHTML=`<p><b>Complainant's statement</b></p>`+esc(C.complaint_text||'').split('\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('')+
-    `<p class="hint">${C.processing?'The case narrative, investigation findings and recommendations are being prepared from the submitted evidence.':'The case narrative has not been prepared yet — analysis is queued.'}</p>`;
-  $('keyfacts').innerHTML=[['Complainant',C.complainant],['Type',C.type],['Reported loss','AED '+fmt(C.amount||0)],['Filed',C.filed.replace('T',' ')],['Channel',C.channel||'—'],['Officer',C.officer||'Unassigned']].map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('');
-  $('evassess').innerHTML=`<tbody><tr><td class="hint">Pending</td></tr></tbody>`; $('evaBadge').textContent='';
-  $('timeline').innerHTML=`<div class="q-hint">Pending</div>`; $('tlBadge').textContent='';
-  $('invSummary').textContent=C.processing?'Cross-case matching and open-source checks are running.':'Investigation findings will appear here once the analysis has run.';
-  $('linked').innerHTML=''; $('entities').innerHTML=''; $('osint').innerHTML=''; $('flow').innerHTML=''; $('findings').innerHTML='<div class="q-hint">Pending</div>';
-  $('actions').innerHTML='<tbody><tr><td class="q-hint">Pending</td></tr></tbody>';
+  const CT=pick(C,'complaint_text')||'';
+  $('narrBadge').textContent=C.processing?t('Being prepared'):t('Not yet prepared');
+  $('narrative').innerHTML=`<p><b>${esc(t("Complainant's statement"))}</b></p>`+esc(CT).split('\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('')+
+    `<p class="hint">${esc(C.processing?t('The case narrative, investigation findings and recommendations are being prepared from the submitted evidence.'):t('The case narrative has not been prepared yet — analysis is queued.'))}</p>`;
+  $('keyfacts').innerHTML=[[t('Complainant'),t(C.complainant)],[t('Type'),t(C.type)],[t('Reported loss'),money(C.amount||0)],[t('Filed'),C.filed.replace('T',' ')],[t('Channel'),t(C.channel||'—')],[t('Officer'),C.officer?t(C.officer):t('Unassigned')]].map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('');
+  $('evassess').innerHTML=`<tbody><tr><td class="hint">${esc(t('Pending'))}</td></tr></tbody>`; $('evaBadge').textContent='';
+  $('timeline').innerHTML=`<div class="q-hint">${esc(t('Pending'))}</div>`; $('tlBadge').textContent='';
+  $('invSummary').textContent=C.processing?t('Cross-case matching and open-source checks are running.'):t('Investigation findings will appear here once the analysis has run.');
+  $('linked').innerHTML=''; $('entities').innerHTML=''; $('osint').innerHTML=''; $('flow').innerHTML=''; $('findings').innerHTML=`<div class="q-hint">${esc(t('Pending'))}</div>`;
+  $('actions').innerHTML=`<tbody><tr><td class="q-hint">${esc(t('Pending'))}</td></tr></tbody>`;
   ['linkedBadge','entBadge','osintBadge','flowBadge','findBadge','actBadge'].forEach(id=>$(id).textContent='');
   $('cntLinked').textContent='—'; $('cntActions').textContent='—';
 }
 
 function renderReport(r){
-  $('narrBadge').textContent='Case narrative';
+  $('narrBadge').textContent=t('Case narrative');
   $('narrative').innerHTML=esc(r.narrative).split(/\n+/).filter(Boolean).map(p=>`<p>${p}</p>`).join('');
   $('keyfacts').innerHTML=(r.key_facts||[]).map(k=>`<tr><td>${esc(k.label)}</td><td>${esc(k.value)}</td></tr>`).join('');
   const stB={verified:'green',partial:'amber',unverified:'red'};
-  $('evaBadge').textContent=(r.evidence_assessment||[]).filter(e=>e.status==='verified').length+' of '+(r.evidence_assessment||[]).length+' verified';
-  $('evassess').innerHTML=`<thead><tr><th>Item</th><th>Finding</th><th class="r">Status</th></tr></thead><tbody>`+(r.evidence_assessment||[]).map(e=>`<tr><td><span class="en-strong">${esc(e.item)}</span></td><td><span class="en-sub" style="font-size:11px;color:var(--text-md)">${esc(e.finding)}</span></td><td style="text-align:right"><span class="rb ${stB[e.status]||'grey'}">${esc(e.status)}</span></td></tr>`).join('')+'</tbody>';
-  $('tlBadge').textContent=(r.timeline||[]).length+' events';
-  $('timeline').innerHTML=(r.timeline||[]).map(t=>`<div class="tl-item"><div class="dt-lbl">${esc(t.date)}</div><div>${esc(t.event)}</div><span class="src">${esc(t.source)}</span></div>`).join('');
+  $('evaBadge').textContent=tf('{n} of {m} verified',{n:(r.evidence_assessment||[]).filter(e=>e.status==='verified').length, m:(r.evidence_assessment||[]).length});
+  $('evassess').innerHTML=`<thead><tr><th>${esc(t('Item'))}</th><th>${esc(t('Finding'))}</th><th class="r">${esc(t('Status'))}</th></tr></thead><tbody>`+(r.evidence_assessment||[]).map(e=>`<tr><td><span class="en-strong">${esc(t(e.item))}</span></td><td><span class="en-sub" style="font-size:11px;color:var(--text-md)">${esc(e.finding)}</span></td><td class="ta-r"><span class="rb ${stB[e.status]||'grey'}">${esc(t(e.status))}</span></td></tr>`).join('')+'</tbody>';
+  $('tlBadge').textContent=tf('{n} events',{n:(r.timeline||[]).length});
+  $('timeline').innerHTML=(r.timeline||[]).map(x=>`<div class="tl-item"><div class="dt-lbl">${esc(x.date)}</div><div>${esc(x.event)}</div><span class="src">${esc(t(x.source))}</span></div>`).join('');
 
   $('invSummary').textContent=r.investigation_summary||'';
   const pcs=r.prior_cases||[];
-  $('cntLinked').textContent=pcs.length+' linked';
-  $('linkedBadge').textContent=pcs.length?`${pcs.length} prior case${pcs.length===1?'':'s'} · AED ${fmt(pcs.reduce((s,c)=>s+c.amount,0))}`:'No prior occurrence';
+  $('cntLinked').textContent=tf('{n} linked',{n:pcs.length});
+  $('linkedBadge').textContent=pcs.length?tf(pcs.length===1?'{n} prior case · {a}':'{n} prior cases · {a}',{n:pcs.length, a:money(pcs.reduce((s,c)=>s+c.amount,0))}):t('No prior occurrence');
   $('linkedBadge').className='ch-badge '+(pcs.length?'red':'green');
-  $('linked').innerHTML=`<thead><tr><th>Case</th><th>Filed</th><th>Complainant</th><th class="r">Loss (AED)</th><th>Matched on</th><th>Status</th><th></th></tr></thead><tbody>`+
+  $('linked').innerHTML=`<thead><tr><th>${esc(t('Case'))}</th><th>${esc(t('Filed'))}</th><th>${esc(t('Complainant'))}</th><th class="r">${esc(t('Loss (AED)'))}</th><th>${esc(t('Matched on'))}</th><th>${esc(t('Status'))}</th><th></th></tr></thead><tbody>`+
     (pcs.length?pcs.map(c=>`<tr><td><span class="mono" style="font-weight:700;color:var(--text)">${esc(c.case_id)}</span></td><td class="mono">${esc(c.filed_date)}</td>
       <td><span class="en-strong">${esc(c.victim)}</span><span class="en-sub">${esc(c.summary)}</span></td><td class="num">${fmt(c.amount)}</td>
-      <td>${(c.matched_on||[]).map(m=>`<span class="match-chip">${esc(m)}</span>`).join('')}</td><td><span class="rb amber">${esc(c.status)}</span></td>
-      <td style="text-align:right"><a class="btn btn-glass btn-sm" href="case.html?ref=${encodeURIComponent(c.case_id)}">Open</a></td></tr>`).join('')
-    :`<tr><td colspan="7"><span class="dot-status"><span class="dot green"></span>No prior occurrence of this case's accounts, phone numbers or company names in complaint history.</span></td></tr>`)+'</tbody>';
+      <td>${(c.matched_on||[]).map(m=>`<span class="match-chip">${esc(m)}</span>`).join('')}</td><td><span class="rb amber">${esc(t(c.status))}</span></td>
+      <td class="ta-r"><a class="btn btn-glass btn-sm" href="case.html?ref=${encodeURIComponent(c.case_id)}">${esc(t('Open'))}</a></td></tr>`).join('')
+    :`<tr><td colspan="7"><span class="dot-status"><span class="dot green"></span>${esc(t("No prior occurrence of this case's accounts, phone numbers or company names in complaint history."))}</span></td></tr>`)+'</tbody>';
   const tyIc={person:'user',organization:'building',account:'card',phone:'phone',social:'tag',website:'globe',case:'folder',location:'flag',other:'doc'};
-  const ents=r.entities||[]; $('entBadge').textContent=ents.filter(e=>e.flagged).length+' flagged';
-  $('entities').innerHTML=`<thead><tr><th>Entity</th><th>Type</th><th class="r">Status</th></tr></thead><tbody>`+(ents.length?ents.map(e=>`<tr><td><span class="en-strong">${esc(e.label)}</span><span class="en-sub">${esc(e.role)}</span></td><td style="white-space:nowrap">${ic(tyIc[e.type]||'doc',12)} <span style="margin-left:4px;text-transform:capitalize">${esc(e.type)}</span></td><td style="text-align:right">${e.flagged?'<span class="rb red">Flagged</span>':'<span class="rb green">Complainant</span>'}</td></tr>`).join(''):`<tr><td colspan="3" class="hint">No entities recorded</td></tr>`)+'</tbody>';
+  const ents=r.entities||[]; $('entBadge').textContent=tf('{n} flagged',{n:ents.filter(e=>e.flagged).length});
+  $('entities').innerHTML=`<thead><tr><th>${esc(t('Entity'))}</th><th>${esc(t('Type'))}</th><th class="r">${esc(t('Status'))}</th></tr></thead><tbody>`+(ents.length?ents.map(e=>`<tr><td><span class="en-strong">${esc(e.label)}</span><span class="en-sub">${esc(e.role)}</span></td><td style="white-space:nowrap">${ic(tyIc[e.type]||'doc',12)} <span class="ms-4 cap">${esc(t(e.type))}</span></td><td class="ta-r">${e.flagged?`<span class="rb red">${esc(t('Flagged'))}</span>`:`<span class="rb green">${esc(t('Complainant'))}</span>`}</td></tr>`).join(''):`<tr><td colspan="3" class="hint">${esc(t('No entities recorded'))}</td></tr>`)+'</tbody>';
   const osB={adverse:'red',neutral:'grey',clear:'green'}; const os=r.osint_findings||[];
-  $('osintBadge').textContent=os.filter(o=>o.assessment==='adverse').length+' adverse';
-  $('osint').innerHTML=`<thead><tr><th>Subject</th><th>Source</th><th>Finding</th><th class="r">Result</th></tr></thead><tbody>`+(os.length?os.map(o=>`<tr><td><span class="en-strong">${esc(o.subject)}</span></td><td class="hint" style="white-space:nowrap">${esc(o.source)}</td><td style="font-size:11px">${esc(o.finding)}</td><td style="text-align:right"><span class="rb ${osB[o.assessment]||'grey'}">${esc(o.assessment)}</span></td></tr>`).join(''):`<tr><td colspan="4" class="hint">No checks recorded</td></tr>`)+'</tbody>';
-  const ff=r.financial_flow||[]; $('flowBadge').textContent=ff.length+' movements';
-  $('flow').innerHTML=`<thead><tr><th>Date</th><th>From</th><th>To</th><th class="r">Amount (AED)</th><th>Note</th></tr></thead><tbody>`+ff.map(f=>{const cur=/^THIS CASE/i.test(f.note);return `<tr${cur?' class="hl-row"':''}><td class="mono" style="white-space:nowrap">${esc(f.date)}</td><td>${esc(f.from)}</td><td>${esc(f.to)}</td><td class="num${cur?' red':''}">${fmt(f.amount)}</td><td><span class="en-sub">${esc(f.note.replace(/^THIS CASE\s*—?\s*/i,''))}${cur?' <span class="rb red" style="margin-left:4px">this case</span>':''}</span></td></tr>`;}).join('')+'</tbody>';
+  $('osintBadge').textContent=tf('{n} adverse',{n:os.filter(o=>o.assessment==='adverse').length});
+  $('osint').innerHTML=`<thead><tr><th>${esc(t('Subject'))}</th><th>${esc(t('Source'))}</th><th>${esc(t('Finding'))}</th><th class="r">${esc(t('Result'))}</th></tr></thead><tbody>`+(os.length?os.map(o=>`<tr><td><span class="en-strong">${esc(o.subject)}</span></td><td class="hint" style="white-space:nowrap">${esc(o.source)}</td><td style="font-size:11px">${esc(o.finding)}</td><td class="ta-r"><span class="rb ${osB[o.assessment]||'grey'}">${esc(t(o.assessment))}</span></td></tr>`).join(''):`<tr><td colspan="4" class="hint">${esc(t('No checks recorded'))}</td></tr>`)+'</tbody>';
+  const ff=r.financial_flow||[]; $('flowBadge').textContent=tf('{n} movements',{n:ff.length});
+  $('flow').innerHTML=`<thead><tr><th>${esc(t('Date'))}</th><th>${esc(t('From'))}</th><th>${esc(t('To'))}</th><th class="r">${esc(t('Amount (AED)'))}</th><th>${esc(t('Note'))}</th></tr></thead><tbody>`+ff.map(f=>{const cur=/^THIS CASE/i.test(f.note);return `<tr${cur?' class="hl-row"':''}><td class="mono" style="white-space:nowrap">${esc(f.date)}</td><td>${esc(f.from)}</td><td>${esc(f.to)}</td><td class="num${cur?' red':''}">${fmt(f.amount)}</td><td><span class="en-sub">${esc(f.note.replace(/^THIS CASE\s*—?\s*/i,''))}${cur?` <span class="rb red ms-4">${esc(t('this case'))}</span>`:''}</span></td></tr>`;}).join('')+'</tbody>';
   const dotCls={critical:'red',warning:'amber',info:'blue'}; const kf=r.key_findings||[];
-  $('findBadge').textContent=kf.filter(f=>f.severity==='critical').length+' critical';
-  $('findings').innerHTML=kf.map(f=>`<div class="alert-item"><div class="alert-dot ${dotCls[f.severity]||'blue'}"></div><div><div class="alert-title">${esc(f.title)}</div><div class="alert-desc">${esc(f.detail)}</div><div class="alert-src">${esc(f.source)}</div></div></div>`).join('');
+  $('findBadge').textContent=tf('{n} critical',{n:kf.filter(f=>f.severity==='critical').length});
+  $('findings').innerHTML=kf.map(f=>`<div class="alert-item"><div class="alert-dot ${dotCls[f.severity]||'blue'}"></div><div><div class="alert-title">${esc(f.title)}</div><div class="alert-desc">${esc(f.detail)}</div><div class="alert-src">${esc(t(f.source))}</div></div></div>`).join('');
 
   const acts=r.recommended_actions||[]; const prCls={immediate:'red',high:'amber',routine:'grey'};
-  $('cntActions').textContent=acts.length; $('actBadge').textContent=acts.filter(a=>a.priority==='immediate').length+' immediate';
-  $('actions').innerHTML=`<thead><tr><th>#</th><th>Priority</th><th>Action</th><th>Addressee</th><th>Timeframe</th><th>Basis</th><th></th></tr></thead><tbody>`+acts.map((a,i)=>`<tr><td class="mono">${i+1}</td><td><span class="rb ${prCls[a.priority]||'grey'}">${esc(a.priority)}</span></td><td><span class="en-strong" style="font-weight:600">${esc(a.action)}</span></td><td style="white-space:nowrap">${esc(a.addressee||'')}</td><td style="white-space:nowrap">${esc(a.timeframe||'')}</td><td><span class="en-sub">${esc(a.rationale)}</span></td><td style="text-align:right"><button class="btn btn-glass btn-sm" onclick="draft(${i})">Draft</button></td></tr>`).join('')+'</tbody>';
+  $('cntActions').textContent=acts.length; $('actBadge').textContent=tf('{n} immediate',{n:acts.filter(a=>a.priority==='immediate').length});
+  $('actions').innerHTML=`<thead><tr><th>#</th><th>${esc(t('Priority'))}</th><th>${esc(t('Action'))}</th><th>${esc(t('Addressee'))}</th><th>${esc(t('Timeframe'))}</th><th>${esc(t('Basis'))}</th><th></th></tr></thead><tbody>`+acts.map((a,i)=>`<tr><td class="mono">${i+1}</td><td><span class="rb ${prCls[a.priority]||'grey'}">${esc(t(a.priority))}</span></td><td><span class="en-strong" style="font-weight:600">${esc(a.action)}</span></td><td style="white-space:nowrap">${esc(t(a.addressee||''))}</td><td style="white-space:nowrap">${esc(t(a.timeframe||''))}</td><td><span class="en-sub">${esc(a.rationale)}</span></td><td class="ta-r"><button class="btn btn-glass btn-sm" onclick="draft(${i})">${esc(t('Draft'))}</button></td></tr>`).join('')+'</tbody>';
 }
 
 function renderEvidence(){
-  const ev=C.evidence||[]; $('cntEvidence').textContent=ev.length; $('evGridBadge').textContent=(C.image_count||0)+' images';
+  const ev=C.evidence||[]; $('cntEvidence').textContent=ev.length; $('evGridBadge').textContent=tf('{n} images',{n:C.image_count||0});
   if(C.image_count){
-    $('evGrid').innerHTML=Array.from({length:C.image_count},(_,i)=>`<div><img src="/api/cases/${encodeURIComponent(C.ref)}/evidence/${i}" alt="evidence ${i+1}"><div class="cap">${esc(ev[i]||('Image '+(i+1)))}</div></div>`).join('');
-    $('evNote').textContent='Click an image to view it at full size.';
-  } else { $('evGrid').innerHTML=''; $('evNote').textContent='Evidence documents are held on the physical case file. Items are listed in the register.'; }
+    $('evGrid').innerHTML=Array.from({length:C.image_count},(_,i)=>`<div><img src="/api/cases/${encodeURIComponent(C.ref)}/evidence/${i}" alt="evidence ${i+1}"><div class="cap">${esc(ev[i]?t(ev[i]):tf('Image {n}',{n:i+1}))}</div></div>`).join('');
+    $('evNote').textContent=t('Click an image to view it at full size.');
+  } else { $('evGrid').innerHTML=''; $('evNote').textContent=t('Evidence documents are held on the physical case file. Items are listed in the register.'); }
   $('evGrid').onclick=e=>{ if(e.target.tagName!=='IMG') return; $('lightboxImg').src=e.target.src; $('lightbox').classList.add('open'); };
   $('lightbox').onclick=()=>$('lightbox').classList.remove('open');
-  $('evList').innerHTML=`<thead><tr><th>#</th><th>Item</th><th class="r">Status</th></tr></thead><tbody>`+ev.map((n,i)=>`<tr><td class="mono">${i+1}</td><td><span class="mono">${esc(n)}</span>${C.is_demo&&/statement/i.test(n)?` <a class="hint" href="/api/demo/statement.pdf" target="_blank">open</a>`:''}</td><td style="text-align:right"><span class="rb green">On file</span></td></tr>`).join('')+'</tbody>';
-  $('statement').innerHTML=esc(C.complaint_text||'').split('\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('')||'<p class="hint">No statement recorded.</p>';
+  $('evList').innerHTML=`<thead><tr><th>#</th><th>${esc(t('Item'))}</th><th class="r">${esc(t('Status'))}</th></tr></thead><tbody>`+ev.map((n,i)=>`<tr><td class="mono">${i+1}</td><td><span class="mono">${esc(t(n))}</span>${C.is_demo&&/statement/i.test(n)?` <a class="hint" href="/api/demo/statement.pdf" target="_blank">${esc(t('open'))}</a>`:''}</td><td class="ta-r"><span class="rb green">${esc(t('On file'))}</span></td></tr>`).join('')+'</tbody>';
+  $('statement').innerHTML=esc(pick(C,'complaint_text')||'').split('\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('')||`<p class="hint">${esc(t('No statement recorded.'))}</p>`;
 }
 
 /* processing: follow the analysis stream, then reload the file */
 function startProgress(){
   $('procBanner').style.display='flex';
   if(!C.run_id) return;
-  const stages=['Intake & triage','Reading the conversation','Reconciling bank records','Open-source checks','Complaint-history matching','Preparing the case file'];
+  const stages=['Intake & triage','Reading the conversation','Reconciling bank records','Open-source checks','Complaint-history matching','Preparing the case file'].map(t);
   let i=0; const es=new EventSource('/api/stream/'+C.run_id);
   es.onmessage=async ev=>{
     const e=JSON.parse(ev.data);
     if(e.type==='pipeline_start'){ i=0; }
-    if(e.type==='agent_start'){ $('procStage').textContent=stages[i]||'Working'; $('procBar').style.width=Math.round(8+i*15)+'%'; i++; }
+    if(e.type==='agent_start'){ $('procStage').textContent=stages[i]||t('Working'); $('procBar').style.width=Math.round(8+i*15)+'%'; i++; }
     if(e.type==='report'||e.type==='done'||e.type==='error'){ es.close(); $('procBar').style.width='100%';
       setTimeout(async()=>{ $('procBanner').style.display='none'; await load(); }, 700); }
   };
@@ -287,17 +310,17 @@ function startProgress(){
 /* chat assistant */
 $('chatFab').onclick=()=>{ $('chatPanel').classList.toggle('open'); if($('chatPanel').classList.contains('open')) $('chatInput').focus(); };
 $('chatClose').onclick=()=>$('chatPanel').classList.remove('open');
-document.querySelectorAll('.chat-sugg button').forEach(b=>b.onclick=()=>ask(b.dataset.q));
+document.querySelectorAll('.chat-sugg button').forEach(b=>b.onclick=()=>ask(t(b.dataset.q)));
 $('chatSend').onclick=()=>ask($('chatInput').value);
 $('chatInput').addEventListener('keydown',e=>{ if(e.key==='Enter') ask($('chatInput').value); });
-function draft(i){ const a=(C.report?.recommended_actions||[])[i]; if(!a) return; $('chatPanel').classList.add('open'); ask(`Draft the request for action ${i+1}: "${a.action}" — addressed to ${a.addressee}. Include the exact identifiers from the case file.`); }
+function draft(i){ const a=((pick(C,'report')||{}).recommended_actions||[])[i]; if(!a) return; $('chatPanel').classList.add('open'); ask(tf('Draft the request for action {n}: "{a}" — addressed to {to}. Include the exact identifiers from the case file.',{n:i+1, a:a.action, to:t(a.addressee)})); }
 async function ask(q){
   q=(q||'').trim(); if(!q) return; $('chatInput').value='';
   const body=$('chatBody');
   body.insertAdjacentHTML('beforeend',`<div class="qa-q">${esc(q)}</div>`);
-  const w=document.createElement('div'); w.className='qa-a'; w.innerHTML='<em style="color:var(--text-faint)">Working…</em>'; body.appendChild(w); body.scrollTop=body.scrollHeight;
+  const w=document.createElement('div'); w.className='qa-a'; w.innerHTML=`<em style="color:var(--text-faint)">${esc(t('Working…'))}</em>`; body.appendChild(w); body.scrollTop=body.scrollHeight;
   try{
-    const res=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ref:C.ref,question:q})});
+    const res=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ref:C.ref,question:q,lang:LANG})});
     if(!res.ok) throw new Error((await res.json()).detail||res.statusText);
     const d=await res.json(); w.innerHTML=md(d.answer);
   }catch(err){ w.innerHTML=`<span style="color:var(--red)">${esc(err.message)}</span>`; }

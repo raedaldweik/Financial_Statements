@@ -9,6 +9,7 @@ import logging
 from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+import asyncio
 from typing import Optional
 
 from pydantic import BaseModel
@@ -16,6 +17,7 @@ from pydantic import BaseModel
 import config
 import pipeline
 import registry
+import translate
 import store
 
 logging.basicConfig(level=logging.INFO)
@@ -126,6 +128,7 @@ async def stream(run_id: str) -> StreamingResponse:
 class AskRequest(BaseModel):
     ref: str
     question: str
+    lang: str = "en"
 
 
 @app.post("/api/ask")
@@ -136,7 +139,27 @@ async def ask(req: AskRequest) -> dict:
     if not req.question.strip():
         raise HTTPException(400, "Empty question")
     sc = store.get_case(entry["case_id"]) if entry.get("case_id") else None
-    return await pipeline.answer_question(entry, req.question.strip()[:2000], sc)
+    return await pipeline.answer_question(entry, req.question.strip()[:2000], sc,
+                                          lang="ar" if req.lang == "ar" else "en")
+
+
+@app.post("/api/cases/{ref}/translate")
+async def case_translate(ref: str) -> dict:
+    """Arabic case file: bundled, cached, or produced in the background."""
+    entry = registry.CASES.get(ref)
+    if not entry:
+        raise HTTPException(404, "Unknown case reference")
+    st = translate.schedule(ref)
+    out = {"ref": ref, "status": st}
+    if st == "ready":
+        out["report_ar"] = entry.get("report_ar")
+        out["complaint_text_ar"] = entry.get("complaint_text_ar")
+    return out
+
+
+@app.on_event("startup")
+async def _prewarm_translations() -> None:
+    asyncio.get_running_loop().create_task(translate.prewarm())
 
 
 # ─── Demo assets ────────────────────────────────────────────────────

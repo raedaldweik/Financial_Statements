@@ -305,3 +305,56 @@ table.kv{width:100%;border-collapse:collapse}
 .ev-grid img{width:100%;height:160px;object-fit:cover;object-position:top;border-radius:6px;border:1px solid rgba(200,164,74,0.35);cursor:zoom-in;background:#111}
 .ev-grid .cap{font-size:10px;color:var(--text-dim);margin-top:4px;font-family:var(--mono)}
 .q-hint{font-size:10.5px;color:var(--text-faint);padding:10px 14px}
+
+/* ══ DIRECTION-AWARE HELPERS ══ */
+.ta-r{text-align:right}.ms-4{margin-left:4px}.ms-6{margin-left:6px}.ms-auto{margin-left:auto}.me-6{margin-right:6px}.cap{text-transform:capitalize}
+[dir=rtl] .ta-r{text-align:left}[dir=rtl] .ms-4{margin-left:0;margin-right:4px}[dir=rtl] .ms-6{margin-left:0;margin-right:6px}
+[dir=rtl] .ms-auto{margin-left:0;margin-right:auto}[dir=rtl] .me-6{margin-right:0;margin-left:6px}
+
+/* ══ LANGUAGE TOGGLE ══ */
+.lang-btn{display:inline-flex;align-items:center;gap:6px;font-family:'Tajawal','Plus Jakarta Sans','Segoe UI',sans-serif;font-size:11px;font-weight:700;padding:5px 13px;border-radius:20px;border:1px solid rgba(200,164,74,0.45);color:#E2BC68;background:rgba(200,164,74,0.10);cursor:pointer;transition:.15s;margin-inline-start:6px;line-height:1.2}
+.lang-btn:hover{background:rgba(200,164,74,0.22);color:#fff;border-color:rgba(200,164,74,0.7)}
+
+/* ══ RTL (ARABIC) ══ */
+html[dir=rtl],html[dir=rtl] body{font-family:'Tajawal','Segoe UI',Tahoma,Arial,sans-serif;font-size:13.5px}
+[dir=rtl] *{letter-spacing:0!important}
+[dir=rtl] .idchip i{font-family:inherit}
+[dir=rtl] .nav-title{font-size:14px}[dir=rtl] .tab{font-size:14px}[dir=rtl] .officer{font-size:12px}
+[dir=rtl] .btn{font-size:12px}[dir=rtl] .btn-sm{font-size:11px}
+[dir=rtl] .kpi-lbl{font-size:10.5px}[dir=rtl] .kpi-tr{font-size:11px}[dir=rtl] .kpi-val{letter-spacing:0}
+[dir=rtl] .ch h3{font-size:12.5px}[dir=rtl] .ch-badge{font-size:10px}[dir=rtl] .rb{font-size:10px}
+[dir=rtl] .dt thead th{font-size:10.5px;text-align:right}[dir=rtl] .dt td{font-size:13px}[dir=rtl] .dt.compact td{font-size:12.5px}
+[dir=rtl] .dt td .en-strong{font-size:13px}[dir=rtl] .dt td .en-sub{font-size:11px}
+[dir=rtl] .hint{font-size:11.5px}[dir=rtl] .fl{font-size:10.5px;margin:0 1px 5px 0}[dir=rtl] .fs{font-size:12px;padding:9px 13px 9px 30px;background-position:left 10px center;text-align:right}
+[dir=rtl] .fi,[dir=rtl] .fa{font-size:13px;text-align:right}
+[dir=rtl] .tab-btn{font-size:12.5px}[dir=rtl] .tab-btn .cnt{font-size:10px}
+[dir=rtl] .kv td{font-size:13px;text-align:right}[dir=rtl] .kv td:first-child{font-size:10.5px}
+[dir=rtl] .prose p{font-size:14px;line-height:1.9}
+[dir=rtl] .sec-lbl{font-size:10.5px}[dir=rtl] .log th{font-size:10px;text-align:right}[dir=rtl] .log{font-size:11.5px}
+[dir=rtl] .md p,[dir=rtl] .md li{font-size:12.5px;line-height:1.7}[dir=rtl] .md p.md-h{font-size:10.5px}[dir=rtl] .md th{text-align:right;font-size:10.5px}[dir=rtl] .md table{font-size:12px}
+[dir=rtl] .md ul,[dir=rtl] .md ol{margin:4px 16px 4px 0}
+[dir=rtl] .qa-q,[dir=rtl] .qa-a{font-size:13px;line-height:1.7}
+[dir=rtl] .qa-q{border-radius:10px 10px 10px 3px}[dir=rtl] .qa-a{border-radius:10px 10px 3px 10px}
+[dir=rtl] .chat-head{font-size:12px}[dir=rtl] .chat-sugg button{font-size:11px}
+[dir=rtl] .stage .nm{font-size:13px}[dir=rtl] .stage .rl{font-size:11px}[dir=rtl] .stage .st{font-size:10px}
+[dir=rtl] .callout{font-size:13px;border-left:none;border-right:3px solid var(--gold);border-radius:6px 0 0 6px}
+[dir=rtl] .alert-title{font-size:12.5px}[dir=rtl] .alert-desc{font-size:11.5px}[dir=rtl] .alert-src{font-size:10px}
+[dir=rtl] .tl-item{font-size:12.5px}[dir=rtl] .tl-item .src{margin-left:0;margin-right:auto;font-size:10px}
+[dir=rtl] .step{font-size:11px}[dir=rtl] .drop b{font-size:13px}[dir=rtl] .drop span{font-size:11.5px}
+[dir=rtl] .nextsteps div{font-size:12.5px}[dir=rtl] .nextsteps b{font-size:10.5px}[dir=rtl] .check{font-size:13px}
+[dir=rtl] .citizen-foot{font-size:11.5px}[dir=rtl] .empty-state .big{font-size:15px}[dir=rtl] .empty-state p{font-size:12.5px}
+[dir=rtl] .ph-left h1{letter-spacing:0;font-size:22px}[dir=rtl] .ph-left p{font-size:12.5px}
+[dir=rtl] .banner{font-size:13px;background:linear-gradient(270deg,rgba(200,164,74,0.14),rgba(200,164,74,0.04))}
+[dir=rtl] .q-hint{font-size:11.5px}[dir=rtl] .dot-status{font-size:12.5px}[dir=rtl] .tfoot{font-size:11.5px}
+[dir=rtl] .mono,[dir=rtl] .num,[dir=rtl] .confirm-ref,[dir=rtl] .log td.tn,[dir=rtl] .log td.tq,[dir=rtl] .tl-item .dt-lbl,[dir=rtl] .ev-grid .cap,[dir=rtl] .match-chip{direction:ltr;unicode-bidi:isolate}
+[dir=rtl] .num,[dir=rtl] .dt thead th.r{text-align:left}
+[dir=rtl] .ai-label{border-right:none;border-left:1px solid rgba(200,164,74,0.15)}
+[dir=rtl] .dot{margin-right:0;margin-left:6px}
+[dir=rtl] .legend i{margin-right:0;margin-left:7px}[dir=rtl] .legend b{float:left;margin-left:0;margin-right:12px}
+[dir=rtl] .match-chip{margin:2px 0 2px 4px}[dir=rtl] .idchip{margin:0 0 6px 6px}
+[dir=rtl] .chat-fab,[dir=rtl] .chat-panel{right:auto;left:26px}
+[dir=rtl] .stage.running{background:linear-gradient(270deg,rgba(200,164,74,0.12),rgba(200,164,74,0.02))}
+[dir=rtl] .dt tbody tr:hover{background:linear-gradient(270deg,rgba(200,164,74,0.08),rgba(200,164,74,0.04))}
+[dir=rtl] tr.hl-row td{background:linear-gradient(270deg,rgba(192,57,43,0.06),rgba(192,57,43,0.02))}
+[dir=rtl] .kpi-val small{font-size:11px}
+.dt td.mono{white-space:nowrap}

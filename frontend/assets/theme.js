@@ -96,15 +96,15 @@ function parseFindings(text){
   let i = 0;
   while(i < lines.length && !lines[i].trim()) i++;
   const first = (lines[i] || '').trim();
-  if(/^\*\*.*\*\*\.?$/.test(first) || /^\*\*Verdict/i.test(first)){
-    verdict = first.replace(/^\*\*(Verdict:\s*)?/i,'').replace(/\*\*\.?$/,'').replace(/\*\*/g,'');
+  if(/^\*\*.*\*\*\.?$/.test(first) || /^\*\*(Verdict|الخلاصة)/i.test(first)){
+    verdict = first.replace(/^\*\*((Verdict|الخلاصة):\s*)?/i,'').replace(/\*\*\.?$/,'').replace(/\*\*/g,'');
     verdict = verdict.charAt(0).toUpperCase() + verdict.slice(1);
     i++;
   }
   let inIds = false;
   for(; i < lines.length; i++){
     const l = lines[i];
-    if(/\*\*\s*key identifiers\s*\*\*/i.test(l) || /^#+\s*key identifiers/i.test(l)){ inIds = true; continue; }
+    if(/\*\*\s*(key identifiers|المعرّفات الأساسية)\s*\*\*/i.test(l) || /^#+\s*(key identifiers|المعرّفات الأساسية)/i.test(l)){ inIds = true; continue; }
     if(inIds){
       const m = l.match(/^\s*[-*]\s+(.*)/);
       if(m) ids.push(m[1].replace(/\*\*/g,''));

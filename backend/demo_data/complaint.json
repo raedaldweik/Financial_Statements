@@ -1,17 +1,19 @@
 {
-  "complaint_ref": "FC-2026-0231",
-  "filed_date": "{{FILED_DATE}}",
-  "channel": "e-Crime Portal",
-  "category": "Online product trading fraud (non-delivery)",
-  "status": "New — pending triage",
-  "victim": {
-    "name": "Ahmed Hassan",
-    "phone": "+971 50 771 2094",
-    "email": "ahmed.h@example.ae",
-    "emirate": "Dubai",
-    "id_masked": "784-19XX-XXXXXXX-3"
-  },
-  "claimed_loss": 12500,
-  "currency": "AED",
-  "narrative": "I would like to report that I have been the victim of an online purchase fraud. About a month ago I found an advertisement on social media offering electronic products at attractive prices, from a company presenting itself as an established electronics trading business ('Prime Gulf Electronics'). The page looked professional, with product catalogs, customer reviews and delivery photos. I contacted the seller on WhatsApp using the number in the advertisement; he introduced himself as a sales representative, confirmed availability, and assured me delivery within a few days after payment. Believing the company was legitimate, on 24 August I transferred AED 12,500 for electronic devices to the account he provided: beneficiary Mubarak Salem, account 5660609, IBAN AE600340005660609. The seller confirmed receipt and said the order was being processed. The delivery never happened — my messages were ignored, the phone stopped responding and the social media page disappeared. I can provide the WhatsApp conversation, the payment confirmation and the beneficiary bank details. I request that the authorities investigate the individual who received the payment, the account, the company identity used in the advertisement, and any other victims connected to the same account."
+ "complaint_ref": "FC-2026-0231",
+ "filed_date": "{{FILED_DATE}}",
+ "channel": "e-Crime Portal",
+ "category": "Online product trading fraud (non-delivery)",
+ "status": "New — pending triage",
+ "victim": {
+  "name": "Ahmed Hassan",
+  "phone": "+971 50 771 2094",
+  "email": "ahmed.h@example.ae",
+  "emirate": "Dubai",
+  "id_masked": "784-19XX-XXXXXXX-3",
+  "name_ar": "أحمد حسن"
+ },
+ "claimed_loss": 12500,
+ "currency": "AED",
+ "narrative": "I would like to report that I have been the victim of an online purchase fraud. About a month ago I found an advertisement on social media offering electronic products at attractive prices, from a company presenting itself as an established electronics trading business ('Prime Gulf Electronics'). The page looked professional, with product catalogs, customer reviews and delivery photos. I contacted the seller on WhatsApp using the number in the advertisement; he introduced himself as a sales representative, confirmed availability, and assured me delivery within a few days after payment. Believing the company was legitimate, on 24 August I transferred AED 12,500 for electronic devices to the account he provided: beneficiary Mubarak Salem, account 5660609, IBAN AE600340005660609. The seller confirmed receipt and said the order was being processed. The delivery never happened — my messages were ignored, the phone stopped responding and the social media page disappeared. I can provide the WhatsApp conversation, the payment confirmation and the beneficiary bank details. I request that the authorities investigate the individual who received the payment, the account, the company identity used in the advertisement, and any other victims connected to the same account.",
+ "narrative_ar": "أودّ الإبلاغ عن تعرّضي لعملية احتيال في شراء إلكتروني. قبل نحو شهر وجدتُ إعلاناً على وسائل التواصل الاجتماعي يعرض منتجات إلكترونية بأسعار مغرية، من شركة تقدّم نفسها بوصفها شركة راسخة في تجارة الإلكترونيات («برايم غلف إلكترونيكس»). بدت الصفحة احترافية، وتضمنت كتالوجات منتجات وتقييمات عملاء وصوراً لعمليات تسليم. تواصلتُ مع البائع عبر واتساب على الرقم الوارد في الإعلان؛ فقدّم نفسه بصفته مندوب مبيعات، وأكد توافر المنتجات، وطمأنني بالتسليم خلال أيام قليلة من الدفع. واعتقاداً مني بأن الشركة شرعية، حوّلتُ في 24 أغسطس مبلغ 12,500 درهم ثمناً لأجهزة إلكترونية إلى الحساب الذي زوّدني به: المستفيد مبارك سالم، الحساب 5660609، آيبان AE600340005660609. أكد البائع الاستلام وقال إن الطلب قيد المعالجة. لم يتم التسليم قط — تم تجاهل رسائلي، وتوقف الهاتف عن الرد، واختفت صفحة التواصل الاجتماعي. يمكنني تقديم محادثة واتساب وتأكيد الدفع وبيانات الحساب المصرفي للمستفيد. وأطلب من الجهات المختصة التحقيق مع الشخص الذي استلم الدفعة، وفي الحساب، والهوية التجارية المستخدمة في الإعلان، وأي ضحايا آخرين مرتبطين بالحساب نفسه."
 }

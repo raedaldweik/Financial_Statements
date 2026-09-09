@@ -175,6 +175,11 @@ def start_run(case: Case, mode: str, ref: Optional[str] = None) -> str:
             RUNS[run_id]["status"] = "done"
             if ref and case.report:
                 registry.complete(ref, case.report, case.memos)
+                if mode == "replay" or RUNS[run_id].get("fallback"):
+                    registry.attach_bundled_ar(ref, filed)
+                else:
+                    from translate import schedule  # local import (translate imports pipeline)
+                    schedule(ref)
         except Exception as exc:  # surface everything to the UI
             logger.exception("Run %s failed", run_id)
             RUNS[run_id]["status"] = "error"
@@ -233,16 +238,87 @@ def _accounts_from(report: dict) -> list[str]:
     return accts
 
 
-def offline_answer(entry: dict, question: str) -> str:
+_KW = {
+    "freeze": (("freeze", "hold", "block"), ("تجميد", "حجز", "إيقاف", "تعليق")),
+    "disclosure": (("statement", "disclosure", "kyc", "bank record", "6 month", "six month"),
+                   ("كشف", "كشوف", "إفصاح", "اعرف عميلك", "ستة أشهر", "6 أشهر", "سجلات البنك")),
+    "telecom": (("telecom", "phone", "sim", "subscriber"), ("اتصالات", "هاتف", "شريحة", "المشترك")),
+    "narrative": (("what happened", "summar", "narrative", "explain the case", "brief"),
+                  ("ماذا حدث", "ملخص", "لخص", "السرد", "اشرح", "موجز", "القصة")),
+    "linked": (("link", "other case", "connected", "network", "prior", "before", "same"),
+               ("مرتبط", "قضايا أخرى", "شبكة", "سابق", "نفس", "مشترك", "ربط")),
+    "recommend": (("recommend", "next", "action", "what should", "do first"),
+                  ("توصي", "التوصيات", "الخطوة", "إجراء", "ماذا أفعل", "أبدأ", "أولا", "أولاً")),
+    "evidence": (("evidence", "screenshot", "receipt", "reconcil"), ("أدلة", "دليل", "لقطات", "إيصال", "مطابقة")),
+}
+_EV_STATUS_AR = {"verified": "مُتحقق", "partial": "جزئي", "unverified": "غير مُتحقق"}
+
+
+def _asks(q: str, key: str) -> bool:
+    en, ar = _KW[key]
+    return any(k in q for k in en) or any(k in q for k in ar)
+
+
+def _offline_answer_ar(entry: dict, question: str) -> str:
+    q = question.lower()
+    rep = entry.get("report_ar") or entry.get("report") or {}
+    ref = entry["ref"]
+    accts = _accounts_from(rep)
+    acct_lines = "\n".join(f"- {a}" for a in accts) or "- (حساب المستفيد وفق ملف القضية)"
+    today = registry.today()
+    if _asks(q, "freeze"):
+        return (f"**مسودة — طلب حجز مؤقت على حسابات المستفيد**\n\n"
+                f"إلى: إدارة الامتثال / مسؤول الإبلاغ عن غسل الأموال، بنك المستفيد\nالمرجع: {ref} — {rep.get('classification', 'بلاغ احتيال')}\nالتاريخ: {today}\n\n"
+                f"تحقق وحدة الجرائم المالية في بلاغ {rep.get('classification', 'احتيال')} حوّل فيه المبلّغ أموالاً إلى الحساب/الحسابات التالية:\n{acct_lines}\n\n"
+                "يرجى وضع حجز مؤقت (إيقاف الخصم) على الحساب/الحسابات المذكورة إلى حين ورود طلب الإفصاح الرسمي، "
+                "والاحتفاظ بجميع الأموال المودعة حالياً، وإفادتنا بالرصيد الحالي وأي تعليمات تحويل صادرة معلّقة.\n\n"
+                "ضابط التحقيق، وحدة الجرائم المالية")
+    if _asks(q, "disclosure"):
+        return (f"**مسودة — طلب إفصاح: كشوف حساب 6 أشهر وملف «اعرف عميلك»**\n\n"
+                f"إلى: إدارة الامتثال / مسؤول الإبلاغ عن غسل الأموال، بنك المستفيد\nالمرجع: {ref}\nالتاريخ: {today}\n\n"
+                f"في إطار التحقيق المشار إليه أعلاه، يرجى تزويدنا بما يلي لكل من الحساب/الحسابات التالية:\n{acct_lines}\n\n"
+                "1. كشوف الحساب الكاملة عن الأشهر الستة السابقة لهذا الطلب، بما فيها الأطراف المقابلة والمراجع.\n"
+                "2. ملف «اعرف عميلك»: وثيقة الهوية، العنوان المسجّل، أرقام التواصل، نموذج فتح الحساب وتاريخه.\n"
+                "3. تفاصيل جميع التحويلات الصادرة والسحوبات النقدية (مع مواقع أجهزة الصراف الآلي) والتحويلات إلى "
+                "منصات الأصول الافتراضية منذ أول إيداع من المبلّغ.\n4. الحسابات والبطاقات والأجهزة المرتبطة المستخدمة في الخدمات المصرفية الإلكترونية.\n\n"
+                "يرجى التعامل مع هذا الطلب بصفة عاجلة؛ فقد خرجت الأموال من هذه الحسابات سابقاً خلال 72 ساعة.\n\n"
+                "ضابط التحقيق، وحدة الجرائم المالية")
+    if _asks(q, "telecom"):
+        phones = [e["label"] for e in rep.get("entities", []) if e.get("type") == "phone"]
+        return (f"**مسودة — طلب بيانات المشترك**\n\nإلى: منسق إنفاذ القانون، مشغّل الاتصالات\nالمرجع: {ref}\n\n"
+                f"يرجى تزويدنا بمستندات تسجيل المشترك وتاريخ التفعيل وسجل IMEI وسجلات أبراج الاتصال للرقم/الأرقام: "
+                f"{'، '.join(phones) or 'رقم البائع الوارد في الملف'} (الفترة: من التفعيل حتى تاريخه).\n\nضابط التحقيق، وحدة الجرائم المالية")
+    if _asks(q, "narrative"):
+        return rep.get("narrative") or entry.get("complaint_text_ar") or entry.get("complaint_text") or "لا يتوفر سرد لهذه القضية بعد."
+    if _asks(q, "linked"):
+        pcs = rep.get("prior_cases") or []
+        if not pcs:
+            return "لم يُعثر على تكرار سابق لمعرّفات هذه القضية في سجل البلاغات."
+        lines = [f"- **{p['case_id']}** ({p['filed_date']}، {p['victim']}، {p['amount']:,.0f} درهم) — أساس المطابقة: {'، '.join(p['matched_on'])}" for p in pcs]
+        return (rep.get("investigation_summary", "") + "\n\n" + "\n".join(lines)).strip()
+    if _asks(q, "recommend"):
+        acts = rep.get("recommended_actions") or []
+        return "\n".join(f"{i}. **{a['action']}** — {a['addressee']} · {a['timeframe']}" for i, a in enumerate(acts, 1)) or "لا توجد توصيات مسجلة بعد."
+    if _asks(q, "evidence"):
+        ev = rep.get("evidence_assessment") or []
+        return "\n".join(f"- **{e['item']}** — {e['finding']} ({_EV_STATUS_AR.get(e['status'], e['status'])})" for e in ev) or "تقييم الأدلة غير متاح بعد."
+    return ((rep.get("investigation_summary") or entry.get("complaint_text_ar") or entry.get("complaint_text") or "") +
+            "\n\nيمكنني صياغة طلب الإفصاح المصرفي أو طلب التجميد أو طلب بيانات الاتصالات، أو تلخيص ما حدث، "
+            "أو عرض القضايا المرتبطة والإجراءات الموصى بها.").strip()
+
+
+def offline_answer(entry: dict, question: str, lang: str = "en") -> str:
     """Deterministic fallback when no LLM is configured: answers and drafts built
     from the case file itself."""
+    if lang == "ar":
+        return _offline_answer_ar(entry, question)
     q = question.lower()
     rep = entry.get("report") or {}
     ref = entry["ref"]
     accts = _accounts_from(rep)
     acct_lines = "\n".join(f"- {a}" for a in accts) or "- (beneficiary account per case file)"
     today = registry.today()
-    if any(k in q for k in ("freeze", "hold", "block")):
+    if _asks(q, "freeze"):
         return (f"**Draft — request for temporary hold on beneficiary accounts**\n\n"
                 f"To: Compliance / MLRO, beneficiary bank\nRef: {ref} — {rep.get('classification','fraud complaint')}\nDate: {today}\n\n"
                 f"The Financial Crime Unit is investigating a complaint of {rep.get('classification','fraud').lower()} "
@@ -250,7 +326,7 @@ def offline_answer(entry: dict, question: str) -> str:
                 "Please place a temporary no-debit hold on the above account(s) pending our formal disclosure request, "
                 "retain all funds currently held, and confirm the current balance and any pending outward instructions "
                 "by return.\n\nInvestigating officer, Financial Crime Unit")
-    if any(k in q for k in ("statement", "disclosure", "kyc", "bank record", "6 month", "six month")):
+    if _asks(q, "disclosure"):
         return (f"**Draft — disclosure request: 6-month statements and KYC**\n\n"
                 f"To: Compliance / MLRO, beneficiary bank\nRef: {ref}\nDate: {today}\n\n"
                 f"In connection with the above investigation, please provide for each of the following account(s):\n{acct_lines}\n\n"
@@ -260,23 +336,23 @@ def offline_answer(entry: dict, question: str) -> str:
                 "transfers since the first complainant credit.\n4. Linked accounts, cards and devices used for online banking.\n\n"
                 "Please treat this request as urgent; funds have historically left these accounts within 72 hours.\n\n"
                 "Investigating officer, Financial Crime Unit")
-    if any(k in q for k in ("telecom", "phone", "sim", "subscriber")):
+    if _asks(q, "telecom"):
         phones = [e["label"] for e in rep.get("entities", []) if e.get("type") == "phone"]
         return (f"**Draft — subscriber data request**\n\nTo: Law-enforcement liaison, telecom operator\nRef: {ref}\n\n"
                 f"Please provide subscriber registration documents, activation date, IMEI history and cell-site records "
                 f"for: {', '.join(phones) or 'the seller number on file'} (period: activation to date).\n\nInvestigating officer, Financial Crime Unit")
-    if any(k in q for k in ("what happened", "summar", "narrative", "explain the case", "brief")):
+    if _asks(q, "narrative"):
         return rep.get("narrative") or entry.get("complaint_text") or "No narrative is available for this case yet."
-    if any(k in q for k in ("link", "other case", "connected", "network", "prior", "before", "same")):
+    if _asks(q, "linked"):
         pcs = rep.get("prior_cases") or []
         if not pcs:
             return "No prior occurrence of this case's identifiers was found in complaint history."
         lines = [f"- **{p['case_id']}** ({p['filed_date']}, {p['victim']}, AED {p['amount']:,.0f}) — matched on: {', '.join(p['matched_on'])}" for p in pcs]
         return (rep.get("investigation_summary", "") + "\n\n" + "\n".join(lines)).strip()
-    if any(k in q for k in ("recommend", "next", "action", "what should", "do first")):
+    if _asks(q, "recommend"):
         acts = rep.get("recommended_actions") or []
         return "\n".join(f"{i}. **{a['action']}** — {a['addressee']} · {a['timeframe']}" for i, a in enumerate(acts, 1)) or "No recommendations recorded yet."
-    if any(k in q for k in ("evidence", "screenshot", "receipt", "reconcil")):
+    if _asks(q, "evidence"):
         ev = rep.get("evidence_assessment") or []
         return "\n".join(f"- **{e['item']}** — {e['finding']} ({e['status']})" for e in ev) or "Evidence assessment is not available yet."
     return ((rep.get("investigation_summary") or entry.get("complaint_text") or "") +
@@ -284,10 +360,19 @@ def offline_answer(entry: dict, question: str) -> str:
             "or list the linked cases and recommended actions.").strip()
 
 
-async def answer_question(entry: dict, question: str, store_case: Optional[Case]) -> dict:
+QA_SYSTEM_AR = (
+    "\n\nAnswer in formal Modern Standard Arabic (the register of UAE police case files). Keep "
+    "case references, transaction references, IBANs, account numbers, phone numbers, dates and "
+    "amounts exactly as they appear in the file; write amounts as '12,500 درهم'. Drafts must be "
+    "complete, formal Arabic documents ready to send."
+)
+
+
+async def answer_question(entry: dict, question: str, store_case: Optional[Case],
+                          lang: str = "en") -> dict:
     client = get_client()
     if client is None:
-        answer = offline_answer(entry, question)
+        answer = offline_answer(entry, question, lang)
         entry.setdefault("qa_history", []).append({"q": question, "a": answer})
         return {"answer": answer, "tools_used": []}
 
@@ -310,11 +395,24 @@ async def answer_question(entry: dict, question: str, store_case: Optional[Case]
     tools_used: list[str] = []
     rounds = 0
     kwargs: dict[str, Any] = {
-        "model": config.MODEL, "system": QA_SYSTEM,
+        "model": config.MODEL, "system": QA_SYSTEM + (QA_SYSTEM_AR if lang == "ar" else ""),
         "max_tokens": config.MAX_TOKENS,
         "output_config": {"effort": config.LLM_EFFORT},
         "tools": schemas(ALL_TOOLS),
     }
+    try:
+        return await _answer_live(entry, question, messages, kwargs, tools_used, lang)
+    except Exception:  # key, quota, network: answer from the case file instead
+        logger.exception("Live Q&A failed for %s — answering offline", entry.get("ref"))
+        answer = offline_answer(entry, question, lang)
+        entry.setdefault("qa_history", []).append({"q": question, "a": answer})
+        return {"answer": answer, "tools_used": []}
+
+
+async def _answer_live(entry: dict, question: str, messages: list, kwargs: dict,
+                       tools_used: list, lang: str) -> dict:
+    client = get_client()
+    rounds = 0
     while True:
         resp = await client.messages.create(messages=messages, **kwargs)
         if resp.stop_reason == "refusal":

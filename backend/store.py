@@ -84,7 +84,7 @@ def load_demo_case() -> Case:
     if not case.complaint_images:  # fallback if images are missing
         case.complaint_text = (DEMO_DIR / "conversation.txt").read_text(encoding="utf-8")
     case.statements.append({
-        "name": "Example Bank statement — Sep 2026.pdf",
+        "name": "Example Bank statement — Aug 2026.pdf",
         "text": extract_pdf_text((DEMO_DIR / "bank_statement.pdf").read_bytes()),
     })
     return case

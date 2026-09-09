@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Case Queue — Financial Crime Unit</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%23191100' stroke='%23C8A44A' stroke-width='1.6'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/theme.css">
+<script src="assets/i18n.js"></script>
 </head>
 <body>
 
@@ -40,7 +41,7 @@
     <select class="fs" id="fType"><option value="">All types</option></select>
     <select class="fs" id="fStatus"><option value="">All statuses</option><option>New</option><option>Triage</option><option>Under investigation</option><option>Awaiting complainant</option><option>Closed</option></select>
     <select class="fs" id="fSort"><option value="filed">Sort: Newest first</option><option value="risk">Sort: Risk score</option><option value="amount">Sort: Amount</option><option value="oldest">Sort: Oldest first</option></select>
-    <span class="hint" id="count" style="margin-left:auto"></span>
+    <span class="hint ms-auto" id="count"></span>
   </div>
 
   <div class="card">
@@ -78,11 +79,12 @@ async function load(){
   try{
     const d=await (await fetch('/api/cases')).json();
     DATA=d.cases; TODAY=d.today;
-    $('asOf').textContent='As of '+TODAY+' · '+new Date().toTimeString().slice(0,5);
+    $('asOf').textContent=tf('As of {d} · {t}',{d:TODAY, t:new Date().toTimeString().slice(0,5)});
     const types=[...new Set(DATA.map(c=>c.type))].sort();
-    const sel=$('fType'), cur=sel.value; sel.innerHTML='<option value="">All types</option>'+types.map(t=>`<option>${esc(t)}</option>`).join(''); sel.value=cur;
+    const sel=$('fType'), cur=sel.value;
+    sel.innerHTML=`<option value="">${esc(t('All types'))}</option>`+types.map(ty=>`<option value="${esc(ty)}">${esc(t(ty))}</option>`).join(''); sel.value=cur;
     kpis(); render();
-  }catch(e){ toast('Could not load the case queue: '+e.message); }
+  }catch(e){ toast(t('Could not load the case queue: ')+e.message); }
 }
 
 function kpis(){
@@ -90,42 +92,42 @@ function kpis(){
   const d30=DATA.filter(c=>c.days_open<=30);
   const linked=DATA.filter(c=>c.linked_count>0);
   $('kpiStrip').innerHTML=[
-    {l:'Open cases',v:open.length,cls:'gold',tr:DATA.length+' in queue'},
-    {l:'New / unassigned',v:DATA.filter(c=>c.status==='New').length,cls:'amber',tr:'awaiting triage'},
-    {l:'Under investigation',v:DATA.filter(c=>c.status==='Under investigation').length,cls:'green',tr:'assigned to officers'},
-    {l:'Awaiting external response',v:DATA.filter(c=>/awaiting|requested|recall|response/i.test(c.stage||'')).length,cls:'blue',tr:'banks · platforms · telecom'},
-    {l:'Reported loss — 30 days',v:'AED '+fmt(d30.reduce((s,c)=>s+(c.amount||0),0)),cls:'red',tr:d30.length+' complaints'},
-    {l:'Cross-case links',v:linked.length,cls:'red',tr:'cases sharing accounts or identities'},
+    {l:t('Open cases'),v:open.length,cls:'gold',tr:tf('{n} in queue',{n:DATA.length})},
+    {l:t('New / unassigned'),v:DATA.filter(c=>c.status==='New').length,cls:'amber',tr:t('awaiting triage')},
+    {l:t('Under investigation'),v:DATA.filter(c=>c.status==='Under investigation').length,cls:'green',tr:t('assigned to officers')},
+    {l:t('Awaiting external response'),v:DATA.filter(c=>/awaiting|requested|recall|response/i.test(c.stage||'')).length,cls:'blue',tr:t('banks · platforms · telecom')},
+    {l:t('Reported loss — 30 days'),v:money(d30.reduce((s,c)=>s+(c.amount||0),0)),cls:'red',tr:tf('{n} complaints',{n:d30.length})},
+    {l:t('Cross-case links'),v:linked.length,cls:'red',tr:t('cases sharing accounts or identities')},
   ].map(k=>`<div class="kpi"><div class="kpi-lbl">${k.l}</div><div class="kpi-val ${k.cls}">${k.v}</div><div class="kpi-tr">${k.tr}</div></div>`).join('');
 }
 
 function render(){
   const q=$('q').value.toLowerCase(), ft=$('fType').value, fs=$('fStatus').value, sort=$('fSort').value;
-  let rows=DATA.filter(c=>(!ft||c.type===ft)&&(!fs||c.status===fs)&&(!q||[c.ref,c.complainant,c.type,c.subtype,c.officer||'',c.stage||''].join(' ').toLowerCase().includes(q)));
+  let rows=DATA.filter(c=>(!ft||c.type===ft)&&(!fs||c.status===fs)&&(!q||[c.ref,c.complainant,t(c.complainant),c.type,t(c.type),c.subtype,t(c.subtype),c.officer||'',c.stage||''].join(' ').toLowerCase().includes(q)));
   const key={filed:(a,b)=>b.filed.localeCompare(a.filed),oldest:(a,b)=>a.filed.localeCompare(b.filed),
              risk:(a,b)=>(b.risk_score??-1)-(a.risk_score??-1)||b.filed.localeCompare(a.filed),
              amount:(a,b)=>(b.amount||0)-(a.amount||0)}[sort];
   rows.sort(key);
   document.querySelectorAll('th.sortable').forEach(th=>th.classList.toggle('sorted', th.dataset.sort===(sort==='oldest'?'filed':sort)));
   $('rows').innerHTML=rows.map(c=>{
-    const risk = c.processing ? `<span class="dot-status"><span class="spin"></span><span class="hint">Analysing</span></span>`
-      : c.risk_score==null ? `<span class="rb grey">Pending</span>`
-      : `<span style="display:inline-flex;align-items:center;gap:8px"><b style="font-size:13px">${c.risk_score}</b><span class="rb ${lvlCls[c.risk_level]||'grey'}">${esc(c.risk_level)}</span></span>`;
+    const risk = c.processing ? `<span class="dot-status"><span class="spin"></span><span class="hint">${esc(t('Analysing'))}</span></span>`
+      : c.risk_score==null ? `<span class="rb grey">${esc(t('Pending'))}</span>`
+      : `<span style="display:inline-flex;align-items:center;gap:8px"><b style="font-size:13px">${c.risk_score}</b><span class="rb ${lvlCls[c.risk_level]||'grey'}">${esc(t(c.risk_level))}</span></span>`;
     const isNew = c.days_open===0 && c.status==='New';
     return `<tr class="clickable" onclick="location.href='case.html?ref=${encodeURIComponent(c.ref)}'">
-      <td><span class="mono" style="font-weight:700;color:var(--text)">${esc(c.ref)}</span>${isNew?' <span class="rb gold" style="margin-left:6px">Today</span>':''}</td>
-      <td><span class="mono">${esc(c.filed.replace('T',' '))}</span><span class="en-sub">${c.days_open} day${c.days_open===1?'':'s'} open</span></td>
-      <td><span class="en-strong">${esc(c.complainant)}</span><span class="en-sub">${esc(c.emirate||'')} · ${esc(c.channel||'')}</span></td>
-      <td><span class="en-strong" style="font-weight:600">${esc(c.type)}</span><span class="en-sub">${esc(c.subtype||'')}</span></td>
+      <td><span class="mono" style="font-weight:700;color:var(--text)">${esc(c.ref)}</span>${isNew?` <span class="rb gold ms-6">${esc(t('Today'))}</span>`:''}</td>
+      <td><span class="mono">${esc(c.filed.replace('T',' '))}</span><span class="en-sub">${esc(c.days_open===0?t('Opened today'):tf(c.days_open===1?'{n} day open':'{n} days open',{n:c.days_open}))}</span></td>
+      <td><span class="en-strong">${esc(t(c.complainant))}</span><span class="en-sub">${esc(t(c.emirate||''))} · ${esc(t(c.channel||''))}</span></td>
+      <td><span class="en-strong" style="font-weight:600">${esc(t(c.type))}</span><span class="en-sub">${esc(t(c.subtype||''))}</span></td>
       <td class="num">${fmt(c.amount||0)}</td>
       <td>${risk}</td>
-      <td><span class="dot-status"><span class="dot ${stDot[c.status]||'grey'}"></span>${esc(c.status)}</span><span class="en-sub">${esc(c.stage||'')}</span></td>
-      <td>${c.officer?esc(c.officer):'<span class="hint">Unassigned</span>'}</td>
-      <td>${c.linked_count?`<span class="rb red">${c.linked_count} linked</span>`:'<span class="hint">—</span>'}</td>
-      <td style="text-align:right"><a class="btn btn-glass btn-sm" href="case.html?ref=${encodeURIComponent(c.ref)}" onclick="event.stopPropagation()">Open</a></td></tr>`;
+      <td><span class="dot-status"><span class="dot ${stDot[c.status]||'grey'}"></span>${esc(t(c.status))}</span><span class="en-sub">${esc(t(c.stage||''))}</span></td>
+      <td>${c.officer?esc(t(c.officer)):`<span class="hint">${esc(t('Unassigned'))}</span>`}</td>
+      <td>${c.linked_count?`<span class="rb red">${esc(tf('{n} linked',{n:c.linked_count}))}</span>`:'<span class="hint">—</span>'}</td>
+      <td class="ta-r"><a class="btn btn-glass btn-sm" href="case.html?ref=${encodeURIComponent(c.ref)}" onclick="event.stopPropagation()">${esc(t('Open'))}</a></td></tr>`;
   }).join('');
-  $('count').textContent=rows.length+' of '+DATA.length+' cases';
-  $('tfoot').innerHTML=`<span>Showing ${rows.length} cases</span><span>Total reported loss in view: <b>AED ${fmt(rows.reduce((s,c)=>s+(c.amount||0),0))}</b></span>`;
+  $('count').textContent=tf('{n} of {m} cases',{n:rows.length, m:DATA.length});
+  $('tfoot').innerHTML=`<span>${esc(tf('Showing {n} cases',{n:rows.length}))}</span><span>${esc(t('Total reported loss in view:'))} <b>${esc(money(rows.reduce((s,c)=>s+(c.amount||0),0)))}</b></span>`;
 }
 </script>
 </body>

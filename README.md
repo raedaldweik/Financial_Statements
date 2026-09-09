@@ -62,6 +62,26 @@ chat. Three complaints, two accounts, one network: AED 296,400.
 5. **Complaint History Cross-Reference** — prior complaints & known entities (3 tools) — first offence or a series?
 6. **Lead Investigator** — synthesizes the structured report (schema-enforced JSON)
 
+## Languages
+
+Every page has an **English / العربية** toggle in the nav (stored per
+browser). Arabic renders the whole interface right-to-left, including the
+queue vocabulary (statuses, types, stages, officers), the citizen form and
+the case assistant. Case-file content comes from an Arabic case file:
+
+- the demo submission and the two linked cases (FC-2026-0187, FC-2026-0204)
+  ship with hand-written Arabic case files and agent memos
+  (`demo_data/replay.ar.json`, `demo_data/cases.ar.json`);
+- every other case is translated by the model on first open in Arabic
+  (schema-enforced, so the Arabic file has exactly the English structure) and
+  pre-translated in the background at startup when a key is set
+  (`PREWARM_TRANSLATIONS=0` disables that);
+- without a key, cases that have no Arabic file show the English content
+  inside the Arabic interface.
+
+The case assistant answers in the interface language; offline drafts exist in
+both languages.
+
 ## Live mode vs. simulation mode
 
 - **Live** (`ANTHROPIC_API_KEY` set): real agentic runs — upload your own
@@ -96,6 +116,7 @@ uvicorn main:app --reload
    | `ANTHROPIC_API_KEY` | for live mode | without it the app runs in simulation mode |
    | `MODEL` | no | default `claude-opus-5`; `claude-sonnet-5` for snappier turns |
    | `LLM_EFFORT` | no | default `medium` |
+   | `PREWARM_TRANSLATIONS` | no | `0` to skip translating the seeded case files into Arabic at startup |
    | `DEMO_TZ` | no | timezone for filing timestamps, default `Asia/Dubai` |
    | `DEMO_TODAY` | no | pin "today" (`2026-09-10`) for a rehearsal; normally unset |
 
@@ -115,5 +136,7 @@ lives in `backend/demo_data/`:
 - `replay.json` — the recorded run (filing-date placeholders such as
   `{{FILED_LONG}}` are filled with the real submission date at run time)
 - `cases.json` — the seeded case queue (11 cases with their case files)
+- `replay.ar.json`, `cases.ar.json` — Arabic case files and memos for the
+  demo submission and the two linked cases
 
 Swap these files to retheme the storyline for another client.
