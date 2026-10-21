@@ -173,15 +173,14 @@ def run(fid: str) -> None:
                     warnings.append(f"Model extraction of company and auditor facts failed ({str(e)[:140]}).")
                     log.exception("company facts failed")
             if not company:
-                first_lines = [l.strip() for l in (page_text.get(1, "") + "\n" + page_text.get(2, "")).splitlines() if l.strip()]
-                name = meta.get("name") or (first_lines[0] if first_lines else fid)
+                name = meta.get("name") or ex.guess_company_name(pages, raw_notes, meta.get("uploadName") or fid)
                 yr = re.search(r"20\d\d", stmt_text[:3000] or "")
-                company = {"name": name, "shortName": meta.get("name") or name.split("(")[0].strip()[:40], "ticker": meta.get("ticker"), "exchange": None,
+                company = {"name": name, "shortName": meta.get("name") or ex.clean_company_name(name.split("(")[0])[:40] or name[:40], "ticker": meta.get("ticker"), "exchange": None,
                            "sector": meta.get("sector") or "—", "hq": None, "fy": f"FY{yr.group(0)}" if yr else "FY", "periodEnd": yr.group(0) if yr else "",
                            "years": statements[0]["cols"][:2], "unit": unit, "scale": scale, "currency": currency, "approvedBy": None, "approvedOn": None, "signatories": [],
                            "auditor": {"firm": None, "partner": None, "license": None, "reportDate": None, "opinion": "Unknown", "opinionText": None, "materiality": None,
                                        "emphasisOfMatter": None, "otherMatter": None, "goingConcern": None, "kams": []}}
-                s.info("extraction-only: company facts taken from the upload form and the cover page")
+                s.info(f"extraction-only: company name '{name}' from the upload form, note 1 or the page headers")
             company["unit"] = company.get("unit") or unit
             company["scale"] = company.get("scale") or scale or 1
             if meta.get("name"):

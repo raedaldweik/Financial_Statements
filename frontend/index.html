@@ -31,10 +31,10 @@ h1 { font-size:clamp(32px,3.8vw,58px); font-weight:200; line-height:1.08; color:
 h1 strong { font-weight:700; color:#fff; display:block; }
 .gold-bar { width:54px; height:2px; background:linear-gradient(90deg,var(--gold-hi),var(--green),transparent); margin:24px 0; opacity:0; animation:fadeUp .7s .4s ease forwards; }
 p.desc { font-size:13px; font-weight:300; line-height:1.85; color:rgba(255,255,255,0.48); max-width:470px; opacity:0; animation:fadeUp .7s .52s ease forwards; }
-.stats{display:flex;gap:30px;margin-top:26px;opacity:0;animation:fadeUp .7s .6s ease forwards}
+.stats{display:flex;gap:30px;margin-top:30px;opacity:0;animation:fadeUp .7s .8s ease forwards}
 .stat b{display:block;font-size:24px;font-weight:600;color:#fff;letter-spacing:-.02em;line-height:1}
 .stat span{display:block;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(140,203,176,0.75);margin-top:7px}
-.btns { display:flex; gap:14px; margin-top:32px; flex-wrap:wrap; opacity:0; animation:fadeUp .7s .7s ease forwards; }
+.btns { display:flex; gap:14px; margin-top:22px; flex-wrap:wrap; opacity:0; animation:fadeUp .7s .7s ease forwards; }
 .btn { display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:14px 26px; border:none; border-radius:4px; font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; text-decoration:none; white-space:nowrap; min-width:230px; transition:all .22s ease; position:relative; overflow:hidden; }
 .btn::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,0); transition:background .2s; }
 .btn:hover::after { background:rgba(255,255,255,0.06); }
@@ -44,7 +44,7 @@ p.desc { font-size:13px; font-weight:300; line-height:1.85; color:rgba(255,255,2
 .btn-ghost:hover{border-color:rgba(140,203,176,0.8);color:#fff;transform:translateY(-2px)}
 .btn-arrow { opacity:.6; transition:transform .2s; font-size:15px; }
 .btn:hover .btn-arrow { transform:translateX(4px); }
-.caps{display:flex;gap:22px;margin-top:38px;opacity:0;animation:fadeUp .7s .85s ease forwards;flex-wrap:wrap}
+.caps{display:flex;gap:22px;margin-top:30px;opacity:0;animation:fadeUp .7s .9s ease forwards;flex-wrap:wrap}
 .cap{display:flex;gap:9px;align-items:flex-start;flex:1 1 130px;max-width:150px}
 .cap svg{width:18px;height:18px;flex-shrink:0;color:var(--gold-hi);margin-top:1px}
 .cap b{display:block;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.85);margin-bottom:3px}
@@ -54,6 +54,25 @@ p.desc { font-size:13px; font-weight:300; line-height:1.85; color:rgba(255,255,2
 .hud { position:absolute; font-size:7.5px; letter-spacing:0.14em; font-family:'Barlow',sans-serif; font-weight:500; color:rgba(140,203,176,0.4); opacity:0; animation:fadeUp .4s ease forwards; white-space:nowrap; text-transform:uppercase; }
 .hud.gold { color:rgba(226,188,104,0.4); }
 .hud.dim { color:rgba(255,255,255,0.12); }
+.tab-cta{color:#F3E2B0;background:rgba(226,188,104,0.12);border:1px solid rgba(226,188,104,0.45);padding:7px 14px;border-radius:20px}
+.tab-cta:hover{background:rgba(226,188,104,0.22);color:#fff}
+.hero-drop{margin-top:24px;border:1.5px dashed rgba(226,188,104,0.5);border-radius:12px;padding:18px 22px;display:flex;align-items:center;gap:16px;cursor:pointer;background:rgba(255,255,255,0.03);transition:border-color .2s,background .2s;opacity:0;animation:fadeUp .7s .58s ease forwards;max-width:540px}
+.hero-drop:hover,.hero-drop.over{border-color:var(--gold-hi);background:rgba(226,188,104,0.09)}
+.hero-drop.busy{filter:brightness(.7);pointer-events:none}
+.hero-drop.disabled{cursor:not-allowed;border-style:dotted}
+.hero-drop svg{width:30px;height:30px;color:var(--gold-hi);flex-shrink:0}
+.hero-drop b{display:block;font-size:14.5px;font-weight:600;color:#fff;margin-bottom:3px}
+.hero-drop span{font-size:11px;color:rgba(255,255,255,0.48);line-height:1.5}
+.hero-prog{max-width:540px;margin-top:10px}
+.up-line{font-size:11.5px;color:#8CCBB0}
+.up-line.ok{color:#F3E2B0}
+.up-line a{color:var(--gold-hi)}
+.prog{height:4px;border-radius:3px;background:rgba(255,255,255,0.1);overflow:hidden;margin-top:6px;max-width:540px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-hi),var(--green));transition:width .4s}
+.nd-flag{display:flex;gap:10px;padding:10px 12px;border-radius:8px;font-size:12px;color:#fff;background:rgba(200,60,60,0.18);border:1px solid rgba(200,60,60,0.45)}
+.nd-flag .lv{font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-top:2px;color:#F2A0A0}
+.toast{position:fixed;bottom:26px;right:26px;z-index:9999;background:#07211A;border:1px solid rgba(226,188,104,0.4);border-radius:10px;padding:12px 20px;font-size:12.5px;color:#F3E2B0;box-shadow:0 10px 36px rgba(0,0,0,0.3);opacity:0;transform:translateY(10px);transition:all .24s;max-width:440px;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
 .foot{position:fixed;left:60px;right:60px;bottom:18px;z-index:6;display:flex;justify-content:space-between;font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,0.22)}
 @media(max-width:900px){nav{padding:18px 20px 0}.nav-tabs{display:none}.main{padding:0 20px}.foot{left:20px;right:20px}.brand-txt{display:none}}
 </style>
@@ -64,9 +83,10 @@ p.desc { font-size:13px; font-weight:300; line-height:1.85; color:rgba(255,255,2
   <nav>
     <a class="brand" href="index.html" id="brand"></a>
     <div class="nav-tabs">
-      <a href="index.html" class="tab active">Landing</a>
-      <a href="portfolio.html" class="tab">Filings portfolio</a>
-      <a href="company.html?c=aramco" class="tab">Statement explorer</a>
+      <a href="index.html" class="tab active">Home</a>
+      <a href="upload.html" class="tab tab-cta">Upload a statement</a>
+      <a href="portfolio.html" class="tab">Filings</a>
+      <a href="company.html" class="tab">Statement explorer</a>
     </div>
     <span class="nav-pill">Investor Financial Intelligence</span>
   </nav>
@@ -76,16 +96,22 @@ p.desc { font-size:13px; font-weight:300; line-height:1.85; color:rgba(255,255,2
       <div class="eyebrow">Ministry of Investment · investor due diligence</div>
       <h1>Financial Statement<strong>Intelligence Explorer</strong></h1>
       <div class="gold-bar"></div>
-      <p class="desc">Ingest a company's audited annual report, rebuild its primary statements with every note reference as a live link, and read the filing the way an investment authority needs to: auditor's opinion and key audit matters, flagged disclosures, ownership and Government exposure, debt and covenants, commitments and contingencies, each finding traced to the note that supports it.</p>
-      <div class="stats" id="stats">
-        <div class="stat"><b>2</b><span>Filings loaded</span></div>
-        <div class="stat"><b>75</b><span>Notes indexed</span></div>
-        <div class="stat"><b id="st-links">—</b><span>Cross-references</span></div>
-        <div class="stat"><b>12</b><span>Review areas</span></div>
+      <p class="desc">Upload any company's audited annual financial statements. The primary statements are rebuilt with every note reference as a live link, the notes are indexed and cross-referenced, and the filing is read the way an investment authority needs to: auditor's opinion and key audit matters, flagged disclosures, ownership and Government exposure, debt and covenants, commitments and contingencies, each finding traced to the note that supports it.</p>
+      <input type="file" id="hero-file" accept="application/pdf" style="display:none">
+      <div class="hero-drop" id="hero-drop">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M4 17v1a2 2 0 002 2h12a2 2 0 002-2v-1"/></svg>
+        <div><b>Drop an annual report PDF here to start</b><span id="hero-drop-sub">or click to choose a file · the explorer is built while you watch</span></div>
       </div>
+      <div class="hero-prog" id="hero-prog"></div>
       <div class="btns">
-        <a href="portfolio.html" class="btn btn-primary">Open filings portfolio <span class="btn-arrow">›</span></a>
-        <a href="company.html?c=aramco#statements/income" class="btn btn-ghost">Explore Aramco FY2024 <span class="btn-arrow">›</span></a>
+        <a href="upload.html" class="btn btn-primary">Upload a statement <span class="btn-arrow">›</span></a>
+        <a href="portfolio.html" class="btn btn-ghost" id="btn-browse">Browse filings <span class="btn-arrow">›</span></a>
+      </div>
+      <div class="stats" id="stats">
+        <div class="stat"><b>—</b><span>Filings ready</span></div>
+        <div class="stat"><b>—</b><span>Notes indexed</span></div>
+        <div class="stat"><b>—</b><span>Cross-references</span></div>
+        <div class="stat"><b>12</b><span>Review areas</span></div>
       </div>
       <div class="caps">
         <div class="cap"><svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><div><b>Linked statements</b><span>Every “Note x” on the face of the statements opens the note.</span></div></div>
@@ -99,26 +125,35 @@ p.desc { font-size:13px; font-weight:300; line-height:1.85; color:rgba(255,255,2
 
 <div class="hud-labels">
   <span class="hud gold" style="right:42%; top:28%; animation-delay:1.1s">Note 24 · Revenue</span>
-  <span class="hud"      style="right:36%; top:22%; animation-delay:1.4s">2222 · Saudi Aramco</span>
+  <span class="hud"      style="right:36%; top:22%; animation-delay:1.4s">Any audited filing · PDF</span>
   <span class="hud dim"  style="right:29%; top:18%; animation-delay:1.7s">— —</span>
   <span class="hud gold" style="right:46%; top:33%; animation-delay:1.9s">Note 5 · PP&amp;E</span>
   <span class="hud"      style="right:22%; top:21%; animation-delay:1.3s">IFRS · SOCPA endorsed</span>
   <span class="hud gold" style="right:38%; top:42%; animation-delay:1.6s">Note 20 · Borrowings</span>
   <span class="hud gold" style="right:18%; top:30%; animation-delay:1.8s">Note 33 · Contingencies</span>
-  <span class="hud"      style="right:12%; top:44%; animation-delay:2.1s">2040 · Saudi Ceramic</span>
+  <span class="hud"      style="right:12%; top:44%; animation-delay:2.1s">Statements ⟷ notes</span>
   <span class="hud gold" style="right:44%; top:62%; animation-delay:2.3s">Note 16.4 · Covenants</span>
   <span class="hud gold" style="right:28%; top:72%; animation-delay:2.5s">Note 29 · Related parties</span>
   <span class="hud gold" style="right:14%; top:78%; animation-delay:2.6s">Note 36 · Dividends</span>
   <span class="hud dim"  style="right:8%;  top:35%; animation-delay:2.0s">KAM ×3</span>
 </div>
-<div class="foot"><span>Ministry of Investment · Demo on public Tadawul filings FY2024</span><span>Statements · Notes · Cross-reference map · Investor lens</span></div>
+<div class="foot"><span>Ministry of Investment · Upload any audited annual financial statements</span><span>Statements · Notes · Cross-reference map · Investor lens</span></div>
 
 <script src="assets/app.js"></script>
 <script>
 (async function(){
   document.getElementById('brand').innerHTML = FSX.LOGO_IMG ? `<img src="${FSX.LOGO_IMG}" alt="Ministry of Investment" style="height:48px">` : FSX.emblem('#E2BC68', '#07211A', 'emblem') + '<span class="brand-txt"><span class="brand-ar">وزارة الاستثمار</span><span class="brand-en">Ministry of Investment</span></span>';
-  try { const reg = await FSX.api.registry(); const I = (reg.items||[]).filter(x => x.status === 'ready');
-    if (I.length) { const b = document.querySelectorAll('#stats .stat b'); b[0].textContent = I.length; b[1].textContent = I.reduce((a,x)=>a+((x.stats||{}).notes||0),0); b[2].textContent = I.reduce((a,x)=>a+((x.stats||{}).links||0),0); }
+  const health = await FSX.api.health();
+  const drop = document.getElementById('hero-drop'), sub = document.getElementById('hero-drop-sub');
+  if (!health.ok) sub.textContent = 'uploads need the server: open the app through its URL, not as a file';
+  else if (!health.llm) sub.textContent = 'or click to choose a file · extraction-only mode (no ANTHROPIC_API_KEY on the server)';
+  FSX.uploader({ drop, input: document.getElementById('hero-file'), prog: document.getElementById('hero-prog'), health,
+    onDone: res => { setTimeout(() => { location.href = `company.html?c=${encodeURIComponent(res.id)}`; }, 600); } });
+  try { const reg = await FSX.api.registry(); const I = (reg.items||[]).filter(x => x.status === 'ready'); const S = I.filter(FSX.isSample);
+    const b = document.querySelectorAll('#stats .stat b'), l = document.querySelectorAll('#stats .stat span');
+    b[0].textContent = I.length; b[1].textContent = I.reduce((a,x)=>a+((x.stats||{}).notes||0),0); b[2].textContent = I.reduce((a,x)=>a+((x.stats||{}).links||0),0);
+    l[0].textContent = S.length ? (I.length === S.length ? `Sample filing${S.length > 1 ? 's' : ''}` : `Filings · ${S.length} sample${S.length > 1 ? 's' : ''}`) : 'Filings ready';
+    if (!I.length) { b[0].textContent = '0'; document.getElementById('btn-browse').style.display = 'none'; }
   } catch (e) {}
 })();
 const C   = document.getElementById('bg');

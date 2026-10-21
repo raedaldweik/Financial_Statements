@@ -258,14 +258,22 @@
     return `<a class="brand" href="index.html">${FSX.emblem('#E2BC68', '#0B3A2E')}<span class="brand-txt"><span class="brand-ar">وزارة الاستثمار</span><span class="brand-en">Ministry of Investment</span></span></a>`;
   };
   FSX.nav = function (active) {
-    const tabs = [['index.html', 'landing', 'Landing'], ['portfolio.html', 'portfolio', 'Filings portfolio'], ['company.html?c=aramco', 'explorer', 'Statement explorer']];
+    const tabs = [['index.html', 'landing', 'Home'], ['upload.html', 'upload', 'Upload a statement'], ['portfolio.html', 'portfolio', 'Filings'], ['company.html', 'explorer', 'Statement explorer']];
     return `<nav class="nav">
       <div class="nav-left">${FSX.logo()}<span class="nav-divider"></span><span class="nav-app">Investor Financial<br>Intelligence<small>Statement &amp; note explorer</small></span></div>
-      <div class="nav-tabs">${tabs.map(t => `<a class="tab${t[1] === active ? ' active' : ''}" href="${t[0]}">${t[2]}</a>`).join('')}</div>
-      <div class="nav-right"><span class="nav-pill">FY2024 · Tadawul filings · Demo</span></div>
+      <div class="nav-tabs">${tabs.map(t => `<a class="tab${t[1] === active ? ' active' : ''}${t[1] === 'upload' ? ' tab-cta' : ''}" href="${t[0]}">${t[2]}</a>`).join('')}</div>
+      <div class="nav-right"><span class="nav-pill" id="nav-mode">Investor Financial Intelligence</span></div>
     </nav>`;
   };
-  FSX.footer = () => `<div class="foot"><span><b>Ministry of Investment</b> · Investor Financial Intelligence</span><span>Source: audited consolidated financial statements FY2024 · IFRS as endorsed in KSA</span><span>Pipeline: pdftotext → note index → cross-reference map</span></div>`;
+  FSX.footer = () => `<div class="foot"><span><b>Ministry of Investment</b> · Investor Financial Intelligence</span><span>Works on any audited annual financial statements PDF · IFRS as endorsed in KSA</span><span>Pipeline: pdftotext → statements → notes → cross-reference map</span></div>`;
+  /* how a filing was produced: sample (reviewed bundle shipped with the app), model (ingested with
+     Claude) or extraction (deterministic parse only) */
+  FSX.modeLabel = x => {
+    const m = x && x.mode;
+    if (x && (x.sample || m === 'curated')) return ['Sample', 'gold'];
+    return m === 'full' ? ['Model', 'green'] : m === 'extraction' ? ['Extraction', 'amber'] : ['—', 'grey'];
+  };
+  FSX.isSample = x => !!(x && (x.sample || x.mode === 'curated'));
 
   /* ───────────── inline SVG charts ───────────── */
   const C = { green: '#176A52', greenHi: '#3FA07C', greenPale: '#8CCBB0', gold: '#C8A44A', goldHi: '#E2BC68', dark: '#0B3A2E', red: '#C0392B', blue: '#1A5A9A', amber: '#B8620A', grey: 'rgba(100,128,122,0.35)', grid: 'rgba(23,106,82,0.12)', axis: 'rgba(30,58,50,0.6)' };
@@ -437,6 +445,52 @@
     },
     async del(id) { const r = await fetch('api/filings/' + encodeURIComponent(id), { method: 'DELETE' }); if (!r.ok) throw new Error(r.status); return r.json(); },
     async rerun(id) { const r = await fetch('api/filings/' + encodeURIComponent(id) + '/rerun', { method: 'POST' }); if (!r.ok) throw new Error(r.status); return r.json(); },
+  };
+  /* Drop-zone uploader shared by the landing page, the upload page and the portfolio.
+     opts: { drop, input, button?, label?, prog?, fields?: {name,ticker,sector} (elements), health,
+             onDone(res) }  — picks a PDF by click or drag, posts it and reports progress. */
+  FSX.uploader = function (o) {
+    const f = FSX.fmt, can = !!(o.health && o.health.ok);
+    let chosen = null;
+    const say = html => { if (o.prog) o.prog.innerHTML = html; };
+    const setFile = file => {
+      chosen = file;
+      if (o.label) o.label.textContent = file ? `${file.name} · ${(file.size / 1048576).toFixed(1)} MB` : 'No file selected';
+      if (o.button) o.button.disabled = !file || !can;
+      if (file && !o.button) send();           // no explicit button: upload as soon as a file is picked
+    };
+    const pick = file => {
+      if (!file) return;
+      if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) { FSX.toast('Please choose a PDF.'); return; }
+      const cap = (o.health && o.health.maxUploadMb) || 40;
+      if (file.size > cap * 1048576) { FSX.toast(`That PDF is larger than ${cap} MB.`); return; }
+      setFile(file);
+    };
+    async function send() {
+      if (!chosen || !can) return;
+      if (o.button) o.button.disabled = true;
+      o.drop.classList.add('busy');
+      say(`<div class="up-line">Uploading ${f.esc(chosen.name)}…</div><div class="prog"><i style="width:0%"></i></div>`);
+      const meta = {};
+      Object.entries(o.fields || {}).forEach(([k, el]) => { if (el && el.value) meta[k] = el.value; });
+      try {
+        const res = await FSX.api.upload(chosen, meta, p => { const b = o.prog && o.prog.querySelector('.prog i'); if (b) b.style.width = Math.round(p * 100) + '%'; });
+        say(`<div class="up-line ok">Uploaded · pipeline started in ${f.esc(res.mode)} mode · <a href="company.html?c=${encodeURIComponent(res.id)}">watch it build ›</a></div>`);
+        const file = chosen; setFile(null); if (o.input) o.input.value = '';
+        if (o.onDone) o.onDone(res, file);
+      } catch (err) {
+        say(`<div class="nd-flag alert"><span class="lv">error</span><span>${f.esc(err.message)}</span></div>`);
+        if (o.button) o.button.disabled = false;
+      } finally { o.drop.classList.remove('busy'); }
+    }
+    o.drop.addEventListener('click', () => { if (!can) { FSX.toast('Uploads need the server: open the app through its URL (http://…), not as a file.'); return; } o.input.click(); });
+    o.input.addEventListener('change', () => pick(o.input.files[0] || null));
+    ['dragenter', 'dragover'].forEach(ev => o.drop.addEventListener(ev, e => { e.preventDefault(); o.drop.classList.add('over'); }));
+    ['dragleave', 'drop'].forEach(ev => o.drop.addEventListener(ev, e => { e.preventDefault(); o.drop.classList.remove('over'); }));
+    o.drop.addEventListener('drop', e => { if (!can) { FSX.toast('Uploads need the server.'); return; } pick(e.dataTransfer.files[0]); });
+    if (o.button) { o.button.disabled = true; o.button.addEventListener('click', send); }
+    if (!can) o.drop.classList.add('disabled');
+    return { send, setFile, get file() { return chosen; } };
   };
   /* pipeline progress widget shared by the portfolio and the company page */
   FSX.pipelineHtml = function (s) {

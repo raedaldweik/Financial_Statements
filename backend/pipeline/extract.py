@@ -230,6 +230,58 @@ def split_notes(pages: list[Page], start_page: int | None) -> list[dict]:
     return out
 
 
+COMPANY_KW = re.compile(r"\b(company|co\.|corporation|corp\.?|group|holding|holdings|bank|limited|ltd\.?|plc|sjsc|jsc|llc|l\.l\.c|inc\.?|industries|insurance|cement|telecom|petrochemicals?)\b", re.I)
+NOT_NAME = re.compile(r"financial\s+statements?|auditor|notes?\s+to|statement\s+of|for\s+the\s+(year|period)|\bindex\b|\bpage\b|contents|balance\s+sheet|\breport\b|december|\bsar\b|riyal|thousand|million|unaudited|continued|cont'd|\d{1,2}\.\s", re.I)
+LEGAL_FORM = re.compile(r"\(?\b(a\s+)?(saudi\s+)?(closed\s+|listed\s+)?joint[\s-]+stock\s+company\)?|\(?\bs\.?j\.?s\.?c\.?\)?|\(?\bk\.?s\.?c\.?\)?", re.I)
+NOTE1_NAME = re.compile(r"(?:^|[\s(])(?:the\s+)?([A-Z][A-Za-z0-9&.'’\-]*(?:\s+[A-Za-z0-9&.'’\-]+){0,8}?)\s*\(\s*(?:the\s+|hereinafter\s+)?[“\"']?\s*(?:company|group|bank|parent|corporation|co\.)\b", re.I)
+SUBNOTE_MARK = re.compile(r"^\s*(?:\([a-z0-9]{1,3}\)|[A-Za-z][-.)]|\d{1,2}(?:[-.]\d{1,2})?[-.)]?)\s+")
+
+
+def clean_company_name(name: str) -> str:
+    name = re.sub(r"\s+", " ", name).strip(" ,.-–|•·()\"“”'")
+    name = LEGAL_FORM.sub("", name).strip(" ,.-–()")
+    return title_case(name) if name.isupper() else name
+
+
+def guess_company_name(pages: list[Page], notes: list[dict], fallback: str = "") -> str:
+    """Company name for the extraction-only mode: the opening of note 1 ('X Company (the "Company")'),
+    otherwise the most repeated header line that looks like a company name, otherwise the file name."""
+    cands: Counter[str] = Counter()
+    seen: dict[str, tuple[int, str]] = {}
+
+    def consider(line: str, page_no: int, weight: int = 1):
+        t = re.sub(r"\s+", " ", line).strip(" -–|•·")
+        if not 4 <= len(t) <= 90 or NOT_NAME.search(t) or not COMPANY_KW.search(t):
+            return
+        if sum(c.isalpha() for c in t) < 0.6 * len(t):
+            return
+        key = clean_company_name(t).lower()
+        if len(key) < 4:
+            return
+        cands[key] += weight
+        seen.setdefault(key, (page_no, t))
+
+    if notes:
+        head = SUBNOTE_MARK.sub("", re.sub(r"\s+", " ", notes[0].get("text", "")[:800]))
+        m = NOTE1_NAME.search(head)
+        if m:
+            consider(m.group(1), 0, 1000)
+    for p in pages:
+        ls = [l for l in p.raw.splitlines() if l.strip()]
+        for l in ls[:4] + ls[-4:]:
+            consider(l, p.no)
+        if p.no <= 2:
+            for l in ls[:12]:
+                consider(l, p.no, 3)
+    if cands:
+        key = max(cands, key=lambda k: (cands[k], -seen[k][0]))
+        name = clean_company_name(seen[key][1])
+        if name:
+            return name
+    stem = re.sub(r"[-_.]+", " ", Path(fallback).stem if fallback else "").strip()
+    return " ".join(w.upper() if re.fullmatch(r"(fy)?\d{2,4}", w, re.I) else w.capitalize() for w in stem.split()) or "Uploaded filing"
+
+
 def title_case(t: str) -> str:
     if t.isupper():
         small = {"and", "of", "the", "to", "for", "in", "on", "at", "or", "net"}

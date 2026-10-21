@@ -10,14 +10,16 @@ primary statements with **every note reference as a live link**, splits and inde
 notes, curates each note (summary, key figures, sub-sections, flags), computes KPIs and
 charts, and writes an analyst brief and a twelve-area **investor lens** — each finding
 citing the notes that support it. Two FY2024 Tadawul filings (Saudi Aramco, Saudi
-Ceramic) ship as reviewed demo seeds so the app is never empty.
+Ceramic) ship as **sample filings** so a fresh deployment shows what the output looks
+like; remove them from the UI or start without them with `SEED_SAMPLES=0`.
 
 ## Pages
 
 | Page | What it does |
 |---|---|
-| `index.html` | Landing page |
-| `portfolio.html` | Upload filings, watch the pipeline run, compare filings, open items and lens heat map |
+| `index.html` | Landing page: drop a PDF to start |
+| `upload.html` | Upload a statement (optional name, ticker, sector), watch the pipeline build it, manage your uploads and the samples |
+| `portfolio.html` | All filings side by side: KPIs, open items, lens heat map; quick drop zone |
 | `company.html?c=<id>` | One filing: overview · statements with note chips · note explorer · cross-reference map · investor lens |
 
 ## Two modes
@@ -58,22 +60,26 @@ Requires `pdftotext`, `pdfseparate` and `pdfunite` (poppler-utils) on the PATH a
    | `MODEL_NOTES` | no | default = `MODEL`; `claude-sonnet-5-5` makes note curation faster and cheaper |
    | `LLM_EFFORT` | no | `low` · `medium` (default) · `high` · `xhigh` · `max` |
    | `STORAGE_DIR` | no | default `/app/storage` |
+   | `SEED_SAMPLES` | no | default `1`; `0` starts without the two sample filings |
 
 4. Settings → Networking → **Generate Domain**.
 5. Optional but recommended: Settings → **Volumes** → mount a volume at `/app/storage` so
-   uploaded filings survive redeploys (the demo seeds are re-created at every start).
+   uploaded filings survive redeploys (the sample filings are re-created at every start
+   unless you removed them in the UI or set `SEED_SAMPLES=0`).
 
 ## API
 
 | Method | Path | |
 |---|---|---|
-| `GET` | `/api/health` | mode (`full` / `extraction-only`), model, filing count |
+| `GET` | `/api/health` | mode (`full` / `extraction-only`), model, filing / sample / upload counts, upload cap |
 | `GET` | `/api/filings` | registry: ready filings (summary) and filings in progress (stages, log) |
 | `POST` | `/api/filings` | multipart: `file` (PDF), optional `name`, `ticker`, `sector` → `{id}`; the pipeline runs in the background |
 | `GET` | `/api/filings/{id}` | the full bundle once ready, otherwise the processing status |
 | `GET` | `/api/filings/{id}/status` | pipeline stages and log (polled by the UI) |
 | `POST` | `/api/filings/{id}/rerun` | re-run the pipeline on the stored PDF |
-| `DELETE` | `/api/filings/{id}` | remove a filing |
+| `DELETE` | `/api/filings/{id}` | remove a filing (a removed sample stays removed across restarts) |
+| `DELETE` | `/api/samples` | remove the sample filings |
+| `POST` | `/api/samples/restore` | put the sample filings back |
 | `GET` | `/filings/{id}.pdf` | the source PDF (the UI deep-links to pages) |
 
 ## How ingestion works (`backend/pipeline/`)
@@ -113,18 +119,22 @@ inline in `frontend/assets/app.js`. To use the official artwork set, before `FSX
 FSX.LOGO_IMG = 'assets/misa-logo.svg';
 ```
 
-## Demo seeds
+## Sample filings
 
-`pipeline/curated/` holds the hand-reviewed statements and note overlays for the two demo
-filings; `python3 pipeline/build_data.py` rebuilds `backend/seed/*.bundle.json` (loaded at
-server start) and `frontend/data/*.js` (static fallback).
+Aramco FY2024 and Saudi Ceramic FY2024 are examples, not fixtures: the app works on any
+filing you upload. They are copied into storage at start (`SEED_SAMPLES=1`), can be removed
+with **Remove samples** on the upload or filings page (`DELETE /api/samples`; a removed
+sample stays removed across restarts) and put back with **Restore samples**
+(`POST /api/samples/restore`). `pipeline/curated/` holds their hand-reviewed statements and
+note overlays; `python3 pipeline/build_data.py` rebuilds `backend/seed/*.bundle.json` and
+`frontend/data/*.js` (static fallback).
 
 ## Repository layout
 
 ```
-frontend/   index.html · portfolio.html · company.html · assets/ (theme, runtime) · data/ (static seeds)
+frontend/   index.html · upload.html · portfolio.html · company.html · assets/ (theme, runtime) · data/ (static samples)
 backend/    main.py (FastAPI) · store.py · llm.py · config.py · pipeline/ (extract, statements, curate, analysis, build, run) · seed/
-filings/    the two demo PDFs
+filings/    the two sample PDFs
 pipeline/   curated inputs and the seed builder
 Dockerfile · railway.json · .env.example
 landing.html · executive.html · entity.html   the FTA dashboards from main (unchanged)

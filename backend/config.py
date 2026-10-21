@@ -3,7 +3,7 @@
 Only ANTHROPIC_API_KEY is needed for full ingestion (statement transcription, note
 curation, investor lens). Without it the server still runs: uploads are processed in
 extraction-only mode (statements parsed heuristically, notes split and indexed, no
-summaries or flags) and the two seeded demo filings are served from their curated bundles.
+summaries or flags) and the two sample filings are served from their curated bundles.
 """
 import os
 from pathlib import Path
@@ -28,6 +28,10 @@ NOTE_TEXT_CAP = int(os.getenv("NOTE_TEXT_CAP", "14000"))   # characters of note 
 PARALLEL_NOTE_CALLS = int(os.getenv("PARALLEL_NOTE_CALLS", "3"))
 MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "40"))
 PDFTOTEXT = os.getenv("PDFTOTEXT", "pdftotext")
+# The two sample filings (Aramco, Saudi Ceramic) are copied into storage at start so a fresh
+# deployment shows what the output looks like. Set SEED_SAMPLES=0 to start empty; samples can
+# also be removed (and restored) from the UI.
+SEED_SAMPLES = os.getenv("SEED_SAMPLES", "1").strip().lower() not in ("0", "false", "no", "off")
 
 
 def llm_configured() -> bool:

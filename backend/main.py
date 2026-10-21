@@ -6,7 +6,9 @@
   GET  /api/filings/{id}               the dashboard bundle (or the processing status while it runs)
   GET  /api/filings/{id}/status        pipeline stages + log
   POST /api/filings/{id}/rerun         re-run the pipeline on the stored PDF
-  DELETE /api/filings/{id}
+  DELETE /api/filings/{id}             remove a filing (samples too; a removed sample stays removed)
+  POST /api/samples/restore            put the sample filings back
+  DELETE /api/samples                  remove every sample filing
   GET  /filings/{name}.pdf             the source PDF (deep-linked by page from the UI)
   /                                    the frontend (frontend/)
 """
@@ -36,9 +38,12 @@ _sem = threading.Semaphore(int(__import__("os").getenv("MAX_PARALLEL_JOBS", "2")
 @app.on_event("startup")
 def _startup():
     config.STORAGE_DIR.mkdir(parents=True, exist_ok=True)
-    made = store.seed_from(config.SEED_DIR)
-    if made:
-        log.info("seeded demo filings: %s", made)
+    if config.SEED_SAMPLES:
+        made = store.seed_from(config.SEED_DIR)
+        if made:
+            log.info("seeded sample filings: %s", made)
+    else:
+        log.info("SEED_SAMPLES is off: no sample filings seeded")
     # resume anything interrupted by a restart
     for fid in store.list_ids():
         st = store.status(fid) or {}
@@ -67,8 +72,12 @@ def _status_summary(fid: str) -> dict:
 
 @app.get("/api/health")
 def health():
+    ids = store.list_ids()
+    samples = [i for i in ids if store.is_sample(i)]
     return {"ok": True, "llm": config.llm_configured(), "model": config.MODEL if config.llm_configured() else None,
-            "mode": "full" if config.llm_configured() else "extraction-only", "filings": len(store.list_ids())}
+            "mode": "full" if config.llm_configured() else "extraction-only", "filings": len(ids),
+            "samples": len(samples), "uploads": len(ids) - len(samples), "samplesAvailable": len(store.sample_ids(config.SEED_DIR)),
+            "maxUploadMb": config.MAX_UPLOAD_MB}
 
 
 @app.get("/api/filings")
@@ -80,6 +89,7 @@ def list_filings():
         if b and st.get("state", "ready") == "ready":
             e = registry_entry(b)
             e["warnings"] = b.get("warnings", [])
+            e["sample"] = store.is_sample(fid)
             out.append(e)
         else:
             out.append(_status_summary(fid))
@@ -120,7 +130,7 @@ def get_status(fid: str):
 @app.post("/api/filings/{fid}/rerun")
 def rerun(fid: str):
     if not (store.filing_dir(fid) / "source.pdf").exists():
-        raise HTTPException(400, "This filing has no stored PDF to re-run (seeded demo).")
+        raise HTTPException(400, "This filing has no stored PDF to re-run (sample filing).")
     store.init_status(fid)
     _launch(fid)
     return {"id": fid, "status": "queued"}
@@ -131,6 +141,18 @@ def delete(fid: str):
     if not store.delete(fid):
         raise HTTPException(404, "Unknown filing")
     return {"deleted": fid}
+
+
+@app.post("/api/samples/restore")
+def restore_samples():
+    made = store.restore_samples(config.SEED_DIR)
+    return {"restored": made, "samples": [i for i in store.list_ids() if store.is_sample(i)]}
+
+
+@app.delete("/api/samples")
+def remove_samples():
+    gone = [i for i in store.list_ids() if store.is_sample(i) and store.delete(i)]
+    return {"deleted": gone}
 
 
 @app.get("/filings/{name}")

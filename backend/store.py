@@ -6,8 +6,10 @@
   <id>/bundle.json    the dashboard bundle once ready
   <id>/meta.json      upload metadata
 
-Seeded demo filings live in backend/seed/<id>.bundle.json with their PDFs in filings/; they are
-copied into storage on first start so the registry has a single source of truth.
+Sample filings live in backend/seed/<id>.bundle.json with their PDFs in filings/; they are
+copied into storage on first start so the registry has a single source of truth. A sample the
+user removes is remembered in <STORAGE_DIR>/removed-samples.json so it is not re-created at the
+next start; restore_samples() clears that list.
 """
 from __future__ import annotations
 
@@ -144,25 +146,59 @@ def list_ids() -> list[str]:
                   key=lambda n: (meta(n) or {}).get("createdAt", 0))
 
 
+def is_sample(fid: str) -> bool:
+    return bool((meta(fid) or {}).get("seed"))
+
+
+def _removed_samples_path() -> Path:
+    return config.STORAGE_DIR / "removed-samples.json"
+
+
+def removed_samples() -> set[str]:
+    return set(_read(_removed_samples_path(), []) or [])
+
+
 def delete(fid: str) -> bool:
     d = filing_dir(fid)
     if not d.exists():
         return False
-    shutil.rmtree(d)
+    with _lock:
+        if is_sample(fid):
+            _write(_removed_samples_path(), sorted(removed_samples() | {fid}))
+        shutil.rmtree(d)
     return True
 
 
+def sample_ids(seed_dir: Path) -> list[str]:
+    out = []
+    for f in sorted(seed_dir.glob("*.bundle.json")):
+        b = _read(f)
+        if b and b.get("id"):
+            out.append(b["id"])
+    return out
+
+
+def restore_samples(seed_dir: Path) -> list[str]:
+    """Forget removed samples and seed them again."""
+    with _lock:
+        p = _removed_samples_path()
+        if p.exists():
+            p.unlink()
+    return seed_from(seed_dir)
+
+
 def seed_from(seed_dir: Path) -> list[str]:
-    """Copy the bundled demo filings into storage (idempotent)."""
+    """Copy the bundled sample filings into storage (idempotent; skips samples the user removed)."""
     made = []
     config.STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+    skip = removed_samples()
     for f in sorted(seed_dir.glob("*.bundle.json")):
         b = _read(f)
         if not b:
             continue
         fid = b["id"]
         d = filing_dir(fid)
-        if (d / "bundle.json").exists():
+        if fid in skip or (d / "bundle.json").exists():
             continue
         d.mkdir(parents=True, exist_ok=True)
         b.setdefault("mode", "curated")

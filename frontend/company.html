@@ -164,7 +164,7 @@
   let F;
   try { F = cid ? await FSX.api.filing(cid) : null; } catch (e) { F = null; }
   if (!F) {
-    document.getElementById('co-hdr').innerHTML = `<div class="co-left"><div><div class="co-nm">No filing selected</div><div class="co-meta"><span>Upload a filing from the portfolio to start.</span></div></div></div><div class="co-right"><a class="btn btn-primary btn-sm" href="portfolio.html">Go to portfolio</a></div>`;
+    document.getElementById('co-hdr').innerHTML = `<div class="co-left"><div><div class="co-nm">No filing yet</div><div class="co-meta"><span>Upload an audited annual financial statements PDF and the explorer is built from it.</span></div></div></div><div class="co-right"><a class="btn btn-primary btn-sm" href="upload.html">Upload a statement ›</a></div>`;
     return;
   }
 
@@ -193,7 +193,8 @@
 
   /* ── header ── */
   const opCls = A.opinion === 'Unmodified' ? 'green' : (!A.opinion || A.opinion === 'Unknown') ? 'grey' : 'red';
-  const modeTag = F.mode === 'curated' ? ['Curated demo', 'gold'] : F.mode === 'full' ? ['Model-ingested', 'green'] : ['Extraction-only', 'amber'];
+  const [mLbl, mCls] = FSX.modeLabel(F);
+  const modeTag = [mLbl === 'Sample' ? 'Sample filing' : mLbl === 'Model' ? 'Model-ingested' : 'Extraction-only', mCls];
   document.getElementById('co-hdr').innerHTML = `
     <div class="co-left"><div class="co-avatar">${f.esc((F.ticker || '—').slice(0, 6))}<small>${f.esc(F.exchange ? 'TASI' : 'FILING')}</small></div><div><div class="co-nm">${f.esc(F.name)}</div>
       <div class="co-meta"><span class="mono">${f.esc(F.exchange || F.id)}</span><span class="sep">|</span><span>${f.esc(F.sector || '—')}</span><span class="sep">|</span><span>${f.esc(F.fy || '')} · ${f.esc(F.periodEnd ? 'year ended ' + F.periodEnd : '')}</span><span class="sep">|</span><span>Amounts in ${f.esc(F.unit || '')}</span></div></div></div>
@@ -419,7 +420,7 @@
     const t = ts => new Date((ts || Date.now() / 1000) * 1000).toTimeString().slice(0, 5);
     const llm = F.llm || {};
     document.getElementById('audit-log').innerHTML = `
-      <div class="log-entry"><span class="log-time">${t(F.createdAt)}</span><span><span class="log-action">Pipeline:</span> ${f.esc((F.pdf || '').split('/').pop())} parsed — ${F.stats.notes} notes, ${F.stats.links} cross-references indexed (${f.esc(F.mode || 'curated')} mode${llm.model ? ', ' + f.esc(llm.model) + ', ' + llm.calls + ' calls' : ''}).</span></div>
+      <div class="log-entry"><span class="log-time">${t(F.createdAt)}</span><span><span class="log-action">Pipeline:</span> ${f.esc((F.pdf || '').split('/').pop())} parsed — ${F.stats.notes} notes, ${F.stats.links} cross-references indexed (${f.esc(FSX.isSample(F) ? 'sample' : F.mode || 'extraction')} mode${llm.model ? ', ' + f.esc(llm.model) + ', ' + llm.calls + ' calls' : ''}).</span></div>
       <div class="log-entry"><span class="log-time">${t(F.createdAt)}</span><span><span class="log-action">Pipeline:</span> ${F.stats.flags.alert} alert and ${F.stats.flags.watch} watch flags raised from the notes.</span></div>
       <div class="log-entry"><span class="log-time">${t()}</span><span><span class="log-action">Analyst:</span> opened the investor lens for ${f.esc(F.shortName)} ${f.esc(F.fy || '')}.</span></div>`;
   }
