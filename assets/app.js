@@ -223,19 +223,52 @@
     clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 3200);
   };
 
-  /* ───────────── nav ───────────── */
+  /* ───────────── brand ─────────────
+     The emblem is drawn inline so the demo has no external image dependency.
+     To use the official artwork, set FSX.LOGO_IMG = 'assets/misa-logo.svg' (or .png)
+     before FSX.nav() runs and the lockup is replaced by that image. */
+  FSX.LOGO_IMG = null;
+  FSX.emblem = function (fill, accent, cls) {
+    return `<svg class="${cls || 'brand-emblem'}" viewBox="0 0 120 120" fill="none" aria-hidden="true"><g fill="${fill}">
+      <g transform="translate(60 44)">
+        <g transform="rotate(-78)"><path d="M0 0 C -3.5 -8, -4 -18, 0 -27 C 4 -18, 3.5 -8, 0 0 Z"/></g>
+        <g transform="rotate(-52)"><path d="M0 0 C -3.8 -9, -4.2 -21, 0 -31 C 4.2 -21, 3.8 -9, 0 0 Z"/></g>
+        <g transform="rotate(-26)"><path d="M0 0 C -4 -10, -4.4 -23, 0 -34 C 4.4 -23, 4 -10, 0 0 Z"/></g>
+        <path d="M0 0 C -4 -11, -4.4 -25, 0 -37 C 4.4 -25, 4 -11, 0 0 Z"/>
+        <g transform="rotate(26)"><path d="M0 0 C -4 -10, -4.4 -23, 0 -34 C 4.4 -23, 4 -10, 0 0 Z"/></g>
+        <g transform="rotate(52)"><path d="M0 0 C -3.8 -9, -4.2 -21, 0 -31 C 4.2 -21, 3.8 -9, 0 0 Z"/></g>
+        <g transform="rotate(78)"><path d="M0 0 C -3.5 -8, -4 -18, 0 -27 C 4 -18, 3.5 -8, 0 0 Z"/></g>
+        <g transform="rotate(-100)"><path d="M0 0 C -3 -6, -3.4 -14, 0 -21 C 3.4 -14, 3 -6, 0 0 Z"/></g>
+        <g transform="rotate(100)"><path d="M0 0 C -3 -6, -3.4 -14, 0 -21 C 3.4 -14, 3 -6, 0 0 Z"/></g>
+      </g>
+      <path d="M57.2 44 L55.4 80 Q60 82 64.6 80 L62.8 44 Q60 46 57.2 44 Z"/>
+      <path d="M55.9 55 Q60 57 64.1 55 M55.6 63 Q60 65 64.4 63 M55.4 71 Q60 73 64.6 71" stroke="${accent}" stroke-width="1.4" fill="none" opacity=".9"/>
+      <g id="sw-${cls || 'b'}">
+        <path d="M23 97 C 46 90, 78 77, 104 54 C 82 84, 54 98, 25 104 Z"/>
+        <path d="M20 100.5 L 26 97.5 L 29 103.5 L 23 106.5 Z" transform="rotate(-18 24.5 102)"/>
+        <path d="M21 101 L 11 105.5" stroke="${fill}" stroke-width="3.4" stroke-linecap="round"/>
+        <circle cx="9.5" cy="106.2" r="2.7"/>
+        <path d="M24 99.2 L 27.5 97.5 L 29 100.5 L 25.5 102.2 Z" fill="${accent}"/>
+      </g>
+      <use href="#sw-${cls || 'b'}" transform="translate(120 0) scale(-1 1)"/>
+    </g></svg>`;
+  };
+  FSX.logo = function () {
+    if (FSX.LOGO_IMG) return `<a class="brand" href="index.html"><img class="brand-img" src="${FSX.LOGO_IMG}" alt="Ministry of Investment"></a>`;
+    return `<a class="brand" href="index.html">${FSX.emblem('#E2BC68', '#0B3A2E')}<span class="brand-txt"><span class="brand-ar">وزارة الاستثمار</span><span class="brand-en">Ministry of Investment</span></span></a>`;
+  };
   FSX.nav = function (active) {
     const tabs = [['index.html', 'landing', 'Landing'], ['portfolio.html', 'portfolio', 'Filings portfolio'], ['company.html?c=aramco', 'explorer', 'Statement explorer']];
     return `<nav class="nav">
-      <div class="nav-left"><a class="brand" href="index.html">${FSX.brandMark()}<span class="brand-txt"><b>MISA</b><small>Investor Financial Intelligence</small></span></a></div>
+      <div class="nav-left">${FSX.logo()}<span class="nav-divider"></span><span class="nav-app">Investor Financial<br>Intelligence<small>Statement &amp; note explorer</small></span></div>
       <div class="nav-tabs">${tabs.map(t => `<a class="tab${t[1] === active ? ' active' : ''}" href="${t[0]}">${t[2]}</a>`).join('')}</div>
-      <div class="nav-right"><span class="nav-pill">Ministry of Investment · Saudi Arabia</span></div>
+      <div class="nav-right"><span class="nav-pill">FY2024 · Tadawul filings · Demo</span></div>
     </nav>`;
   };
-  FSX.brandMark = () => `<svg class="brand-mark" viewBox="0 0 32 32" fill="none"><path d="M16 2 30 16 16 30 2 16Z" stroke="#D4A84B" stroke-width="1.5"/><path d="M16 8 24 16 16 24 8 16Z" fill="#B8922A" opacity=".55"/><path d="M16 12 20 16 16 20 12 16Z" fill="#F0D98A"/></svg>`;
+  FSX.footer = () => `<div class="foot"><span><b>Ministry of Investment</b> · Investor Financial Intelligence</span><span>Source: audited consolidated financial statements FY2024 · IFRS as endorsed in KSA</span><span>Pipeline: pdftotext → note index → cross-reference map</span></div>`;
 
   /* ───────────── inline SVG charts ───────────── */
-  const C = { gold: '#B8922A', goldHi: '#D4A84B', dark: '#2A1E00', green: '#1A7A45', red: '#C0392B', blue: '#1A5A9A', amber: '#B8620A', grid: 'rgba(180,140,50,0.14)', axis: 'rgba(80,60,20,0.55)' };
+  const C = { green: '#176A52', greenHi: '#3FA07C', greenPale: '#8CCBB0', gold: '#C8A44A', goldHi: '#E2BC68', dark: '#0B3A2E', red: '#C0392B', blue: '#1A5A9A', amber: '#B8620A', grey: 'rgba(100,128,122,0.35)', grid: 'rgba(23,106,82,0.12)', axis: 'rgba(30,58,50,0.6)' };
   FSX.colors = C;
   const niceMax = v => { if (v === 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(v))); const r = v / p; const m = r <= 1 ? 1 : r <= 2 ? 2 : r <= 2.5 ? 2.5 : r <= 5 ? 5 : 10; return m * p; };
   const short = v => { const a = Math.abs(v); const s = a >= 1e12 ? (a / 1e12).toFixed(2) + 'tn' : a >= 1e9 ? (a / 1e9).toFixed(1) + 'bn' : a >= 1e6 ? (a / 1e6).toFixed(1) + 'm' : a >= 1e3 ? (a / 1e3).toFixed(0) + 'k' : a.toFixed(0); return (v < 0 ? '−' : '') + s; };
@@ -322,16 +355,16 @@
     const resize = () => { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; };
     resize(); window.addEventListener('resize', resize);
     const SOURCES = [
-      { ox: -.18, oy: -.22, spd: .00018, phase: 0, rays: 60, spread: 1.05, r1: '180,138,48', r2: '220,175,75' },
-      { ox: 1.22, oy: -.15, spd: .00013, phase: 2.09, rays: 50, spread: .90, r1: '155,118,38', r2: '200,158,58' },
-      { ox: .55, oy: 1.28, spd: .00021, phase: 4.19, rays: 45, spread: .80, r1: '168,130,45', r2: '210,168,64' },
+      { ox: -.18, oy: -.22, spd: .00018, phase: 0, rays: 60, spread: 1.05, r1: '23,106,82', r2: '63,160,124' },
+      { ox: 1.22, oy: -.15, spd: .00013, phase: 2.09, rays: 50, spread: .90, r1: '180,138,48', r2: '220,175,75' },
+      { ox: .55, oy: 1.28, spd: .00021, phase: 4.19, rays: 45, spread: .80, r1: '23,106,82', r2: '140,203,176' },
     ];
     const BLOBS = [
-      { xF: .15, yF: .25, rx: .55, ry: .40, rot: -.3, spd: { x: .00006, y: .00005, r: .00008 }, phase: { x: 0, y: 1.2, r: 2.1 }, al: .055, col: '200,155,55' },
-      { xF: .82, yF: .18, rx: .50, ry: .35, rot: .5, spd: { x: .00005, y: .00007, r: .00006 }, phase: { x: 3.1, y: 0.8, r: 1.4 }, al: .045, col: '175,135,45' },
-      { xF: .65, yF: .75, rx: .60, ry: .38, rot: .2, spd: { x: .00007, y: .00004, r: .00009 }, phase: { x: 1.5, y: 3.7, r: 0.6 }, al: .050, col: '190,148,52' },
+      { xF: .15, yF: .25, rx: .55, ry: .40, rot: -.3, spd: { x: .00006, y: .00005, r: .00008 }, phase: { x: 0, y: 1.2, r: 2.1 }, al: .06, col: '63,160,124' },
+      { xF: .82, yF: .18, rx: .50, ry: .35, rot: .5, spd: { x: .00005, y: .00007, r: .00006 }, phase: { x: 3.1, y: 0.8, r: 1.4 }, al: .05, col: '200,164,74' },
+      { xF: .65, yF: .75, rx: .60, ry: .38, rot: .2, spd: { x: .00007, y: .00004, r: .00009 }, phase: { x: 1.5, y: 3.7, r: 0.6 }, al: .05, col: '23,106,82' },
     ];
-    const MOTES = Array.from({ length: 50 }, () => ({ x: Math.random(), y: Math.random(), vx: (Math.random() - .5) * .00012, vy: -(Math.random() * .00015 + .00004), r: .7 + Math.random() * 2.0, al: .015 + Math.random() * .04, ph: Math.random() * Math.PI * 2, col: Math.random() > .5 ? '200,160,55' : '175,140,48' }));
+    const MOTES = Array.from({ length: 50 }, () => ({ x: Math.random(), y: Math.random(), vx: (Math.random() - .5) * .00012, vy: -(Math.random() * .00015 + .00004), r: .7 + Math.random() * 2.0, al: .015 + Math.random() * .04, ph: Math.random() * Math.PI * 2, col: Math.random() > .5 ? '200,164,74' : '63,160,124' }));
     let t = 0;
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     function draw() {

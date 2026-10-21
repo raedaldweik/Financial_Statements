@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Statement Explorer — MISA Investor Financial Intelligence</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/theme.css">
 <style>
-.st-grid{display:grid;grid-template-columns:250px 1fr;gap:14px;align-items:start}
-.st-left{position:sticky;top:70px}
+.st-grid{display:grid;grid-template-columns:250px 1fr;gap:16px;align-items:start}
+.st-left{position:sticky;top:80px}
 .fs-wrap.only-notes tr.row:not(.has-note){display:none}
-.tog{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-md);padding:10px 14px;border-top:1px solid var(--line);cursor:pointer;user-select:none}
-.tog input{accent-color:var(--gold)}
-.ind-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ind{background:linear-gradient(145deg,rgba(255,255,255,0.9),rgba(250,245,230,0.6));border:1px solid rgba(200,164,74,0.16);border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(100,70,0,0.06)}
-.ind-l{font-size:9px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between;gap:6px}
-.ind-v{font-size:16px;font-weight:800;background:var(--gold-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-top:4px}
+.tog{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text-md);padding:11px 14px;border-top:1px solid var(--line);cursor:pointer;user-select:none}
+.tog input{accent-color:var(--g600)}
+.ind-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ind{background:linear-gradient(145deg,rgba(255,255,255,0.92),rgba(240,247,242,0.7));border:1px solid var(--g200);border-radius:10px;padding:11px 13px;box-shadow:0 1px 6px rgba(10,50,40,0.05)}
+.ind-l{font-size:9px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;display:flex;justify-content:space-between;gap:6px}
+.ind-v{font-size:17px;font-weight:800;color:var(--g700);line-height:1.1;margin-top:5px;letter-spacing:-.02em}
 .ind-d{font-size:9.5px;margin-top:3px;font-weight:600}
 .ind-d.up{color:var(--green)}.ind-d.dn{color:var(--red)}.ind-d.nu{color:var(--text-faint)}
 .ind-s{font-size:9px;color:var(--text-faint);margin-top:2px}
@@ -70,7 +70,7 @@
           <div class="ch"><div class="ch-left"><h3>How to read</h3></div></div>
           <div class="cb" style="font-size:11px;color:var(--text-dim);line-height:1.6;gap:8px">
             <div><span class="nchip" style="pointer-events:none">Note 24</span> Click any note chip to open that note beside the statement — summary, key figures, sub-sections, back-links and the source text.</div>
-            <div>A gold dot after a line item means the line is cross-referenced. Chips with a red or amber dot carry a flag.</div>
+            <div>A gold marker after a line item means the line is cross-referenced. Chips with a red or amber dot carry a flag.</div>
             <div>Inside a note, references to other notes are links too, so you can follow a chain (e.g. Note 7 → Note 33 → Note 35).</div>
           </div>
         </div>
@@ -138,6 +138,7 @@
   </div>
 </div>
 
+<div id="foot"></div>
 <script src="data/aramco.js"></script>
 <script src="data/ceramic.js"></script>
 <script src="assets/app.js"></script>
@@ -152,14 +153,15 @@
   const byN = {}; F.notes.forEach(n => byN[n.n] = n);
 
   document.getElementById('nav').innerHTML = FSX.nav('explorer');
+  document.getElementById('foot').innerHTML = FSX.footer();
   document.title = `${F.shortName} ${F.fy} — Statement Explorer`;
   FSX.bg();
 
   /* ── header ── */
   const opCls = F.auditor.opinion === 'Unmodified' ? 'green' : 'red';
   document.getElementById('co-hdr').innerHTML = `
-    <div><div class="co-nm">${f.esc(F.name)}</div>
-      <div class="co-meta"><span class="mono">${f.esc(F.ticker)} · ${f.esc(F.exchange)}</span><span class="sep">|</span><span>${f.esc(F.sector)}</span><span class="sep">|</span><span>${f.esc(F.fy)} · year ended ${f.esc(F.periodEnd)}</span><span class="sep">|</span><span>Amounts in ${f.esc(F.unit)}</span></div></div>
+    <div class="co-left"><div class="co-avatar">${f.esc(F.ticker)}<small>TASI</small></div><div><div class="co-nm">${f.esc(F.name)}</div>
+      <div class="co-meta"><span class="mono">${f.esc(F.exchange)}</span><span class="sep">|</span><span>${f.esc(F.sector)}</span><span class="sep">|</span><span>${f.esc(F.fy)} · year ended ${f.esc(F.periodEnd)}</span><span class="sep">|</span><span>Amounts in ${f.esc(F.unit)}</span></div></div></div>
     <div class="co-right">
       <span class="rb ${opCls}">Audit opinion: ${f.esc(F.auditor.opinion)}</span>
       ${F.auditor.otherMatter ? '<span class="rb amber">Other-matter paragraph</span>' : ''}
@@ -224,14 +226,14 @@
 
     const rev = F.kpis[0], ni = F.kpis[1];
     document.getElementById('c1-unit').textContent = F.unit;
-    FSX.chart.bars(document.getElementById('c-rev'), { labels: ['2023', '2024'], series: [{ name: 'Revenue', values: [rev.p, rev.v], color: FSX.colors.gold }, { name: ni.label, values: [ni.p, ni.v], color: v => v < 0 ? FSX.colors.red : FSX.colors.dark }], fmt: sar });
+    FSX.chart.bars(document.getElementById('c-rev'), { labels: ['2023', '2024'], series: [{ name: 'Revenue', values: [rev.p, rev.v], color: FSX.colors.green }, { name: ni.label, values: [ni.p, ni.v], color: v => v < 0 ? FSX.colors.red : FSX.colors.gold }], fmt: sar });
     const m24 = ni.v / rev.v * 100, m23 = ni.p / rev.p * 100;
     document.getElementById('c-rev-note').textContent = `Net margin ${m24.toFixed(1)}% (2023: ${m23.toFixed(1)}%). Revenue ${rev.v >= rev.p ? 'grew' : 'fell'} ${Math.abs((rev.v - rev.p) / rev.p * 100).toFixed(1)}% year on year.`;
 
     const b = F.charts.balance;
     FSX.chart.bars(document.getElementById('c-bal'), { stacked: true, labels: ['Assets 23', 'Eq+Liab 23', 'Assets 24', 'Eq+Liab 24'], series: [
-      { name: 'Non-current assets', values: [b.nonCurrentAssets[0], null, b.nonCurrentAssets[1], null], color: FSX.colors.gold },
-      { name: 'Current assets', values: [b.currentAssets[0], null, b.currentAssets[1], null], color: FSX.colors.goldHi },
+      { name: 'Non-current assets', values: [b.nonCurrentAssets[0], null, b.nonCurrentAssets[1], null], color: FSX.colors.green },
+      { name: 'Current assets', values: [b.currentAssets[0], null, b.currentAssets[1], null], color: FSX.colors.greenPale },
       { name: 'Equity', values: [null, b.equity[0], null, b.equity[1]], color: FSX.colors.dark },
       { name: 'Non-current liabilities', values: [null, b.nonCurrentLiab[0], null, b.nonCurrentLiab[1]], color: FSX.colors.blue },
       { name: 'Current liabilities', values: [null, b.currentLiab[0], null, b.currentLiab[1]], color: FSX.colors.amber }], fmt: sar });
@@ -243,7 +245,7 @@
     const s = F.charts.segments;
     document.getElementById('c-seg-h').textContent = 'Segment revenue & result';
     document.getElementById('c-seg-chip').innerHTML = FSX.chip(F, s.note);
-    FSX.chart.bars(document.getElementById('c-seg'), { labels: s.labels.map(l => l.length > 18 ? l.slice(0, 17) + '…' : l), series: [{ name: 'External revenue', values: s.revenue, color: FSX.colors.gold }, { name: 'Result before interest & tax', values: s.ebit, color: v => v < 0 ? FSX.colors.red : FSX.colors.green }], fmt: sar });
+    FSX.chart.bars(document.getElementById('c-seg'), { labels: s.labels.map(l => l.length > 18 ? l.slice(0, 17) + '…' : l), series: [{ name: 'External revenue', values: s.revenue, color: FSX.colors.green }, { name: 'Result before interest & tax', values: s.ebit, color: v => v < 0 ? FSX.colors.red : FSX.colors.gold }], fmt: sar });
     const g = F.charts.geography;
     const tot = g.revenue.reduce((x, y) => x + y, 0);
     document.getElementById('c-seg-note').innerHTML = `Geography: ${g.labels.map((l, i) => `${f.esc(l)} ${(g.revenue[i] / tot * 100).toFixed(0)}%`).join(' · ')} of external revenue ${FSX.chip(F, g.note)}`;

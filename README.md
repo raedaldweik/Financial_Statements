@@ -50,6 +50,18 @@ Two real FY2024 filings from the Saudi Exchange are loaded:
    highlighted) and the cross-reference map. A note cited by another note is itself a link,
    so Note 2 → Note 7 → Note 33 chains can be followed without leaving the page.
 
+## Branding
+
+The palette is Saudi green with gold accents (tokens at the top of `assets/theme.css`;
+change `--g600`, `--gold` and `--nav-grad` to retheme). The Ministry lockup in the nav
+(national emblem + "وزارة الاستثمار / Ministry of Investment") is drawn inline in
+`assets/app.js` so the demo has no external image dependency. To use the official
+artwork instead, drop the file in `assets/` and set, before `FSX.nav()` runs:
+
+```js
+FSX.LOGO_IMG = 'assets/misa-logo.svg';   // or .png — replaces the inline lockup everywhere
+```
+
 ## Run locally
 
 Everything is static — no build step, no API key, no CDN dependency for charts.
