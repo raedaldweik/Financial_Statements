@@ -74,6 +74,19 @@ python3 -m http.server 8000
 
 Opening `index.html` directly from the file system also works.
 
+## Deploy on Railway
+
+The repo root carries a `Dockerfile` (nginx serving the static files) and a `railway.json`.
+
+1. Railway → **New Project → Deploy from GitHub repo** → this repo.
+2. Service **Settings → Source → branch** = `claude/dreamy-wozniak-xb5mjr`
+   (the Dockerfile and the `/index.html` health check are picked up automatically).
+3. Settings → Networking → **Generate Domain**. No environment variables are needed;
+   nginx listens on the `PORT` Railway injects.
+
+Any other static host works too (GitHub Pages from this branch, Netlify, S3): there is
+no build step and no server-side code.
+
 ## Re-run the pipeline
 
 ```bash
