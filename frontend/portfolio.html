@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Filings Portfolio — MISA Investor Financial Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+.dt tbody tr.co{cursor:pointer}
+.opn{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g600);padding:7px 13px;border:1px solid var(--g300a);border-radius:6px;background:var(--g100);text-decoration:none;white-space:nowrap;transition:all .15s;display:inline-block}
+.opn:hover{background:var(--g600);color:#fff;border-color:var(--g600)}
+.opn.danger{color:var(--red);border-color:var(--red-border);background:var(--red-bg)}
+.opn.danger:hover{background:var(--red);color:#fff}
+.prog{height:6px;border-radius:4px;background:var(--g150);overflow:hidden;margin-top:6px}
+.prog i{display:block;height:100%;background:var(--brand-grad);transition:width .4s}
+.form-row{display:grid;grid-template-columns:2fr 1fr 1.4fr;gap:8px}
+.mode-banner{display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:9px;font-size:11.5px;margin-bottom:14px;border:1px solid}
+.mode-banner.full{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.mode-banner.extraction{background:var(--amber-bg);border-color:var(--amber-border);color:var(--amber)}
+.mode-banner.static{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue)}
+.mode-banner code{font-family:var(--mono);font-size:10.5px;background:rgba(255,255,255,.6);padding:1px 6px;border-radius:4px}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div id="nav"></div>
+
+<div class="pw">
+  <div class="ph">
+    <div class="ph-left"><h1>Filings portfolio</h1><p>Upload any audited annual financial statements PDF · statements rebuilt with live note links · notes indexed, flagged and cross-referenced</p></div>
+    <div class="ph-actions"><span class="rb gold" id="mode-pill">…</span></div>
+  </div>
+  <div id="mode-banner"></div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="g2-split">
+    <div class="ai-card">
+      <div class="ai-label"><div class="ai-icon">✦</div><div class="ai-tag">Portfolio<br>brief</div></div>
+      <div class="ai-body"><h3>Cross-filing assessment</h3><div class="ai-text" id="brief">Loading…</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ch-left"><h3>Ingest a new filing</h3></div><span class="ch-badge green" id="ingest-badge">Pipeline ready</span></div>
+      <div class="cb" style="gap:10px">
+        <input type="file" id="file" accept="application/pdf" style="display:none">
+        <div class="dropzone" id="drop"><b>Drop an annual report PDF here</b>or click to select · audited consolidated financial statements (Tadawul, CMA or company site)</div>
+        <div class="form-row">
+          <input class="fi" id="f-name" placeholder="Company short name (optional)">
+          <input class="fi" id="f-ticker" placeholder="Ticker">
+          <input class="fi" id="f-sector" placeholder="Sector (optional)">
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+          <span class="muted" id="file-label" style="font-size:11px">No file selected</span>
+          <button class="btn btn-primary btn-sm" id="go" disabled>Ingest filing</button>
+        </div>
+        <div id="upload-prog"></div>
+        <div id="pipe-live"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="ch"><div class="ch-left"><h3>Filings</h3></div><span class="ch-badge gold" id="n-filings"></span></div>
+    <div style="overflow:auto"><table class="dt"><thead><tr><th>Company</th><th>Sector</th><th class="r">Revenue</th><th class="r">Net result</th><th class="r">Total assets</th><th class="r">Equity</th><th>Auditor</th><th>Opinion</th><th class="r">Notes</th><th>Flags</th><th>Mode</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
+    <div class="fs-foot"><span>Amounts shown in SAR, converted from each filing's presentation unit. Mode: curated = reviewed demo seed · model = ingested with Claude · extraction = deterministic parse only.</span></div>
+  </div>
+
+  <div class="g3-eq">
+    <div class="card"><div class="ch"><div class="ch-left"><h3>Net margin by filing</h3></div></div><div class="cb"><div class="chart-wrap" id="c-margin"></div><div class="chart-note">Net result as a percentage of revenue, prior year vs current year.</div></div></div>
+    <div class="card"><div class="ch"><div class="ch-left"><h3>Flags by filing</h3></div></div><div class="cb"><div class="chart-wrap" id="c-flags"></div><div class="chart-note">Reviewer flags raised from the notes (alert, watch, info).</div></div></div>
+    <div class="card"><div class="ch"><div class="ch-left"><h3>Note coverage</h3></div></div><div class="cb"><div class="chart-wrap" id="c-cov"></div><div class="chart-note">Notes cited on the face of the statements vs disclosure-only notes.</div></div></div>
+  </div>
+
+  <div class="g2-eq">
+    <div class="card">
+      <div class="ch"><div class="ch-left"><h3>Open items across filings</h3></div><span class="ch-badge red" id="n-open"></span></div>
+      <div class="cb tight" id="open-items" style="max-height:520px;overflow:auto"></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ch-left"><h3>Investor-lens heat map</h3></div></div>
+      <div class="cb tight" style="overflow:auto"><table class="dt compact" id="heat"></table></div>
+    </div>
+  </div>
+</div>
+<div id="foot"></div>
+
+<script src="assets/app.js"></script>
+<script>
+(async function () {
+  const f = FSX.fmt;
+  document.getElementById('nav').innerHTML = FSX.nav('portfolio');
+  document.getElementById('foot').innerHTML = FSX.footer();
+  FSX.bg();
+  window.FILINGS = window.FILINGS || {};
+
+  const health = await FSX.api.health();
+  const pill = document.getElementById('mode-pill'), banner = document.getElementById('mode-banner');
+  if (!health.ok) { pill.textContent = 'Static mode'; pill.className = 'rb blue'; banner.innerHTML = `<div class="mode-banner static">Opened without the server: showing the pre-built demo bundles. Run <code>uvicorn main:app</code> in <code>backend/</code> (or deploy the Dockerfile) to upload filings.</div>`; }
+  else if (health.llm) { pill.textContent = 'Full ingestion · ' + health.model; pill.className = 'rb green'; }
+  else { pill.textContent = 'Extraction-only mode'; pill.className = 'rb amber'; banner.innerHTML = `<div class="mode-banner extraction">The server has no <code>ANTHROPIC_API_KEY</code>: uploads are parsed deterministically (statements, notes, cross-references) without note summaries, flags, the analyst brief or the investor lens. Set the key to enable full ingestion.</div>`; }
+  const canUpload = !!health.ok;
+
+  let items = [];
+  async function refresh() {
+    const reg = await FSX.api.registry();
+    items = reg.items || [];
+    render();
+    return items;
+  }
+
+  function fmtMoney(x, k) { const v = (x.kpis || []).find(z => /^(revenue|net (income|loss)|total assets|total equity|operating cash flow)$/i.test(z.label) && new RegExp(k, 'i').test(z.label)); return v ? f.sar(v.v, x.scale) + (v.p != null ? `<br><small class="muted" style="font-weight:500">${FSX.fmt.delta(v.v, v.p).text}</small>` : '') : '<span class="muted">—</span>'; }
+  const modeLabel = m => m === 'curated' ? ['Curated', 'gold'] : m === 'full' ? ['Model', 'green'] : m === 'extraction' ? ['Extraction', 'amber'] : ['—', 'grey'];
+
+  function render() {
+    const ready = items.filter(x => x.status === 'ready');
+    const busy = items.filter(x => x.status !== 'ready');
+    const sum = k => ready.reduce((a, x) => a + ((x.stats || {})[k] || 0), 0);
+    const fl = lv => ready.reduce((a, x) => a + (((x.stats || {}).flags || {})[lv] || 0), 0);
+    const unmod = ready.filter(x => (x.auditor || {}).opinion === 'Unmodified').length;
+    document.getElementById('kpis').innerHTML = [
+      { l: 'Filings', v: ready.length + (busy.length ? `<small> +${busy.length} in progress</small>` : ''), c: 'gold', t: `${ready.filter(x => x.mode === 'full').length} model-ingested · ${ready.filter(x => x.mode === 'curated').length} curated · ${ready.filter(x => x.mode === 'extraction').length} extraction-only` },
+      { l: 'Notes indexed', v: sum('notes'), c: '', t: `${(ready.reduce((a, x) => a + ((x.stats || {}).textChars || 0), 0) / 1000).toFixed(0)}k characters of note text` },
+      { l: 'Statement lines linked', v: sum('linesWithNotes'), c: 'blue', t: `${sum('links')} cross-reference links` },
+      { l: 'Reviewer flags', v: fl('alert') + fl('watch'), c: 'red', t: `${fl('alert')} alert · ${fl('watch')} watch` },
+      { l: 'Audit opinions', v: `${unmod}/${ready.length}`, c: 'green', t: `unmodified · ${ready.filter(x => (x.auditor || {}).otherMatter).length} with other-matter paragraph` },
+      { l: 'Lens items needing attention', v: ready.reduce((a, x) => a + (((x.stats || {}).lens || {}).red || 0), 0), c: 'amber', t: `${ready.reduce((a, x) => a + (((x.stats || {}).lens || {}).amber || 0), 0)} on watch` },
+    ].map(k => `<div class="kpi"><div class="kpi-lbl"><span>${k.l}</span></div><div class="kpi-val ${k.c}">${k.v}</div><div class="kpi-tr nu">${k.t}</div></div>`).join('');
+
+    // brief
+    const reds = ready.flatMap(x => (x.lens || []).filter(l => l.status === 'red').map(l => `${x.shortName}: ${l.area.toLowerCase()}`));
+    const alerts = ready.flatMap(x => (x.flagged || []).filter(z => z.level === 'alert').map(z => `${x.shortName} note ${z.n} (${z.title})`));
+    document.getElementById('brief').innerHTML = ready.length ? `<strong>${ready.length} filing${ready.length > 1 ? 's' : ''}</strong> ready${busy.length ? `, <strong>${busy.length}</strong> being processed` : ''}. ${unmod === ready.length ? 'All audit opinions are unmodified' : `${unmod} of ${ready.length} audit opinions are unmodified`}${ready.some(x => (x.auditor || {}).otherMatter) ? ', with other-matter paragraphs to read' : ''}. ${reds.length ? `Investor-lens areas needing attention: <strong>${f.esc(reds.slice(0, 5).join('; '))}</strong>${reds.length > 5 ? ` and ${reds.length - 5} more` : ''}.` : 'No investor-lens area is rated attention-required.'} ${alerts.length ? `Alert-level disclosures: ${f.esc(alerts.slice(0, 4).join('; '))}${alerts.length > 4 ? ` and ${alerts.length - 4} more` : ''}.` : ''}<em class="rec">Open a filing to read its statements with live note links, follow the cross-reference map, and work the investor lens; each finding cites its notes.</em>` : 'No filings yet. Upload an annual report PDF to start.';
+
+    document.getElementById('n-filings').textContent = `${items.length} filings`;
+    document.getElementById('tbody').innerHTML = items.map(x => {
+      if (x.status !== 'ready') {
+        const [ml, mc] = modeLabel(x.mode);
+        const stage = (x.stages || []).find(s => s.state === 'running') || {};
+        return `<tr data-id="${f.esc(x.id)}"><td><span class="en-strong">${f.esc(x.shortName || x.name)}</span><span class="en-sub mono">${f.esc(x.ticker || '')} · ${f.esc(x.id)}</span></td><td colspan="8"><div style="font-size:11.5px;color:var(--text-md)">${x.status === 'failed' ? `<span class="rb red">Failed</span> <span style="margin-left:8px">${f.esc(x.error || '')}</span>` : `<span class="rb ${x.status === 'running' ? 'blue' : 'grey'}">${f.esc(x.status)}</span> <span style="margin-left:8px">${f.esc(stage.label || '')} ${stage.info ? '· ' + f.esc(stage.info) : ''}</span><div class="prog"><i style="width:${Math.round((x.progress || 0) * 100)}%"></i></div>`}</div></td><td><span class="rb ${mc}">${ml}</span></td><td style="white-space:nowrap"><a class="opn" href="company.html?c=${encodeURIComponent(x.id)}">Watch ›</a> ${x.status === 'failed' ? `<button class="opn danger" data-del="${f.esc(x.id)}">Remove</button>` : ''}</td></tr>`;
+      }
+      const a = x.auditor || {}, [ml, mc] = modeLabel(x.mode);
+      return `<tr class="co" data-id="${f.esc(x.id)}">
+        <td><span class="en-strong">${f.esc(x.shortName)}</span><span class="en-sub mono">${f.esc(x.ticker || '—')} · ${f.esc(x.fy || '')} · ${f.esc(x.unit || '')}</span></td>
+        <td style="max-width:170px">${f.esc(x.sector || '—')}</td>
+        <td class="num">${fmtMoney(x, '^revenue')}</td>
+        <td class="num">${fmtMoney(x, '^net')}</td>
+        <td class="num">${fmtMoney(x, 'total assets')}</td>
+        <td class="num">${fmtMoney(x, 'total equity')}</td>
+        <td>${f.esc((a.firm || '—').split(' (')[0])}<br><small class="muted">${f.esc((a.reportDate || '').split(' (')[0])}</small></td>
+        <td><span class="rb ${a.opinion === 'Unmodified' ? 'green' : a.opinion === 'Unknown' || !a.opinion ? 'grey' : 'red'}">${f.esc(a.opinion || 'n/a')}</span>${a.otherMatter ? '<br><span class="rb amber" style="margin-top:4px">Other matter</span>' : ''}</td>
+        <td class="num">${(x.stats || {}).notes || 0}<br><small class="muted" style="font-weight:500">${(x.stats || {}).links || 0} links</small></td>
+        <td><span class="rb red">${((x.stats || {}).flags || {}).alert || 0} alert</span> <span class="rb amber">${((x.stats || {}).flags || {}).watch || 0} watch</span></td>
+        <td><span class="rb ${mc}">${ml}</span></td>
+        <td style="white-space:nowrap"><a class="opn" href="company.html?c=${encodeURIComponent(x.id)}">Open ›</a> ${canUpload && x.mode !== 'curated' ? `<button class="opn danger" data-del="${f.esc(x.id)}">Remove</button>` : ''}</td></tr>`;
+    }).join('') || '<tr><td colspan="12" class="empty">No filings yet.</td></tr>';
+
+    const pct = v => (v < 0 ? '(' : '') + Math.abs(v).toFixed(1) + '%' + (v < 0 ? ')' : '');
+    const withRev = ready.filter(x => (x.kpis || []).some(k => k.label === 'Revenue') && (x.kpis || []).some(k => /^net/i.test(k.label)));
+    const kp = (x, re) => (x.kpis || []).find(k => re.test(k.label));
+    if (withRev.length) FSX.chart.bars(document.getElementById('c-margin'), { labels: withRev.map(x => x.shortName), series: [
+      { name: 'Prior year', values: withRev.map(x => kp(x, /^Revenue$/).p ? +(kp(x, /^net/i).p / kp(x, /^Revenue$/).p * 100).toFixed(1) : null), color: 'rgba(23,106,82,0.35)' },
+      { name: 'Current year', values: withRev.map(x => +(kp(x, /^net/i).v / kp(x, /^Revenue$/).v * 100).toFixed(1)), color: v => v < 0 ? FSX.colors.red : FSX.colors.green }], fmt: pct });
+    else document.getElementById('c-margin').innerHTML = '<div class="empty">No revenue / net result pairs yet.</div>';
+    if (ready.length) {
+      FSX.chart.bars(document.getElementById('c-flags'), { labels: ready.map(x => x.shortName), series: [
+        { name: 'Alert', values: ready.map(x => ((x.stats || {}).flags || {}).alert || 0), color: FSX.colors.red },
+        { name: 'Watch', values: ready.map(x => ((x.stats || {}).flags || {}).watch || 0), color: FSX.colors.amber },
+        { name: 'Info', values: ready.map(x => ((x.stats || {}).flags || {}).info || 0), color: FSX.colors.blue }], fmt: v => String(Math.round(v)) });
+      FSX.chart.bars(document.getElementById('c-cov'), { labels: ready.map(x => x.shortName), series: [
+        { name: 'Cited on statements', values: ready.map(x => (x.stats || {}).notesReferenced || 0), color: FSX.colors.green },
+        { name: 'Disclosure-only', values: ready.map(x => ((x.stats || {}).notesDisclosureOnly || []).length), color: FSX.colors.grey }], fmt: v => String(Math.round(v)) });
+    }
+
+    const open = [];
+    ready.forEach(x => (x.flagged || []).forEach(z => open.push({ ...z, id: x.id, co: x.shortName })));
+    open.sort((a, b) => (FSX.flagRank[a.level] - FSX.flagRank[b.level]) || a.co.localeCompare(b.co) || (+a.n - +b.n));
+    const openItems = open.filter(i => i.level !== 'info');
+    document.getElementById('n-open').textContent = `${openItems.length} open`;
+    document.getElementById('open-items').innerHTML = openItems.map(i => `<div class="flag-item" data-id="${f.esc(i.id)}" data-n="${f.esc(i.n)}"><div class="flag-dot ${i.level}"></div><div><div class="flag-title">${f.esc(i.co)} · Note ${f.esc(i.n)} · ${f.esc(i.title)}</div><div class="flag-desc">${f.esc(i.text)}</div><div class="flag-src">${f.esc(i.level)} · click to open the note</div></div></div>`).join('') || '<div class="empty">No open items. Flags appear once a filing is ingested in full mode.</div>';
+
+    const areas = [...new Set(ready.flatMap(x => (x.lens || []).map(l => l.area)))];
+    const cell = s => s ? `<span class="dot ${s.status}"></span><span style="font-size:10.5px">${s.status === 'green' ? 'OK' : s.status === 'amber' ? 'Watch' : 'Attention'}</span>` : '<span class="muted">—</span>';
+    document.getElementById('heat').innerHTML = areas.length ? `<thead><tr><th>Review area</th>${ready.map(x => `<th>${f.esc(x.shortName)}</th>`).join('')}</tr></thead><tbody>${areas.map(a => `<tr><td style="font-weight:600;color:var(--text)">${f.esc(a)}</td>${ready.map(x => `<td>${cell((x.lens || []).find(l => l.area === a))}</td>`).join('')}</tr>`).join('')}</tbody>` : '<tbody><tr><td class="empty">The investor lens is produced in full ingestion mode.</td></tr></tbody>';
+
+    const live = busy.find(x => x.status === 'running' || x.status === 'queued') || busy[0];
+    document.getElementById('pipe-live').innerHTML = live ? `<div style="font-size:11px;color:var(--text-dim);margin:6px 0 4px"><b>${f.esc(live.shortName || live.name)}</b> · ${f.esc(live.status)}</div>${FSX.pipelineHtml(live)}` : '';
+  }
+
+  document.getElementById('tbody').addEventListener('click', async e => {
+    const del = e.target.closest('[data-del]');
+    if (del) { e.stopPropagation(); if (!confirm('Remove this filing and its data?')) return; try { await FSX.api.del(del.dataset.del); FSX.toast('Filing removed.'); await refresh(); } catch (err) { FSX.toast('Could not remove: ' + err.message); } return; }
+    if (e.target.closest('a,.nchip,button')) return;
+    const tr = e.target.closest('tr[data-id]'); if (tr) location.href = `company.html?c=${encodeURIComponent(tr.dataset.id)}`;
+  });
+  document.getElementById('open-items').addEventListener('click', async e => {
+    const it = e.target.closest('.flag-item'); if (!it) return;
+    if (!window.FILINGS[it.dataset.id]) { try { window.FILINGS[it.dataset.id] = await FSX.api.filing(it.dataset.id); } catch (err) { FSX.toast('Could not load the filing.'); return; } }
+    FSX.drawer.open(window.FILINGS[it.dataset.id], it.dataset.n);
+  });
+
+  // ── upload ──
+  const fileIn = document.getElementById('file'), drop = document.getElementById('drop'), go = document.getElementById('go');
+  let chosen = null;
+  const setFile = file => { chosen = file; document.getElementById('file-label').textContent = file ? `${file.name} · ${(file.size / 1048576).toFixed(1)} MB` : 'No file selected'; go.disabled = !file || !canUpload; };
+  drop.addEventListener('click', () => { if (!canUpload) { FSX.toast('Uploads need the server; open the app through its URL rather than the file.'); return; } fileIn.click(); });
+  fileIn.addEventListener('change', () => setFile(fileIn.files[0] || null));
+  ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.style.borderColor = 'var(--g500)'; }));
+  ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.style.borderColor = ''; }));
+  drop.addEventListener('drop', e => { const fl = e.dataTransfer.files[0]; if (fl && fl.type === 'application/pdf') setFile(fl); else FSX.toast('Please drop a PDF.'); });
+  if (!canUpload) { document.getElementById('ingest-badge').textContent = 'Server required'; document.getElementById('ingest-badge').className = 'ch-badge amber'; }
+  else if (!health.llm) { document.getElementById('ingest-badge').textContent = 'Extraction-only'; document.getElementById('ingest-badge').className = 'ch-badge amber'; }
+  go.addEventListener('click', async () => {
+    if (!chosen) return;
+    go.disabled = true;
+    const prog = document.getElementById('upload-prog');
+    prog.innerHTML = `<div style="font-size:11px;color:var(--text-dim)">Uploading…</div><div class="prog"><i id="upbar" style="width:0%"></i></div>`;
+    try {
+      const res = await FSX.api.upload(chosen, { name: document.getElementById('f-name').value, ticker: document.getElementById('f-ticker').value, sector: document.getElementById('f-sector').value }, p => { const b = document.getElementById('upbar'); if (b) b.style.width = Math.round(p * 100) + '%'; });
+      prog.innerHTML = `<div style="font-size:11px;color:var(--green)">Uploaded · pipeline started (${f.esc(res.mode)} mode) · <a href="company.html?c=${encodeURIComponent(res.id)}">watch it build ›</a></div>`;
+      setFile(null); fileIn.value = '';
+      await refresh();
+    } catch (err) {
+      prog.innerHTML = `<div class="nd-flag alert"><span class="lv">error</span><span>${f.esc(err.message)}</span></div>`;
+      go.disabled = false;
+    }
+  });
+
+  await refresh();
+  // poll while anything is in progress
+  setInterval(async () => { if (items.some(x => x.status === 'queued' || x.status === 'running')) await refresh(); }, 2500);
+})();
+</script>
+</body>
+</html>

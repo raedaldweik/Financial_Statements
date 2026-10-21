@@ -22,6 +22,9 @@
 .mapfilters{display:flex;gap:6px;flex-wrap:wrap}
 .mapfilters .btn.on{background:var(--nav-grad);color:#E8C86A;border-color:transparent}
 .navbtns{display:flex;gap:6px}
+.warn{padding:10px 14px;border-radius:9px;background:var(--amber-bg);border:1px solid var(--amber-border);font-size:11.5px;color:var(--text-md);margin-bottom:14px;line-height:1.55}
+.warn b{color:var(--amber)}
+.proc{max-width:900px;margin:30px auto}
 </style>
 </head>
 <body>
@@ -30,7 +33,9 @@
 
 <div class="pw">
   <div class="co-hdr" id="co-hdr"></div>
-  <div class="subtabs" id="subtabs"></div>
+  <div id="warn"></div>
+  <div id="processing" style="display:none"></div>
+  <div class="subtabs" id="subtabs" style="display:none"></div>
 
   <!-- ═══ OVERVIEW ═══ -->
   <div class="view" id="v-overview">
@@ -46,8 +51,8 @@
       </div>
     </div>
     <div class="g3-eq">
-      <div class="card"><div class="ch"><div class="ch-left"><h3>Revenue &amp; net income</h3></div><span class="ch-badge gold" id="c1-unit"></span></div><div class="cb"><div class="chart-wrap" id="c-rev"></div><div class="chart-note" id="c-rev-note"></div></div></div>
-      <div class="card"><div class="ch"><div class="ch-left"><h3>Balance sheet structure</h3></div></div><div class="cb"><div class="chart-wrap" id="c-bal"></div><div class="chart-note">Assets versus equity and liabilities at each year-end. Hover a block for the amount.</div></div></div>
+      <div class="card"><div class="ch"><div class="ch-left"><h3>Revenue &amp; net result</h3></div><span class="ch-badge gold" id="c1-unit"></span></div><div class="cb"><div class="chart-wrap" id="c-rev"></div><div class="chart-note" id="c-rev-note"></div></div></div>
+      <div class="card"><div class="ch"><div class="ch-left"><h3>Balance sheet structure</h3></div></div><div class="cb"><div class="chart-wrap" id="c-bal"></div><div class="chart-note" id="c-bal-note">Assets versus equity and liabilities at each year-end. Hover a block for the amount.</div></div></div>
       <div class="card"><div class="ch"><div class="ch-left"><h3>Cash flow bridge</h3></div></div><div class="cb"><div class="chart-wrap" id="c-cash"></div><div class="chart-note" id="c-cash-note"></div></div></div>
     </div>
     <div class="g3-eq">
@@ -137,42 +142,75 @@
     </div>
   </div>
 </div>
-
 <div id="foot"></div>
-<script src="data/aramco.js"></script>
-<script src="data/ceramic.js"></script>
+
 <script src="assets/app.js"></script>
 <script>
-(function () {
+(async function () {
   const f = FSX.fmt;
-  const ALL = window.FILINGS || {};
-  const ids = Object.keys(ALL);
-  let cid = FSX.qs('c'); if (!ALL[cid]) cid = ids[0];
-  const F = ALL[cid]; FSX.currentFiling = F;
-  const sar = v => FSX.chart.short(v * F.scale);
-  const byN = {}; F.notes.forEach(n => byN[n.n] = n);
-
   document.getElementById('nav').innerHTML = FSX.nav('explorer');
   document.getElementById('foot').innerHTML = FSX.footer();
-  document.title = `${F.shortName} ${F.fy} — Statement Explorer`;
   FSX.bg();
+  window.FILINGS = window.FILINGS || {};
+
+  /* ── load registry + filing ── */
+  const reg = await FSX.api.registry();
+  const items = reg.items || [];
+  let cid = FSX.qs('c');
+  if (!cid || !items.some(x => x.id === cid)) { const first = items.find(x => x.status === 'ready') || items[0]; cid = first ? first.id : cid; }
+  const switchHtml = `<select class="fs" id="switch">${items.map(i => `<option value="${f.esc(i.id)}"${i.id === cid ? ' selected' : ''}>${f.esc(i.shortName || i.name || i.id)}${i.ticker ? ' · ' + f.esc(i.ticker) : ''}${i.fy ? ' · ' + f.esc(i.fy) : ''}${i.status !== 'ready' ? ' · ' + i.status : ''}</option>`).join('')}</select>`;
+  const wireSwitch = () => { const s = document.getElementById('switch'); if (s) s.addEventListener('change', e => { location.href = `company.html?c=${encodeURIComponent(e.target.value)}`; }); };
+
+  let F;
+  try { F = cid ? await FSX.api.filing(cid) : null; } catch (e) { F = null; }
+  if (!F) {
+    document.getElementById('co-hdr').innerHTML = `<div class="co-left"><div><div class="co-nm">No filing selected</div><div class="co-meta"><span>Upload a filing from the portfolio to start.</span></div></div></div><div class="co-right"><a class="btn btn-primary btn-sm" href="portfolio.html">Go to portfolio</a></div>`;
+    return;
+  }
+
+  /* ── processing / failed state ── */
+  if (F.status !== 'ready') {
+    const render = s => {
+      document.getElementById('co-hdr').innerHTML = `<div class="co-left"><div class="co-avatar">${f.esc((s.ticker || '—').slice(0, 5))}<small>TASI</small></div><div><div class="co-nm">${f.esc(s.shortName || s.name)}</div><div class="co-meta"><span class="mono">${f.esc(s.id)}</span><span class="sep">|</span><span>${f.esc(s.mode === 'full' ? 'Full ingestion' : s.mode === 'extraction' ? 'Extraction-only mode' : 'Queued')}</span></div></div></div><div class="co-right"><span class="rb ${s.status === 'failed' ? 'red' : 'blue'}">${f.esc(s.status)}</span>${switchHtml}<a class="btn btn-glass btn-sm" href="portfolio.html">Portfolio</a></div>`;
+      wireSwitch();
+      const p = document.getElementById('processing'); p.style.display = 'block';
+      p.innerHTML = `<div class="card proc"><div class="ch"><div class="ch-left"><h3>${s.status === 'failed' ? 'Ingestion failed' : 'Ingesting the filing'}</h3></div><span class="ch-badge ${s.status === 'failed' ? 'red' : 'blue'}">${Math.round((s.progress || 0) * 100)}%</span></div><div class="cb">${FSX.pipelineHtml(s)}${s.status === 'failed' && FSX.api.live ? `<div style="margin-top:12px;display:flex;gap:8px"><button class="btn btn-glass btn-sm" id="rerun">Re-run pipeline</button></div>` : ''}</div></div>`;
+      const rr = document.getElementById('rerun'); if (rr) rr.addEventListener('click', async () => { await FSX.api.rerun(s.id); FSX.toast('Pipeline restarted.'); });
+    };
+    render(F);
+    const timer = setInterval(async () => {
+      try { const s = await FSX.api.status(cid); if (s.status === 'ready') { clearInterval(timer); location.reload(); } else render(s); } catch (e) { }
+    }, 2000);
+    return;
+  }
+
+  window.FILINGS[cid] = F; FSX.currentFiling = F;
+  const sar = v => FSX.chart.short(v * (F.scale || 1));
+  const byN = {}; (F.notes || []).forEach(n => byN[n.n] = n);
+  F.lens = F.lens || []; F.kpis = F.kpis || []; F.ratios = F.ratios || []; F.charts = F.charts || {}; F.statements = F.statements || []; F.stats = F.stats || { notes: 0, links: 0, flags: { alert: 0, watch: 0, info: 0 }, lens: {}, notesDisclosureOnly: [] };
+  const A = F.auditor || {};
+  document.title = `${F.shortName} ${F.fy || ''} — Statement Explorer`;
 
   /* ── header ── */
-  const opCls = F.auditor.opinion === 'Unmodified' ? 'green' : 'red';
+  const opCls = A.opinion === 'Unmodified' ? 'green' : (!A.opinion || A.opinion === 'Unknown') ? 'grey' : 'red';
+  const modeTag = F.mode === 'curated' ? ['Curated demo', 'gold'] : F.mode === 'full' ? ['Model-ingested', 'green'] : ['Extraction-only', 'amber'];
   document.getElementById('co-hdr').innerHTML = `
-    <div class="co-left"><div class="co-avatar">${f.esc(F.ticker)}<small>TASI</small></div><div><div class="co-nm">${f.esc(F.name)}</div>
-      <div class="co-meta"><span class="mono">${f.esc(F.exchange)}</span><span class="sep">|</span><span>${f.esc(F.sector)}</span><span class="sep">|</span><span>${f.esc(F.fy)} · year ended ${f.esc(F.periodEnd)}</span><span class="sep">|</span><span>Amounts in ${f.esc(F.unit)}</span></div></div></div>
+    <div class="co-left"><div class="co-avatar">${f.esc((F.ticker || '—').slice(0, 6))}<small>${f.esc(F.exchange ? 'TASI' : 'FILING')}</small></div><div><div class="co-nm">${f.esc(F.name)}</div>
+      <div class="co-meta"><span class="mono">${f.esc(F.exchange || F.id)}</span><span class="sep">|</span><span>${f.esc(F.sector || '—')}</span><span class="sep">|</span><span>${f.esc(F.fy || '')} · ${f.esc(F.periodEnd ? 'year ended ' + F.periodEnd : '')}</span><span class="sep">|</span><span>Amounts in ${f.esc(F.unit || '')}</span></div></div></div>
     <div class="co-right">
-      <span class="rb ${opCls}">Audit opinion: ${f.esc(F.auditor.opinion)}</span>
-      ${F.auditor.otherMatter ? '<span class="rb amber">Other-matter paragraph</span>' : ''}
-      <select class="fs" id="switch">${ids.map(i => `<option value="${i}"${i === cid ? ' selected' : ''}>${f.esc(ALL[i].shortName)} · ${f.esc(ALL[i].ticker)} · ${f.esc(ALL[i].fy)}</option>`).join('')}</select>
-      <a class="btn btn-glass btn-sm" href="${F.pdf}" target="_blank" rel="noopener">Open filing PDF</a>
+      <span class="rb ${modeTag[1]}">${modeTag[0]}</span>
+      <span class="rb ${opCls}">Audit opinion: ${f.esc(A.opinion || 'n/a')}</span>
+      ${A.otherMatter ? '<span class="rb amber">Other-matter paragraph</span>' : ''}${A.goingConcern ? '<span class="rb red">Going-concern paragraph</span>' : ''}
+      ${switchHtml}
+      <a class="btn btn-glass btn-sm" href="${f.esc(F.pdf)}" target="_blank" rel="noopener">Open filing PDF</a>
     </div>`;
-  document.getElementById('switch').addEventListener('change', e => { location.href = `company.html?c=${e.target.value}${location.hash}`; });
+  wireSwitch();
+  if ((F.warnings || []).length) document.getElementById('warn').innerHTML = `<div class="warn"><b>Pipeline notes:</b> ${F.warnings.map(w => f.esc(w)).join(' · ')}</div>`;
 
   /* ── sub-tabs & routing ── */
   const TABS = [['overview', 'Overview', ''], ['statements', 'Statements', F.statements.length], ['notes', 'Notes', F.stats.notes], ['map', 'Cross-reference map', F.stats.links], ['lens', 'Investor lens', F.lens.length]];
-  document.getElementById('subtabs').innerHTML = TABS.map(t => `<button class="subtab" data-v="${t[0]}">${t[1]}${t[2] !== '' ? `<span class="cnt">${t[2]}</span>` : ''}</button>`).join('');
+  const st = document.getElementById('subtabs'); st.style.display = 'flex';
+  st.innerHTML = TABS.map(t => `<button class="subtab" data-v="${t[0]}">${t[1]}${t[2] !== '' ? `<span class="cnt">${t[2]}</span>` : ''}</button>`).join('');
   document.querySelectorAll('.subtab').forEach(b => b.addEventListener('click', () => { location.hash = '#' + b.dataset.v; }));
   const done = {};
   function route() {
@@ -190,14 +228,10 @@
   }
   window.addEventListener('hashchange', route);
 
-  /* drawer back-link → statements tab */
   FSX.onRefBy = (stmt, row) => {
     FSX.drawer.close();
     location.hash = '#statements/' + stmt;
-    setTimeout(() => {
-      const el = document.getElementById(`r-${stmt}-${row}`);
-      if (el) { el.classList.remove('hl'); void el.offsetWidth; el.classList.add('hl'); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
-    }, 120);
+    setTimeout(() => { const el = document.getElementById(`r-${stmt}-${row}`); if (el) { el.classList.remove('hl'); void el.offsetWidth; el.classList.add('hl'); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } }, 120);
   };
 
   /* ════════ OVERVIEW ════════ */
@@ -207,58 +241,62 @@
       const val = k.kind === 'pct' ? (k.v < 0 ? `(${Math.abs(k.v).toFixed(1)}%)` : `${k.v.toFixed(1)}%`) : f.sar(k.v, F.scale);
       const cls = k.kind === 'money' && k.v < 0 ? 'red' : k.label === 'Revenue' ? 'gold' : '';
       return `<div class="kpi"><div class="kpi-lbl"><span>${f.esc(k.label)}</span>${k.note ? FSX.chip(F, k.note) : ''}</div><div class="kpi-val ${cls}">${val}</div><div class="kpi-tr ${d.cls}">${d.text}</div></div>`;
-    }).join('');
-    document.getElementById('brief-h').textContent = `${F.shortName} · ${F.fy} analyst brief`;
-    document.getElementById('brief').innerHTML = FSX.linkify(F, F.brief);
+    }).join('') || '<div class="kpi" style="grid-column:1/-1"><div class="kpi-lbl"><span>KPIs</span></div><div class="muted">No headline lines could be matched on the statements.</div></div>';
+    document.getElementById('brief-h').textContent = `${F.shortName} · ${F.fy || ''} analyst brief`;
+    document.getElementById('brief').innerHTML = FSX.linkify(F, F.brief || 'No analyst brief for this filing.');
 
-    const a = F.auditor;
     document.getElementById('aud-badge').className = 'ch-badge ' + opCls;
-    document.getElementById('aud-badge').textContent = a.opinion + ' opinion';
-    document.getElementById('aud-body').innerHTML = `
-      <div class="aud-row"><span>Auditor</span><b>${f.esc(a.firm)}</b></div>
-      <div class="aud-row"><span>Engagement partner</span><b>${f.esc(a.partner)} · Licence ${f.esc(a.license)}</b></div>
-      <div class="aud-row"><span>Report date</span><b>${f.esc(a.reportDate)}</b></div>
-      <div class="aud-row"><span>Statements approved</span><b>${f.esc(F.approvedOn)}</b></div>
-      <div class="aud-row"><span>Materiality</span><b style="max-width:60%">${f.esc(a.materiality)}</b></div>
-      <div style="margin-top:10px;font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-lo)">Key audit matters (${a.kams.length})</div>
-      ${a.kams.map(k => `<div class="kam"><div class="kam-t">${f.esc(k.title)}</div><div class="kam-d">${f.esc(k.summary)}</div><div>${k.notes.map(n => FSX.chip(F, n)).join('')}</div></div>`).join('')}
-      ${a.otherMatter ? `<div class="om"><b>Other matter — </b>${f.esc(a.otherMatter)}</div>` : ''}`;
+    document.getElementById('aud-badge').textContent = (A.opinion || 'n/a') + ' opinion';
+    const row = (k, v) => v ? `<div class="aud-row"><span>${k}</span><b style="max-width:60%">${f.esc(v)}</b></div>` : '';
+    document.getElementById('aud-body').innerHTML = (row('Auditor', A.firm) + row('Engagement partner', A.partner ? `${A.partner}${A.license ? ' · Licence ' + A.license : ''}` : '') + row('Report date', A.reportDate) + row('Statements approved', F.approvedOn) + row('Materiality', A.materiality) || '<div class="muted" style="font-size:11.5px">Auditor facts are extracted in full ingestion mode.</div>') +
+      ((A.kams || []).length ? `<div style="margin-top:10px;font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-lo)">Key audit matters (${A.kams.length})</div>` + A.kams.map(k => `<div class="kam"><div class="kam-t">${f.esc(k.title)}</div><div class="kam-d">${f.esc(k.summary)}</div><div>${(k.notes || []).map(n => FSX.chip(F, n)).join('')}</div></div>`).join('') : '') +
+      (A.goingConcern ? `<div class="om" style="background:var(--red-bg);border-color:var(--red-border)"><b style="color:var(--red)">Material uncertainty — </b>${f.esc(A.goingConcern)}</div>` : '') +
+      (A.emphasisOfMatter ? `<div class="om"><b>Emphasis of matter — </b>${f.esc(A.emphasisOfMatter)}</div>` : '') +
+      (A.otherMatter ? `<div class="om"><b>Other matter — </b>${f.esc(A.otherMatter)}</div>` : '');
 
-    const rev = F.kpis[0], ni = F.kpis[1];
-    document.getElementById('c1-unit').textContent = F.unit;
-    FSX.chart.bars(document.getElementById('c-rev'), { labels: ['2023', '2024'], series: [{ name: 'Revenue', values: [rev.p, rev.v], color: FSX.colors.green }, { name: ni.label, values: [ni.p, ni.v], color: v => v < 0 ? FSX.colors.red : FSX.colors.gold }], fmt: sar });
-    const m24 = ni.v / rev.v * 100, m23 = ni.p / rev.p * 100;
-    document.getElementById('c-rev-note').textContent = `Net margin ${m24.toFixed(1)}% (2023: ${m23.toFixed(1)}%). Revenue ${rev.v >= rev.p ? 'grew' : 'fell'} ${Math.abs((rev.v - rev.p) / rev.p * 100).toFixed(1)}% year on year.`;
+    const rev = F.kpis.find(k => k.label === 'Revenue'), ni = F.kpis.find(k => /^net/i.test(k.label));
+    document.getElementById('c1-unit').textContent = F.unit || '';
+    if (rev && ni) {
+      FSX.chart.bars(document.getElementById('c-rev'), { labels: [F.years ? F.years[1] : 'prior', F.years ? F.years[0] : 'current'], series: [{ name: 'Revenue', values: [rev.p, rev.v], color: FSX.colors.green }, { name: ni.label, values: [ni.p, ni.v], color: v => v < 0 ? FSX.colors.red : FSX.colors.gold }], fmt: sar });
+      const m24 = ni.v / rev.v * 100, m23 = rev.p ? ni.p / rev.p * 100 : null;
+      document.getElementById('c-rev-note').textContent = `Net margin ${m24.toFixed(1)}%${m23 !== null ? ` (prior year ${m23.toFixed(1)}%)` : ''}. ${rev.p ? `Revenue ${rev.v >= rev.p ? 'grew' : 'fell'} ${Math.abs((rev.v - rev.p) / rev.p * 100).toFixed(1)}% year on year.` : ''}`;
+    } else document.getElementById('c-rev').innerHTML = '<div class="empty">Revenue / net result lines not matched.</div>';
 
     const b = F.charts.balance;
-    FSX.chart.bars(document.getElementById('c-bal'), { stacked: true, labels: ['Assets 23', 'Eq+Liab 23', 'Assets 24', 'Eq+Liab 24'], series: [
+    if (b) FSX.chart.bars(document.getElementById('c-bal'), { stacked: true, labels: ['Assets prior', 'Eq+Liab prior', 'Assets current', 'Eq+Liab current'], series: [
       { name: 'Non-current assets', values: [b.nonCurrentAssets[0], null, b.nonCurrentAssets[1], null], color: FSX.colors.green },
       { name: 'Current assets', values: [b.currentAssets[0], null, b.currentAssets[1], null], color: FSX.colors.greenPale },
       { name: 'Equity', values: [null, b.equity[0], null, b.equity[1]], color: FSX.colors.dark },
       { name: 'Non-current liabilities', values: [null, b.nonCurrentLiab[0], null, b.nonCurrentLiab[1]], color: FSX.colors.blue },
       { name: 'Current liabilities', values: [null, b.currentLiab[0], null, b.currentLiab[1]], color: FSX.colors.amber }], fmt: sar });
+    else document.getElementById('c-bal').innerHTML = '<div class="empty">Balance-sheet subtotals not matched on this filing.</div>';
 
     const c = F.charts.cashBridge;
-    FSX.chart.waterfall(document.getElementById('c-cash'), { steps: [{ label: 'Opening cash', value: c.open, total: true }, { label: 'Operating', value: c.operating }, { label: 'Investing', value: c.investing }, { label: 'Financing', value: c.financing }, { label: 'Closing cash', value: c.close, total: true }], fmt: sar });
-    document.getElementById('c-cash-note').textContent = `Net ${c.net >= 0 ? 'increase' : 'decrease'} in cash of ${f.sar(c.net, F.scale)}. Operating cash flow ${f.sar(c.operating, F.scale)}; investing ${f.sar(c.investing, F.scale)}; financing ${f.sar(c.financing, F.scale)}.`;
+    if (c) {
+      FSX.chart.waterfall(document.getElementById('c-cash'), { steps: [{ label: 'Opening cash', value: c.open, total: true }, { label: 'Operating', value: c.operating }, { label: 'Investing', value: c.investing }, { label: 'Financing', value: c.financing }, { label: 'Closing cash', value: c.close, total: true }], fmt: sar });
+      document.getElementById('c-cash-note').textContent = `Net ${c.net >= 0 ? 'increase' : 'decrease'} in cash of ${f.sar(c.net, F.scale)}. Operating ${f.sar(c.operating, F.scale)}; investing ${f.sar(c.investing, F.scale)}; financing ${f.sar(c.financing, F.scale)}.`;
+    } else document.getElementById('c-cash').innerHTML = '<div class="empty">Cash-flow totals not matched on this filing.</div>';
 
     const s = F.charts.segments;
     document.getElementById('c-seg-h').textContent = 'Segment revenue & result';
-    document.getElementById('c-seg-chip').innerHTML = FSX.chip(F, s.note);
-    FSX.chart.bars(document.getElementById('c-seg'), { labels: s.labels.map(l => l.length > 18 ? l.slice(0, 17) + '…' : l), series: [{ name: 'External revenue', values: s.revenue, color: FSX.colors.green }, { name: 'Result before interest & tax', values: s.ebit, color: v => v < 0 ? FSX.colors.red : FSX.colors.gold }], fmt: sar });
-    const g = F.charts.geography;
-    const tot = g.revenue.reduce((x, y) => x + y, 0);
-    document.getElementById('c-seg-note').innerHTML = `Geography: ${g.labels.map((l, i) => `${f.esc(l)} ${(g.revenue[i] / tot * 100).toFixed(0)}%`).join(' · ')} of external revenue ${FSX.chip(F, g.note)}`;
+    if (s && s.labels && s.labels.length) {
+      document.getElementById('c-seg-chip').innerHTML = s.note ? FSX.chip(F, s.note) : '';
+      const series = [{ name: 'External revenue', values: s.revenue, color: FSX.colors.green }];
+      if ((s.ebit || []).some(x => x !== null && x !== undefined)) series.push({ name: 'Result before interest & tax', values: s.ebit, color: v => v < 0 ? FSX.colors.red : FSX.colors.gold });
+      FSX.chart.bars(document.getElementById('c-seg'), { labels: s.labels.map(l => l.length > 18 ? l.slice(0, 17) + '…' : l), series, fmt: sar });
+      const g = F.charts.geography;
+      if (g && g.labels) { const tot = g.revenue.reduce((x, y) => x + (y || 0), 0); document.getElementById('c-seg-note').innerHTML = `Geography: ${g.labels.map((l, i) => `${f.esc(l)} ${tot ? (g.revenue[i] / tot * 100).toFixed(0) : '?'}%`).join(' · ')} of revenue ${g.note ? FSX.chip(F, g.note) : ''}`; }
+    } else document.getElementById('c-seg').innerHTML = '<div class="empty">No segment disclosure extracted for this filing.</div>';
 
     document.getElementById('ind').innerHTML = F.ratios.map(r => {
       const d = FSX.fmt.delta(r.v, r.p, { unit: r.unit === 'money' || r.unit === 'SAR' ? undefined : r.unit, lowerIsBetter: /borrow|impair|net debt|gearing|tax/i.test(r.label) });
-      const val = r.unit === 'money' ? f.sar(r.v, F.scale) : r.unit === '%' ? (r.v < 0 ? `(${Math.abs(r.v).toFixed(1)}%)` : r.v.toFixed(1) + '%') : r.unit === 'x' ? r.v.toFixed(2) + 'x' : (r.v < 0 ? `(${Math.abs(r.v).toFixed(2)})` : r.v.toFixed(2)) + ' SAR';
-      return `<div class="ind"><div class="ind-l"><span>${f.esc(r.label)}</span>${r.note ? FSX.chip(F, r.note) : ''}</div><div class="ind-v">${val}</div><div class="ind-d ${d.cls}">${d.text}</div><div class="ind-s">${f.esc(r.desc)}</div></div>`;
-    }).join('');
+      const val = r.v === null || r.v === undefined ? '—' : r.unit === 'money' ? f.sar(r.v, F.scale) : r.unit === '%' ? (r.v < 0 ? `(${Math.abs(r.v).toFixed(1)}%)` : r.v.toFixed(1) + '%') : r.unit === 'x' ? r.v.toFixed(2) + 'x' : (r.v < 0 ? `(${Math.abs(r.v).toFixed(2)})` : r.v.toFixed(2)) + ' SAR';
+      return `<div class="ind"><div class="ind-l"><span>${f.esc(r.label)}</span>${r.note ? FSX.chip(F, r.note) : ''}</div><div class="ind-v">${val}</div><div class="ind-d ${d.cls}">${d.text}</div><div class="ind-s">${f.esc(r.desc || '')}</div></div>`;
+    }).join('') || '<div class="empty" style="grid-column:1/-1">No indicators could be derived.</div>';
 
     const flagged = FSX.flaggedNotes(F);
     document.getElementById('flag-badge').textContent = `${F.stats.flags.alert} alert · ${F.stats.flags.watch} watch`;
-    document.getElementById('flags').innerHTML = flagged.map(n => `<div class="flag-item" data-n="${n.n}"><div class="flag-dot ${n.flag.level}"></div><div><div class="flag-title">Note ${n.n} · ${f.esc(n.title)}</div><div class="flag-desc">${f.esc(n.flag.text)}</div><div class="flag-src">${f.esc(n.flag.level)} · PDF p. ${n.pdfPage}</div></div></div>`).join('') || '<div class="empty">No flagged notes.</div>';
+    document.getElementById('flags').innerHTML = flagged.map(n => `<div class="flag-item" data-n="${n.n}"><div class="flag-dot ${n.flag.level}"></div><div><div class="flag-title">Note ${n.n} · ${f.esc(n.title)}</div><div class="flag-desc">${f.esc(n.flag.text)}</div><div class="flag-src">${f.esc(n.flag.level)} · PDF p. ${n.pdfPage}</div></div></div>`).join('') || `<div class="empty">${F.mode === 'extraction' ? 'Flags are raised in full ingestion mode (set ANTHROPIC_API_KEY).' : 'No flagged notes.'}</div>`;
     document.getElementById('flags').addEventListener('click', e => { const it = e.target.closest('.flag-item'); if (it) FSX.drawer.open(F, it.dataset.n); });
   }
 
@@ -266,6 +304,7 @@
   let curStmt = null;
   function renderStatements(id) {
     const st = F.statements.find(s => s.id === id) || F.statements[0];
+    if (!st) { document.getElementById('st-table').innerHTML = '<div class="empty">No primary statements were parsed from this filing.</div>'; return; }
     if (!done.stList) {
       document.getElementById('sp-list').innerHTML = F.statements.map(s => { const n = s.rows.filter(r => r.n).length + ((s.colNotes || []).filter(Boolean).length); return `<button class="sp-item" data-id="${s.id}"><span>${f.esc(s.short)}</span><small>${n} refs</small></button>`; }).join('');
       document.getElementById('sp-list').addEventListener('click', e => { const b = e.target.closest('.sp-item'); if (b) location.hash = '#statements/' + b.dataset.id; });
@@ -276,7 +315,7 @@
     if (curStmt === st.id) return;
     curStmt = st.id;
     document.getElementById('st-title').textContent = st.title;
-    document.getElementById('st-unit').textContent = `${st.basis} · ${F.unit}`;
+    document.getElementById('st-unit').textContent = `${st.basis ? st.basis + ' · ' : ''}${F.unit || ''}${st.source === 'heuristic' ? ' · heuristic parse' : ''}`;
     const cols = st.cols, span = cols.length + 2;
     let h = `<table class="fst${st.wide ? ' wide' : ''}"><thead><tr><th>Line item</th><th class="nc">Note</th>${cols.map((c, i) => `<th>${f.esc(c)}${st.colNotes && st.colNotes[i] ? '<br>' + FSX.chip(F, st.colNotes[i]) : ''}</th>`).join('')}</tr></thead><tbody>`;
     let links = 0; const noteSet = new Set();
@@ -290,7 +329,8 @@
     h += '</tbody></table>';
     document.getElementById('st-table').innerHTML = h;
     (st.colNotes || []).forEach(cn => { if (cn) { links++; noteSet.add(cn); } });
-    document.getElementById('st-foot').innerHTML = `<span>${links} reference${links === 1 ? '' : 's'} to ${noteSet.size} distinct note${noteSet.size === 1 ? '' : 's'} on this statement</span><span>Transcribed from ${f.esc(F.pdf.split('/').pop())} · negative amounts in parentheses · “–” = nil</span><a class="btn btn-glass btn-sm" href="${F.pdf}#page=${F.statementsStartPage}" target="_blank" rel="noopener">View statements in PDF</a>`;
+    const pages = (st.pdfPages || []).length ? st.pdfPages[0] : F.statementsStartPage;
+    document.getElementById('st-foot').innerHTML = `<span>${links} reference${links === 1 ? '' : 's'} to ${noteSet.size} distinct note${noteSet.size === 1 ? '' : 's'} on this statement</span><span>${st.source === 'heuristic' ? 'Parsed from the text layer (extraction-only mode)' : 'Transcribed from the filing'} · negative amounts in parentheses · “–” = nil</span><a class="btn btn-glass btn-sm" href="${f.esc(F.pdf)}#page=${pages || 1}" target="_blank" rel="noopener">View in PDF (p. ${pages || 1})</a>`;
   }
 
   /* ════════ NOTES ════════ */
@@ -311,6 +351,7 @@
     document.getElementById('n-list').innerHTML = list.map(n => `<div class="ni${n.n === curNote ? ' on' : ''}" data-n="${n.n}"><span class="ni-n">${n.n}</span><div><div class="ni-t">${f.esc(n.title)}</div><div class="ni-m"><span>${f.esc(n.category)}</span><span>p. ${n.pdfPage}</span><span>${(n.referencedBy || []).length ? (n.referencedBy.length + ' line' + (n.referencedBy.length > 1 ? 's' : '')) : 'disclosure-only'}</span></div></div>${n.flag ? `<span class="ni-flag ${n.flag.level}" title="${f.esc(n.flag.level)}"></span>` : ''}</div>`).join('') || '<div class="empty">No notes match.</div>';
   }
   function renderNotes(n) {
+    if (!F.notes.length) { document.getElementById('n-detail').innerHTML = '<div class="empty">No numbered notes were recognised in this filing.</div>'; return; }
     if (!done.notes) {
       const cats = [...new Set(F.notes.map(x => x.category))].sort();
       document.getElementById('n-cat').innerHTML += cats.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -324,42 +365,37 @@
     const i = F.notes.indexOf(nt);
     const prev = F.notes[i - 1], next = F.notes[i + 1];
     document.getElementById('n-detail').innerHTML = `
-      <div class="nd-full-head"><div><div class="dr-num">${f.esc(F.shortName)} · ${f.esc(F.fy)} · Note ${nt.n} of ${F.notes.length}</div><div class="dr-title">${f.esc(nt.title)}</div>
+      <div class="nd-full-head"><div><div class="dr-num">${f.esc(F.shortName)} · ${f.esc(F.fy || '')} · Note ${nt.n} of ${F.notes.length}</div><div class="dr-title">${f.esc(nt.title)}</div>
         <div class="dr-meta"><span>PDF p. ${nt.pdfPage}</span><span>Printed p. ${nt.printedPage}</span><span>${f.esc(nt.category)}</span><span>${(nt.text || '').length.toLocaleString()} chars</span></div></div>
-        <div class="navbtns"><a class="btn btn-glass btn-sm" href="${F.pdf}#page=${nt.pdfPage}" target="_blank" rel="noopener">PDF p. ${nt.pdfPage}</a>${prev ? `<a class="btn btn-glass btn-sm" href="#notes/${prev.n}">‹ ${prev.n}</a>` : ''}${next ? `<a class="btn btn-glass btn-sm" href="#notes/${next.n}">${next.n} ›</a>` : ''}</div></div>
+        <div class="navbtns"><a class="btn btn-glass btn-sm" href="${f.esc(F.pdf)}#page=${nt.pdfPage}" target="_blank" rel="noopener">PDF p. ${nt.pdfPage}</a>${prev ? `<a class="btn btn-glass btn-sm" href="#notes/${prev.n}">‹ ${prev.n}</a>` : ''}${next ? `<a class="btn btn-glass btn-sm" href="#notes/${next.n}">${next.n} ›</a>` : ''}</div></div>
       ${FSX.renderNote(F, nt.n, { full: true })}`;
     const on = document.querySelector('.ni.on'); if (on) on.scrollIntoView({ block: 'nearest' });
   }
 
   /* ════════ CROSS-REFERENCE MAP ════════ */
   function renderMap(filter) {
-    const st = F.stats;
+    const s = F.stats;
     document.getElementById('xstats').innerHTML = [
-      [st.linesWithNotes, 'statement lines cite a note'], [st.links, 'cross-reference links'], [st.notesReferenced + ' / ' + st.notes, 'notes cited on the statements'],
-      [st.notesDisclosureOnly.length, 'disclosure-only notes'], [st.flags.alert + st.flags.watch, 'flagged notes (alert + watch)'], [(st.textChars / 1000).toFixed(0) + 'k', 'characters of note text indexed']
+      [s.linesWithNotes, 'statement lines cite a note'], [s.links, 'cross-reference links'], [s.notesReferenced + ' / ' + s.notes, 'notes cited on the statements'],
+      [(s.notesDisclosureOnly || []).length, 'disclosure-only notes'], [(s.flags.alert || 0) + (s.flags.watch || 0), 'flagged notes (alert + watch)'], [((s.textChars || 0) / 1000).toFixed(0) + 'k', 'characters of note text indexed']
     ].map(x => `<div class="xstat"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('');
     const filt = document.getElementById('map-filters');
-    filt.innerHTML = [['all', 'All statements'], ...F.statements.map(s => [s.id, s.short])].map(x => `<button class="btn btn-glass btn-sm${x[0] === filter ? ' on' : ''}" data-f="${x[0]}">${f.esc(x[1])}</button>`).join('');
+    filt.innerHTML = [['all', 'All statements'], ...F.statements.map(st => [st.id, st.short])].map(x => `<button class="btn btn-glass btn-sm${x[0] === filter ? ' on' : ''}" data-f="${x[0]}">${f.esc(x[1])}</button>`).join('');
     filt.onclick = e => { const b = e.target.closest('[data-f]'); if (b) renderMap(b.dataset.f); };
-
-    // left nodes: unique (stmt,row) with refs
     const left = []; const seen = {};
-    F.xrefs.forEach(x => { if (filter !== 'all' && x.stmt !== filter) return; const key = x.stmt + ':' + x.row; if (!seen[key]) { seen[key] = { stmt: x.stmt, short: x.short, row: x.row, label: x.label, refs: [] }; left.push(seen[key]); } seen[key].refs.push(x); });
+    (F.xrefs || []).forEach(x => { if (filter !== 'all' && x.stmt !== filter) return; const key = x.stmt + ':' + x.row; if (!seen[key]) { seen[key] = { stmt: x.stmt, short: x.short, row: x.row, label: x.label, refs: [] }; left.push(seen[key]); } seen[key].refs.push(x); });
+    if (!left.length) { document.getElementById('xmap').innerHTML = '<div class="empty">No cross-references between statement lines and notes were found.</div>'; document.getElementById('disc-only').innerHTML = ''; return; }
     const noteIds = F.notes.map(n => n.n);
     const W = 1120, LX = 16, LW = 420, RX = 700, RW = 404, RH = 21, LH = 20, GH = 34, TOP = 30;
-    let y = TOP; let lastStmt = null; const lpos = {};
-    left.forEach(l => { if (l.stmt !== lastStmt) { y += GH; lastStmt = l.stmt; l.group = true; l.gy = y - 7; } l.y = y; y += LH; lpos[l.stmt + ':' + l.row] = l; });
-    const leftH = y;
+    let y = TOP; let lastStmt = null;
+    left.forEach(l => { if (l.stmt !== lastStmt) { y += GH; lastStmt = l.stmt; l.group = true; l.gy = y - 7; } l.y = y; y += LH; });
     const rpos = {}; noteIds.forEach((n, i) => rpos[n] = TOP + 18 + i * RH);
-    const H = Math.max(leftH, TOP + 18 + noteIds.length * RH) + 20;
+    const H = Math.max(y, TOP + 18 + noteIds.length * RH) + 20;
     const trunc = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
     let svg = `<svg class="xmap" viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMinYMin meet">`;
-    svg += `<text class="colhead" x="${LX}" y="18">Statement line items</text><text class="colhead" x="${RX}" y="18">Notes to the consolidated financial statements</text>`;
-    // links
-    left.forEach(l => l.refs.forEach(r => { const y1 = l.y + LH / 2 - 1, y2 = rpos[r.n] + RH / 2 - 1; const mx = (LX + LW + RX) / 2; svg += `<path class="lk" data-l="${l.stmt}:${l.row}" data-n="${r.n}" d="M${LX + LW} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${RX} ${y2}"/>`; }));
-    // left nodes
-    left.forEach(l => { if (l.group) svg += `<text class="grp" x="${LX}" y="${l.gy}">${f.esc(l.short)}</text>`; svg += `<g class="ln" data-l="${l.stmt}:${l.row}" data-ns="${l.refs.map(r => r.n).join(',')}"><rect x="${LX}" y="${l.y}" width="${LW}" height="${LH - 3}"/><text x="${LX + 8}" y="${l.y + 12.5}">${f.esc(trunc(l.label, 52))}</text><text x="${LX + LW - 8}" y="${l.y + 12.5}" text-anchor="end" class="st">${f.esc(l.refs.map(r => r.ref).join(', '))}</text></g>`; });
-    // right nodes
+    svg += `<text class="colhead" x="${LX}" y="18">Statement line items</text><text class="colhead" x="${RX}" y="18">Notes to the financial statements</text>`;
+    left.forEach(l => l.refs.forEach(r => { if (rpos[r.n] === undefined) return; const y1 = l.y + LH / 2 - 1, y2 = rpos[r.n] + RH / 2 - 1; const mx = (LX + LW + RX) / 2; svg += `<path class="lk" data-l="${l.stmt}:${l.row}" data-n="${r.n}" d="M${LX + LW} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${RX} ${y2}"/>`; }));
+    left.forEach(l => { if (l.group) svg += `<text class="grp" x="${LX}" y="${l.gy}">${f.esc(l.short)}</text>`; svg += `<g class="ln" data-l="${l.stmt}:${l.row}"><rect x="${LX}" y="${l.y}" width="${LW}" height="${LH - 3}"/><text x="${LX + 8}" y="${l.y + 12.5}">${f.esc(trunc(l.label, 52))}</text><text x="${LX + LW - 8}" y="${l.y + 12.5}" text-anchor="end" class="st">${f.esc(l.refs.map(r => r.ref).join(', '))}</text></g>`; });
     F.notes.forEach(n => { const yy = rpos[n.n]; const inc = left.reduce((a, l) => a + l.refs.filter(r => r.n === n.n).length, 0); svg += `<g class="nn" data-n="${n.n}"><rect x="${RX}" y="${yy}" width="${RW}" height="${RH - 3}"/><text class="num" x="${RX + 8}" y="${yy + 13}">${n.n}</text><text x="${RX + 34}" y="${yy + 13}">${f.esc(trunc(n.title, 44))}</text>${n.flag ? `<circle class="fl" cx="${RX + RW - 30}" cy="${yy + 9}" r="3.5" fill="${n.flag.level === 'alert' ? '#C0392B' : n.flag.level === 'watch' ? '#B8620A' : '#1A5A9A'}"/>` : ''}<text x="${RX + RW - 8}" y="${yy + 13}" text-anchor="end" class="num" style="font-size:9px;opacity:.7">${inc || ''}</text></g>`; });
     svg += '</svg>';
     const wrap = document.getElementById('xmap'); wrap.innerHTML = svg;
@@ -371,21 +407,21 @@
     S.addEventListener('mouseover', e => { if (pinned) return; const l = e.target.closest('.ln'), n = e.target.closest('.nn'); if (l) lightLine(l.dataset.l); else if (n) lightNote(n.dataset.n); });
     S.addEventListener('mouseleave', () => { if (!pinned) clear(); });
     S.addEventListener('click', e => { const l = e.target.closest('.ln'), n = e.target.closest('.nn'); if (l) { pinned = pinned === l.dataset.l ? null : l.dataset.l; pinned ? lightLine(pinned) : clear(); } else if (n) { pinned = 'n:' + n.dataset.n; lightNote(n.dataset.n); FSX.drawer.open(F, n.dataset.n); } else { pinned = null; clear(); } });
-    document.getElementById('disc-only').innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:6px">${F.stats.notesDisclosureOnly.map(n => FSX.chip(F, n, { full: true })).join('') || '<span class="muted">Every note is cited on the face of the statements.</span>'}</div>`;
+    document.getElementById('disc-only').innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:6px">${(F.stats.notesDisclosureOnly || []).map(n => FSX.chip(F, n, { full: true })).join('') || '<span class="muted">Every note is cited on the face of the statements.</span>'}</div>`;
   }
 
   /* ════════ INVESTOR LENS ════════ */
   function renderLens() {
-    const s = F.stats.lens;
-    document.getElementById('lens-sum').innerHTML = `<span class="lens-pill"><span class="dot green"></span><b>${s.green}</b> satisfactory</span><span class="lens-pill"><span class="dot amber"></span><b>${s.amber}</b> watch</span><span class="lens-pill"><span class="dot red"></span><b>${s.red}</b> attention required</span><span class="lens-pill">Review areas organised the way an investment-authority analyst reads a filing · every finding cites its notes</span>`;
-    document.getElementById('lens-grid').innerHTML = F.lens.map(l => `<div class="lens ${l.status}"><div class="lens-top"><span class="lens-area">${f.esc(l.area)}</span><span class="rb ${l.status}">${l.status === 'green' ? 'Satisfactory' : l.status === 'amber' ? 'Watch' : 'Attention'}</span></div><div class="lens-h">${f.esc(l.headline)}</div><div class="lens-d">${f.esc(l.detail)}</div><div class="lens-notes">${l.notes.map(n => FSX.chip(F, n)).join('')}</div></div>`).join('');
+    const s = F.stats.lens || {};
+    document.getElementById('lens-sum').innerHTML = F.lens.length ? `<span class="lens-pill"><span class="dot green"></span><b>${s.green || 0}</b> satisfactory</span><span class="lens-pill"><span class="dot amber"></span><b>${s.amber || 0}</b> watch</span><span class="lens-pill"><span class="dot red"></span><b>${s.red || 0}</b> attention required</span><span class="lens-pill">Review areas organised the way an investment-authority analyst reads a filing · every finding cites its notes</span>` : '';
+    document.getElementById('lens-grid').innerHTML = F.lens.map(l => `<div class="lens ${l.status}"><div class="lens-top"><span class="lens-area">${f.esc(l.area)}</span><span class="rb ${l.status}">${l.status === 'green' ? 'Satisfactory' : l.status === 'amber' ? 'Watch' : 'Attention'}</span></div><div class="lens-h">${f.esc(l.headline)}</div><div class="lens-d">${f.esc(l.detail)}</div><div class="lens-notes">${(l.notes || []).map(n => FSX.chip(F, n)).join('')}</div></div>`).join('') || `<div class="card" style="grid-column:1/-1"><div class="cb"><div class="empty">${F.mode === 'extraction' ? 'The investor lens is written in full ingestion mode (set ANTHROPIC_API_KEY on the server and re-run the pipeline).' : 'No investor-lens findings for this filing.'}</div></div></div>`;
     document.querySelectorAll('[data-toast]').forEach(b => b.addEventListener('click', () => FSX.toast(b.dataset.toast)));
-    const now = new Date();
-    const t = m => { const d = new Date(now.getTime() - m * 60000); return d.toTimeString().slice(0, 5); };
+    const t = ts => new Date((ts || Date.now() / 1000) * 1000).toTimeString().slice(0, 5);
+    const llm = F.llm || {};
     document.getElementById('audit-log').innerHTML = `
-      <div class="log-entry"><span class="log-time">${t(9)}</span><span><span class="log-action">Pipeline:</span> ${f.esc(F.pdf.split('/').pop())} parsed — ${F.stats.notes} notes, ${F.stats.links} cross-references indexed.</span></div>
-      <div class="log-entry"><span class="log-time">${t(7)}</span><span><span class="log-action">Pipeline:</span> ${F.stats.flags.alert} alert and ${F.stats.flags.watch} watch flags raised from the notes.</span></div>
-      <div class="log-entry"><span class="log-time">${t(2)}</span><span><span class="log-action">Analyst:</span> opened the investor lens for ${f.esc(F.shortName)} ${f.esc(F.fy)}.</span></div>`;
+      <div class="log-entry"><span class="log-time">${t(F.createdAt)}</span><span><span class="log-action">Pipeline:</span> ${f.esc((F.pdf || '').split('/').pop())} parsed — ${F.stats.notes} notes, ${F.stats.links} cross-references indexed (${f.esc(F.mode || 'curated')} mode${llm.model ? ', ' + f.esc(llm.model) + ', ' + llm.calls + ' calls' : ''}).</span></div>
+      <div class="log-entry"><span class="log-time">${t(F.createdAt)}</span><span><span class="log-action">Pipeline:</span> ${F.stats.flags.alert} alert and ${F.stats.flags.watch} watch flags raised from the notes.</span></div>
+      <div class="log-entry"><span class="log-time">${t()}</span><span><span class="log-action">Analyst:</span> opened the investor lens for ${f.esc(F.shortName)} ${f.esc(F.fy || '')}.</span></div>`;
   }
 
   route();

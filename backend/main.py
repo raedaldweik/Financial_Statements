@@ -1,0 +1,150 @@
+"""Investor Financial Intelligence — API + static frontend.
+
+  GET  /api/health                     server mode (llm on/off), model, filing count
+  GET  /api/filings                    registry: ready filings (summary) and filings in progress
+  POST /api/filings                    multipart upload (file=PDF, name?, ticker?, sector?) → starts the pipeline
+  GET  /api/filings/{id}               the dashboard bundle (or the processing status while it runs)
+  GET  /api/filings/{id}/status        pipeline stages + log
+  POST /api/filings/{id}/rerun         re-run the pipeline on the stored PDF
+  DELETE /api/filings/{id}
+  GET  /filings/{name}.pdf             the source PDF (deep-linked by page from the UI)
+  /                                    the frontend (frontend/)
+"""
+from __future__ import annotations
+
+import logging
+import threading
+import time
+from pathlib import Path
+
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+
+import config
+import store
+from pipeline.build import registry_entry
+from pipeline.run import run as run_pipeline
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
+log = logging.getLogger("misa")
+
+app = FastAPI(title="Investor Financial Intelligence", version="1.0")
+_sem = threading.Semaphore(int(__import__("os").getenv("MAX_PARALLEL_JOBS", "2")))
+
+
+@app.on_event("startup")
+def _startup():
+    config.STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+    made = store.seed_from(config.SEED_DIR)
+    if made:
+        log.info("seeded demo filings: %s", made)
+    # resume anything interrupted by a restart
+    for fid in store.list_ids():
+        st = store.status(fid) or {}
+        if st.get("state") in ("queued", "running") and (store.filing_dir(fid) / "source.pdf").exists():
+            _launch(fid)
+    log.info("mode: %s · model: %s · storage: %s", "full" if config.llm_configured() else "extraction-only", config.MODEL, config.STORAGE_DIR)
+
+
+def _launch(fid: str):
+    def job():
+        with _sem:
+            run_pipeline(fid)
+    threading.Thread(target=job, name=f"pipeline-{fid}", daemon=True).start()
+
+
+def _status_summary(fid: str) -> dict:
+    st = store.status(fid) or {}
+    meta = store.meta(fid) or {}
+    done = sum(1 for s in st.get("stages", []) if s["state"] == "done")
+    return {"id": fid, "name": meta.get("name") or meta.get("uploadName") or fid, "shortName": meta.get("name") or Path(meta.get("uploadName", fid)).stem,
+            "ticker": meta.get("ticker"), "sector": meta.get("sector"), "status": st.get("state", "queued"), "stage": st.get("stage"), "stages": st.get("stages", []),
+            "progress": round(done / max(len(st.get("stages", [])), 1), 2), "error": st.get("error"), "warnings": st.get("warnings", []),
+            "createdAt": meta.get("createdAt"), "startedAt": st.get("startedAt"), "finishedAt": st.get("finishedAt"), "mode": st.get("mode"),
+            "log": st.get("log", [])[-12:]}
+
+
+@app.get("/api/health")
+def health():
+    return {"ok": True, "llm": config.llm_configured(), "model": config.MODEL if config.llm_configured() else None,
+            "mode": "full" if config.llm_configured() else "extraction-only", "filings": len(store.list_ids())}
+
+
+@app.get("/api/filings")
+def list_filings():
+    out = []
+    for fid in store.list_ids():
+        b = store.bundle(fid)
+        st = store.status(fid) or {}
+        if b and st.get("state", "ready") == "ready":
+            e = registry_entry(b)
+            e["warnings"] = b.get("warnings", [])
+            out.append(e)
+        else:
+            out.append(_status_summary(fid))
+    out.sort(key=lambda x: x.get("createdAt") or 0)
+    return out
+
+
+@app.post("/api/filings")
+async def upload(file: UploadFile = File(...), name: str | None = Form(None), ticker: str | None = Form(None), sector: str | None = Form(None)):
+    data = await file.read()
+    if not data.startswith(b"%PDF"):
+        raise HTTPException(400, "The upload is not a PDF.")
+    if len(data) > config.MAX_UPLOAD_MB * 1024 * 1024:
+        raise HTTPException(413, f"PDF larger than {config.MAX_UPLOAD_MB} MB.")
+    fid = store.create(file.filename or "filing.pdf", data, {"name": (name or "").strip() or None, "ticker": (ticker or "").strip() or None, "sector": (sector or "").strip() or None})
+    _launch(fid)
+    return {"id": fid, "status": "queued", "mode": "full" if config.llm_configured() else "extraction-only"}
+
+
+@app.get("/api/filings/{fid}")
+def get_filing(fid: str):
+    b = store.bundle(fid)
+    st = store.status(fid)
+    if b and (not st or st.get("state") == "ready"):
+        return JSONResponse(b | {"status": "ready"})
+    if st:
+        return _status_summary(fid)
+    raise HTTPException(404, "Unknown filing")
+
+
+@app.get("/api/filings/{fid}/status")
+def get_status(fid: str):
+    if not store.status(fid):
+        raise HTTPException(404, "Unknown filing")
+    return _status_summary(fid)
+
+
+@app.post("/api/filings/{fid}/rerun")
+def rerun(fid: str):
+    if not (store.filing_dir(fid) / "source.pdf").exists():
+        raise HTTPException(400, "This filing has no stored PDF to re-run (seeded demo).")
+    store.init_status(fid)
+    _launch(fid)
+    return {"id": fid, "status": "queued"}
+
+
+@app.delete("/api/filings/{fid}")
+def delete(fid: str):
+    if not store.delete(fid):
+        raise HTTPException(404, "Unknown filing")
+    return {"deleted": fid}
+
+
+@app.get("/filings/{name}")
+def filing_pdf(name: str):
+    if not name.endswith(".pdf"):
+        raise HTTPException(404)
+    fid = name[:-4]
+    p = store.pdf_path(fid)
+    if not p:
+        seed = config.SEED_FILINGS_DIR / name
+        p = seed if seed.exists() else None
+    if not p:
+        raise HTTPException(404, "PDF not found")
+    return FileResponse(p, media_type="application/pdf", filename=name)
+
+
+app.mount("/", StaticFiles(directory=str(config.FRONTEND_DIR), html=True), name="frontend")

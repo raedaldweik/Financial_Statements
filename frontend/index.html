@@ -113,12 +113,13 @@ p.desc { font-size:13px; font-weight:300; line-height:1.85; color:rgba(255,255,2
 </div>
 <div class="foot"><span>Ministry of Investment · Demo on public Tadawul filings FY2024</span><span>Statements · Notes · Cross-reference map · Investor lens</span></div>
 
-<script src="data/registry.js"></script>
 <script src="assets/app.js"></script>
 <script>
-(function(){
+(async function(){
   document.getElementById('brand').innerHTML = FSX.LOGO_IMG ? `<img src="${FSX.LOGO_IMG}" alt="Ministry of Investment" style="height:48px">` : FSX.emblem('#E2BC68', '#07211A', 'emblem') + '<span class="brand-txt"><span class="brand-ar">وزارة الاستثمار</span><span class="brand-en">Ministry of Investment</span></span>';
-  const I=window.FILING_INDEX||[]; if(I.length){ document.getElementById('st-links').textContent=I.reduce((a,x)=>a+x.stats.links,0); document.querySelector('#stats .stat b').textContent=I.length; document.querySelectorAll('#stats .stat b')[1].textContent=I.reduce((a,x)=>a+x.stats.notes,0); }
+  try { const reg = await FSX.api.registry(); const I = (reg.items||[]).filter(x => x.status === 'ready');
+    if (I.length) { const b = document.querySelectorAll('#stats .stat b'); b[0].textContent = I.length; b[1].textContent = I.reduce((a,x)=>a+((x.stats||{}).notes||0),0); b[2].textContent = I.reduce((a,x)=>a+((x.stats||{}).links||0),0); }
+  } catch (e) {}
 })();
 const C   = document.getElementById('bg');
 const ctx = C.getContext('2d');

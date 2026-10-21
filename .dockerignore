@@ -1,6 +1,9 @@
 .git
+storage
 pipeline
+deploy
 README.md
 landing.html
 executive.html
 entity.html
+**/__pycache__

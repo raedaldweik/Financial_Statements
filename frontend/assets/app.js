@@ -404,3 +404,47 @@
   FSX.flagRank = { alert: 0, watch: 1, info: 2 };
   FSX.flaggedNotes = filing => (filing.notes || []).filter(n => n.flag).sort((a, b) => (FSX.flagRank[a.flag.level] - FSX.flagRank[b.flag.level]) || (+a.n - +b.n));
 })();
+
+/* ───────────── data access: API first, static bundles as fallback ─────────────
+   Served by the FastAPI backend the pages call /api/...; opened from the file system or a
+   static host the same calls fail and the pre-built bundles in data/ are loaded instead. */
+(function () {
+  const FSX = window.FSX;
+  FSX.loadScript = src => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+  FSX.api = {
+    live: null,
+    async get(url) { if (location.protocol === 'file:') throw new Error('static'); const r = await fetch(url, { cache: 'no-store' }); if (!r.ok) throw new Error(`${r.status} ${url}`); return r.json(); },
+    async health() { try { const h = await this.get('api/health'); this.live = true; return h; } catch (e) { this.live = false; return { ok: false, mode: 'static', llm: false }; } },
+    async registry() {
+      try { const items = await this.get('api/filings'); this.live = true; return { items, live: true }; }
+      catch (e) { this.live = false; try { await FSX.loadScript('data/registry.js'); } catch (_) { } return { items: (window.FILING_INDEX || []).map(x => ({ ...x, status: 'ready', mode: 'curated' })), live: false }; }
+    },
+    async filing(id) {
+      try { const b = await this.get('api/filings/' + encodeURIComponent(id)); this.live = true; return b; }
+      catch (e) { this.live = false; try { await FSX.loadScript('data/' + encodeURIComponent(id) + '.js'); } catch (_) { } const f = window.FILINGS && window.FILINGS[id]; if (!f) throw new Error('Unknown filing ' + id); return { ...f, status: 'ready', mode: f.mode || 'curated' }; }
+    },
+    status(id) { return this.get('api/filings/' + encodeURIComponent(id) + '/status'); },
+    upload(file, meta, onProgress) {
+      return new Promise((resolve, reject) => {
+        const fd = new FormData(); fd.append('file', file);
+        Object.entries(meta || {}).forEach(([k, v]) => { if (v) fd.append(k, v); });
+        const x = new XMLHttpRequest(); x.open('POST', 'api/filings');
+        x.upload.onprogress = e => { if (onProgress && e.lengthComputable) onProgress(e.loaded / e.total); };
+        x.onload = () => { try { const j = JSON.parse(x.responseText); x.status < 300 ? resolve(j) : reject(new Error(j.detail || x.statusText)); } catch (e) { reject(new Error(x.statusText || 'upload failed')); } };
+        x.onerror = () => reject(new Error('network error'));
+        x.send(fd);
+      });
+    },
+    async del(id) { const r = await fetch('api/filings/' + encodeURIComponent(id), { method: 'DELETE' }); if (!r.ok) throw new Error(r.status); return r.json(); },
+    async rerun(id) { const r = await fetch('api/filings/' + encodeURIComponent(id) + '/rerun', { method: 'POST' }); if (!r.ok) throw new Error(r.status); return r.json(); },
+  };
+  /* pipeline progress widget shared by the portfolio and the company page */
+  FSX.pipelineHtml = function (s) {
+    const f = FSX.fmt;
+    const stages = s.stages || [];
+    const icon = st => st === 'done' ? '✓' : st === 'running' ? '…' : st === 'failed' ? '✕' : '·';
+    return `<div class="pipe">${stages.map(x => `<div class="pipe-step ${x.state}"><div class="pipe-n">${f.esc(icon(x.state))} ${f.esc(x.id.toUpperCase())}</div><div class="pipe-t">${f.esc(x.label)}</div><div class="pipe-d">${f.esc(x.info || x.detail)}</div></div>`).join('')}</div>
+      ${s.error ? `<div class="nd-flag alert" style="margin-top:10px"><span class="lv">failed</span><span>${f.esc(s.error)}</span></div>` : ''}
+      ${(s.log || []).length ? `<div class="audit-log" style="margin-top:10px">${s.log.slice(-6).map(l => `<div class="log-entry"><span class="log-time">${new Date(l.t * 1000).toTimeString().slice(0, 8)}</span><span><span class="log-action">${f.esc(l.stage || '')}:</span> ${f.esc(l.msg)}</span></div>`).join('')}</div>` : ''}`;
+  };
+})();

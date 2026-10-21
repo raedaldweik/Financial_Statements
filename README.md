@@ -1,121 +1,135 @@
-# Investor Financial Intelligence — Statement & Note Explorer (MISA demo)
+# Investor Financial Intelligence — Statement & Note Explorer (MISA)
 
-> **This branch** (`claude/dreamy-wozniak-xb5mjr`) holds a standalone demo built for the
+> **This branch** (`claude/dreamy-wozniak-xb5mjr`) holds a standalone app built for the
 > Ministry of Investment of Saudi Arabia (MISA) opportunity. The FTA dashboards on `main`
-> (`landing.html`, `executive.html`, `entity.html`) are untouched; the new app reuses their
-> design system (dark gold-waves landing, glass/gold dashboard pages).
+> (`landing.html`, `executive.html`, `entity.html`) are untouched; the app reuses their
+> glass design system, re-themed to Saudi green and gold with the Ministry lockup.
 
-The demo ingests a listed company's audited annual financial statements (PDF), rebuilds the
-primary statements with their **note references as live links**, indexes every note to the
-consolidated financial statements, and presents an investment-authority view of the filing:
-summary KPIs, an analyst brief, the auditor's opinion and key audit matters, flagged
-disclosures, and a reviewer "lens" organised the way a MISA analyst would read a company.
-
-Two real FY2024 filings from the Saudi Exchange are loaded:
-
-| Filing | Ticker | Notes | What it shows off |
-|---|---|---|---|
-| Saudi Aramco — consolidated financial statements 2024 | 2222 | 40 | Scale, Government relationship, guarantees, 100+ subsidiaries |
-| Saudi Ceramic Company — consolidated financial statements 2024 | 2040 | 35 | Losses, impairments, covenant breach, fire, restated comparatives, predecessor auditor's qualified opinion |
+Upload any company's audited annual financial statements (PDF). The server rebuilds the
+primary statements with **every note reference as a live link**, splits and indexes the
+notes, curates each note (summary, key figures, sub-sections, flags), computes KPIs and
+charts, and writes an analyst brief and a twelve-area **investor lens** — each finding
+citing the notes that support it. Two FY2024 Tadawul filings (Saudi Aramco, Saudi
+Ceramic) ship as reviewed demo seeds so the app is never empty.
 
 ## Pages
 
 | Page | What it does |
 |---|---|
-| `index.html` | Landing page (dark gold-waves design) |
-| `portfolio.html` | Filings portfolio: KPIs across filings, comparison table, flags, ingestion pipeline |
-| `company.html?c=aramco` | Statement explorer for one filing — five sub-views: |
-| &nbsp;&nbsp;`#overview` | KPIs, analyst brief, charts, auditor card, flagged notes |
-| &nbsp;&nbsp;`#statements/<id>` | The primary statements; every **Note** reference is a chip that opens the note in a side drawer |
-| &nbsp;&nbsp;`#notes/<n>` | Note index with search; full note view with key figures, sub-sections, back-links and the extracted source text |
-| &nbsp;&nbsp;`#map` | Cross-reference map: statement lines ⟷ notes, interactive |
-| &nbsp;&nbsp;`#lens` | Investor lens: 12 review areas with status, finding and the supporting notes |
+| `index.html` | Landing page |
+| `portfolio.html` | Upload filings, watch the pipeline run, compare filings, open items and lens heat map |
+| `company.html?c=<id>` | One filing: overview · statements with note chips · note explorer · cross-reference map · investor lens |
 
-### How the note linking works
+## Two modes
 
-1. `pipeline/extract_notes.py` runs `pdftotext -layout`, strips page furniture, and splits the
-   notes section by its numbered headings (requiring note numbers to increase by one, which
-   separates real headings from footnotes and "continued" headers). It records each note's
-   text, PDF page, printed page, sub-headings and the other notes it cites.
-2. `pipeline/curated/<id>.company.json` holds the primary statements exactly as printed —
-   each line with its note reference (`"24"`, `"5,6"`, `"35(a)"`, `"16.1"`, `"5-E,5-F"`), plus
-   metadata, auditor's report, KPIs, chart series, the investor lens and the brief.
-3. `pipeline/curated/<id>.notes.json` is the reviewed overlay per note: plain-English summary,
-   key figures, sub-sections, cross-references, tags, investor relevance and a flag.
-4. `pipeline/build_data.py` merges the three, parses every note reference (including
-   sub-note ids such as `(a)` or `16.1`), writes the back-links (`referencedBy`,
-   `mentionedIn`) onto each note and emits `data/<id>.js` and `data/registry.js`.
-5. In the browser, `assets/app.js` renders the chips, the drawer (summary → key figures →
-   sub-sections → "referenced from" → "refers to" → source text, with the cited sub-section
-   highlighted) and the cross-reference map. A note cited by another note is itself a link,
-   so Note 2 → Note 7 → Note 33 chains can be followed without leaving the page.
+| | Full ingestion (`ANTHROPIC_API_KEY` set) | Extraction-only (no key) |
+|---|---|---|
+| Statements | Transcribed by Claude from the statement pages (text + the PDF pages themselves), every line with its note reference | Parsed from the text layer by a deterministic heuristic |
+| Notes | Split by heading, then curated: summary, key figures, sub-sections, cross-references, tags, investor relevance, flag | Split by heading; raw text and auto-detected cross-references only |
+| Company & auditor | Entity facts, opinion type, key audit matters, other-matter / going-concern paragraphs (scanned auditor pages are read visually) | Name from the upload form / cover page |
+| Analysis | KPIs and ratios computed in code from model-mapped rows; analyst brief; 12-area investor lens; segment and geography charts | KPIs and ratios from label matching |
 
-## Branding
-
-The palette is Saudi green with gold accents (tokens at the top of `assets/theme.css`;
-change `--g600`, `--gold` and `--nav-grad` to retheme). The Ministry lockup in the nav
-(national emblem + "وزارة الاستثمار / Ministry of Investment") is drawn inline in
-`assets/app.js` so the demo has no external image dependency. To use the official
-artwork instead, drop the file in `assets/` and set, before `FSX.nav()` runs:
-
-```js
-FSX.LOGO_IMG = 'assets/misa-logo.svg';   // or .png — replaces the inline lockup everywhere
-```
+Both modes build the same cross-reference index (statement line ⟷ note, sub-note aware),
+so the explorer works either way. Opened without the server (file system or a static host),
+the pages fall back to the pre-built demo bundles in `frontend/data/`.
 
 ## Run locally
 
-Everything is static — no build step, no API key, no CDN dependency for charts.
-
 ```bash
-# any static server works; python is enough
-python3 -m http.server 8000
-# open http://localhost:8000/index.html
+cd backend
+pip install -r requirements.txt
+cp ../.env.example .env        # add ANTHROPIC_API_KEY for full ingestion (optional)
+uvicorn main:app --reload      # http://localhost:8000
 ```
 
-Opening `index.html` directly from the file system also works.
+Requires `pdftotext`, `pdfseparate` and `pdfunite` (poppler-utils) on the PATH and Python 3.11+.
 
 ## Deploy on Railway
 
-The repo root carries a `Dockerfile` (nginx serving the static files) and a `railway.json`.
-
 1. Railway → **New Project → Deploy from GitHub repo** → this repo.
 2. Service **Settings → Source → branch** = `claude/dreamy-wozniak-xb5mjr`
-   (the Dockerfile and the `/index.html` health check are picked up automatically).
-3. Settings → Networking → **Generate Domain**. No environment variables are needed;
-   nginx listens on the `PORT` Railway injects.
+   (the root `Dockerfile` and the `/api/health` health check are picked up automatically).
+3. **Variables**:
 
-Any other static host works too (GitHub Pages from this branch, Netlify, S3): there is
-no build step and no server-side code.
+   | Variable | Required | Notes |
+   |---|---|---|
+   | `ANTHROPIC_API_KEY` | for full ingestion | without it the server runs in extraction-only mode |
+   | `MODEL` | no | default `claude-opus-5-5` (statements, auditor facts, brief, lens) |
+   | `MODEL_NOTES` | no | default = `MODEL`; `claude-sonnet-5-5` makes note curation faster and cheaper |
+   | `LLM_EFFORT` | no | `low` · `medium` (default) · `high` · `xhigh` · `max` |
+   | `STORAGE_DIR` | no | default `/app/storage` |
 
-## Re-run the pipeline
+4. Settings → Networking → **Generate Domain**.
+5. Optional but recommended: Settings → **Volumes** → mount a volume at `/app/storage` so
+   uploaded filings survive redeploys (the demo seeds are re-created at every start).
 
-```bash
-python3 pipeline/extract_notes.py filings/aramco-2222-fy2024.pdf \
-    --id aramco --style aramco --page-offset 3 --first-page 17 --out pipeline/out/aramco.notes.raw.json
-python3 pipeline/extract_notes.py filings/saudi-ceramic-2040-fy2024.pdf \
-    --id ceramic --style ceramic --page-offset 8 --first-page 14 --out pipeline/out/ceramic.notes.raw.json
-python3 pipeline/build_data.py
+## API
+
+| Method | Path | |
+|---|---|---|
+| `GET` | `/api/health` | mode (`full` / `extraction-only`), model, filing count |
+| `GET` | `/api/filings` | registry: ready filings (summary) and filings in progress (stages, log) |
+| `POST` | `/api/filings` | multipart: `file` (PDF), optional `name`, `ticker`, `sector` → `{id}`; the pipeline runs in the background |
+| `GET` | `/api/filings/{id}` | the full bundle once ready, otherwise the processing status |
+| `GET` | `/api/filings/{id}/status` | pipeline stages and log (polled by the UI) |
+| `POST` | `/api/filings/{id}/rerun` | re-run the pipeline on the stored PDF |
+| `DELETE` | `/api/filings/{id}` | remove a filing |
+| `GET` | `/filings/{id}.pdf` | the source PDF (the UI deep-links to pages) |
+
+## How ingestion works (`backend/pipeline/`)
+
+1. **extract** — `pdftotext -layout` per page; page furniture (repeated headers/footers,
+   page numbers, side-bar strips) removed statistically.
+2. **segment** — the auditor's report, each primary statement and the notes section are
+   located by title; notes are split on numbered headings in any of the common styles
+   (`24. Revenue`, `16 - Borrowings`, `10.Trade`, `Note 7`), requiring numbers to increase by
+   one so footnotes and "continued" headers are not mistaken for notes.
+3. **statements** — the statement pages are sent to the model as a PDF document plus their
+   text layer and transcribed line by line into the row schema (label, note reference,
+   values per column, indent, total flags). Heuristic parse as fallback.
+4. **company** — entity facts and the auditor's report (opinion, KAMs with their note
+   references, other-matter, going-concern), from the cover, contents, auditor and first
+   statement pages.
+5. **notes** — curated in batches (6 notes per call, 3 calls in parallel) under a strict
+   JSON schema; every figure must come from the note text.
+6. **analysis** — the model maps statement rows to concepts (revenue, net result, totals,
+   cash flows, borrowings…); KPIs, ratios and the balance/cash-flow charts are then computed
+   in code; the model writes the brief, the twelve-area lens and segment series.
+7. **build** — the cross-reference index: every `Note x` on a statement line (sub-notes such
+   as `35(a)` or `16.1` included) becomes a back-link on that note; key audit matters and
+   lens findings are recorded as mentions.
+
+Model calls use structured outputs (JSON schema), adaptive thinking with `LLM_EFFORT`, prompt
+caching on the system prompt, and the server-side refusal fallback. A typical 60-page filing
+takes 2–5 minutes in full mode and well under a minute in extraction-only mode.
+
+## Branding
+
+Saudi green with gold accents (tokens at the top of `frontend/assets/theme.css`). The
+Ministry lockup (national emblem + "وزارة الاستثمار / Ministry of Investment") is drawn
+inline in `frontend/assets/app.js`. To use the official artwork set, before `FSX.nav()` runs:
+
+```js
+FSX.LOGO_IMG = 'assets/misa-logo.svg';
 ```
 
-Requires `pdftotext` (poppler-utils) and Python 3.10+.
+## Demo seeds
 
-### Adding another filing
-
-1. Drop the PDF in `filings/`, run `extract_notes.py` (add a heading `style` if the filing
-   numbers its notes differently).
-2. Transcribe the primary statements into `pipeline/curated/<id>.company.json` with note
-   references, and write (or generate) the note overlay `pipeline/curated/<id>.notes.json`.
-3. `python3 pipeline/build_data.py` — the new filing appears in the portfolio automatically.
+`pipeline/curated/` holds the hand-reviewed statements and note overlays for the two demo
+filings; `python3 pipeline/build_data.py` rebuilds `backend/seed/*.bundle.json` (loaded at
+server start) and `frontend/data/*.js` (static fallback).
 
 ## Repository layout
 
 ```
-index.html  portfolio.html  company.html     the app
-assets/theme.css  assets/app.js              design system + runtime (no dependencies)
-data/aramco.js  data/ceramic.js  data/registry.js   generated bundles (do not edit by hand)
-filings/*.pdf                                the source filings (deep-linked by page from the UI)
-pipeline/extract_notes.py  build_data.py     the ingestion pipeline
-pipeline/curated/                            reviewed inputs (statements, notes overlay, schema)
-pipeline/out/                                raw extraction output
-landing.html  executive.html  entity.html    the FTA dashboards from main (unchanged)
+frontend/   index.html · portfolio.html · company.html · assets/ (theme, runtime) · data/ (static seeds)
+backend/    main.py (FastAPI) · store.py · llm.py · config.py · pipeline/ (extract, statements, curate, analysis, build, run) · seed/
+filings/    the two demo PDFs
+pipeline/   curated inputs and the seed builder
+Dockerfile · railway.json · .env.example
+landing.html · executive.html · entity.html   the FTA dashboards from main (unchanged)
 ```
+
+Known limits: fully scanned filings get statements and auditor facts (read visually) but
+no note index unless the notes have a text layer; filings that number notes in an unusual
+way may need a new heading pattern in `extract.py`.
