@@ -1,0 +1,855 @@
+{
+  "id": "aramco",
+  "notes": [
+    {
+      "n": "1",
+      "title": "General Information",
+      "category": "disclosure",
+      "summary": "Describes the Saudi Arabian Oil Company, headquartered in Dhahran, formed on November 13, 1988 by Royal Decree No. M/8 with a history dating to the 1933 concession. Under the Hydrocarbons Law (Royal Decree No. M/37, December 20, 2017) all hydrocarbons are the property of the Kingdom and the Government has sole authority to set maximum production and the maximum sustainable capacity; the amended Concession Agreement effective December 24, 2017 has a 40-year initial term, extendable by 20 years and potentially a further 40 years. Share capital is SAR 90,000 million divided into 242 billion shares after bonus issues in 2022 and 2023. Following the December 2019 IPO (3.45 billion shares, 1.73%), transfers of 4%, 4% and 8% of shares to PIF and its wholly-owned companies (2022-2024) and the June 11, 2024 secondary offering of approximately 1.7 billion shares (0.7%), the Government retains an 81.48% direct shareholding; the Company acquired 137.6 million shares from the Government for SAR 3,750 million as treasury shares. The financial statements were approved by the Board on March 3, 2025.",
+      "keyFigures": [],
+      "subnotes": [],
+      "refs": ["16", "17", "36"],
+      "tags": ["ownership", "government", "concession", "share-capital", "pif"],
+      "investorRelevance": "Establishes the Government's 81.48% direct shareholding, the 16% transferred to PIF-related entities since 2022, and the Concession Agreement under which the Kingdom owns all hydrocarbons and sets production limits - the foundation for assessing control and the sovereign relationship.",
+      "flag": {
+        "level": "info",
+        "text": "The Government remains the controlling shareholder with an 81.48% direct stake after the June 11, 2024 secondary offering, and under the Hydrocarbons Law it has sole authority to set the Company's maximum production and maximum sustainable capacity."
+      }
+    },
+    {
+      "n": "2",
+      "title": "Material Accounting Policy Information and Significant Judgments and Estimates",
+      "category": "policy",
+      "summary": "Sets out the accounting policies applied in preparing the consolidated financial statements under IFRS as endorsed in the Kingdom and SOCPA pronouncements, prepared under the historical cost convention except for items measured at fair value. The most significant judgments relate to interests in subsidiaries, joint arrangements and associates, acquisition fair values, asset recoverability, lease terms, taxation, provisions, post-retirement obligations and functional currency. The USD is the Company's functional currency with SAR presentation at USD 1.00 = SAR 3.75; production royalties follow a progressive scheme of 15% up to $70 per barrel, 45% above $70 and 80% above $100. IFRS 18 becomes effective January 1, 2027 and has not been early adopted; no 2024 amendments had a material impact.",
+      "keyFigures": [],
+      "subnotes": [
+        {"id": "(a)", "title": "Basis of preparation", "summary": "IFRS as endorsed in the Kingdom and SOCPA standards, historical cost except investments in securities, derivatives, certain trade receivables/payables and plan assets at fair value."},
+        {"id": "(b)", "title": "Significant accounting judgments and estimates", "summary": "Lists the key judgment areas and notes that climate-change and energy-transition assumptions (net-zero Scope 1 and 2 ambition by 2050) are embedded in price, margin and growth estimates."},
+        {"id": "(c)", "title": "New or amended standards", "summary": "No material 2024 amendments; IFRS 18 (effective January 1, 2027) is being assessed and has not been early adopted."},
+        {"id": "(d)", "title": "Principles of consolidation, acquisition and equity accounting", "summary": "Subsidiaries consolidated on control, joint operations recognized line by line, joint ventures and associates equity accounted; acquisition method with goodwill allocated to cash-generating units."},
+        {"id": "(e)", "title": "Intangible assets", "summary": "Goodwill not amortized but tested annually; brands 10 to 22 years, franchise/customer relationships 5 to 25 years, software 3 to 15 years."},
+        {"id": "(f)", "title": "Exploration and evaluation", "summary": "Successful efforts method: exploratory well costs capitalized pending evaluation, written off when no commercial quantities are found."},
+        {"id": "(g)", "title": "Property, plant and equipment", "summary": "Cost less depreciation; straight-line or unit-of-production for oil and gas properties; useful lives from 2 to 54 years by asset class."},
+        {"id": "(h)", "title": "Impairment of non-financial assets", "summary": "Recoverable amount is the higher of fair value less costs of disposal and value in use; key assumptions are prices, volumes, costs, margins and discount rates."},
+        {"id": "(i)", "title": "Leases", "summary": "Right-of-use assets within PP&E and lease liabilities within borrowings, discounted at the incremental borrowing rate; short-term and low-value leases expensed."},
+        {"id": "(j)", "title": "Investments and other financial assets", "summary": "Classification at FVPL, FVOCI or amortized cost; provisionally priced trade receivables measured at fair value; expected credit loss impairment."},
+        {"id": "(k)", "title": "Derivative instruments and hedging activities", "summary": "Commodity derivatives held for trading through net income; interest rate swaps and currency forwards designated as fair value or cash flow hedges."},
+        {"id": "(l)", "title": "Income tax and zakat", "summary": "Current tax under the 2004 Tax Law, deferred tax by the liability method, zakat per ZATCA; Pillar Two temporary exception applied; the 20% Downstream rate continues to be applied."},
+        {"id": "(m)", "title": "Inventories", "summary": "Lower of cost and net realizable value; FIFO for hydrocarbons and chemicals, weighted average for materials and supplies."},
+        {"id": "(n)", "title": "Due from the Government", "summary": "Price equalization compensation and the Government guarantee of past-due receivables from Government-related entities, settled by offset against taxes."},
+        {"id": "(o)", "title": "Cash and cash equivalents", "summary": "Cash and highly liquid investments with original maturities of three months or less."},
+        {"id": "(p)", "title": "Assets classified as held for sale", "summary": "Measured at the lower of carrying amount and fair value less costs to sell, not depreciated."},
+        {"id": "(q)", "title": "Treasury shares", "summary": "Deducted from equity at the consideration paid including transaction costs."},
+        {"id": "(r)", "title": "Financial liabilities", "summary": "Derivatives and provisionally priced trade payables at FVPL; borrowings and other payables at amortized cost."},
+        {"id": "(s)", "title": "Borrowing costs", "summary": "Expensed except costs directly attributable to qualifying assets, which are capitalized."},
+        {"id": "(t)", "title": "Post-employment benefit plans", "summary": "Defined benefit plans valued annually by independent actuaries using the projected unit credit method, remeasurements through OCI; defined contribution costs expensed."},
+        {"id": "(u)", "title": "Share-based compensation", "summary": "Equity-settled awards measured at grant-date fair value; cash-settled awards remeasured each balance sheet date; recognized over the vesting period."},
+        {"id": "(v)", "title": "Provisions and contingencies", "summary": "Decommissioning provisions recognized for Upstream wells when drilled; Downstream decommissioning generally not recognized due to indeterminate settlement dates."},
+        {"id": "(w)", "title": "Functional and presentation currency", "summary": "USD functional currency, SAR presentation; the SAR has been fixed to the USD since 1986 and convenience translations use USD 1.00 = SAR 3.75."},
+        {"id": "(x)", "title": "Revenue recognition and sales prices", "summary": "Revenue recognized when control transfers; provisionally priced contracts recorded at estimated final price with later adjustments through revenue."},
+        {"id": "(y)", "title": "Other income related to sales", "summary": "Taxable Government compensation for revenue forgone under domestic regulated pricing, recorded as due from the Government."},
+        {"id": "(z)", "title": "Production royalties", "summary": "Progressive royalty on crude production: 15% up to $70 per barrel, 45% above $70 and 80% above $100, expensed and tax deductible."},
+        {"id": "(aa)", "title": "Research and development", "summary": "Development costs with probable future benefits capitalized; other R&D expensed."},
+        {"id": "(bb)", "title": "Dividends", "summary": "Provided when declared and no longer at the Company's discretion."},
+        {"id": "(cc)", "title": "Earnings per share", "summary": "Basic EPS on net income attributable to ordinary shareholders over weighted average shares excluding treasury shares; diluted EPS adjusts for dilutive potential shares."}
+      ],
+      "refs": ["5", "7", "8", "19", "20", "21", "22", "34", "35", "38", "39", "40"],
+      "tags": ["accounting-policies", "judgments", "ifrs", "royalties", "functional-currency"],
+      "investorRelevance": "Defines the fiscal and structural ground rules: the progressive royalty scheme (15%/45%/80% at $70 and $100 per barrel), USD functional currency with the SAR peg, Government price-equalization compensation, and the control and joint-control judgments that determine which entities are consolidated.",
+      "flag": null
+    },
+    {
+      "n": "3",
+      "title": "Financial Risk Management",
+      "category": "risk",
+      "summary": "Covers market (foreign currency, price, interest rate), credit and liquidity risk managed by a central treasury, with derivatives used only for risk management. A 5% move in listed equity prices would change OCI by SAR 622 million (2023: SAR 669 million) and a one percentage point change in interest rates would change pre-tax income by SAR 605 million (2023: SAR 1,281 million). Net debt was SAR 78,078 million at December 31, 2024 against net cash of SAR 102,753 million in 2023, taking gearing to 4.5% from (6.3)% on total borrowings of SAR 319,290 million and total equity of SAR 1,651,355 million. Casualty risk retention is SAR 3,301 million per loss event with insurance of SAR 4,388 million above retention. Financial assets at fair value totalled SAR 175,423 million (2023: SAR 142,270 million), of which SAR 146,864 million is Level 3, mainly provisionally priced trade receivables of SAR 128,101 million; Level 3 investments in securities rose to SAR 15,093 million from SAR 10,051 million.",
+      "keyFigures": [
+        {"label": "Total borrowings (current and non-current)", "v": ["319,290", "290,147"]},
+        {"label": "Net debt (cash)", "v": ["78,078", "(102,753)"]},
+        {"label": "Total equity", "v": ["1,651,355", "1,737,092"]},
+        {"label": "Gearing", "v": ["4.5%", "(6.3)%"]},
+        {"label": "Total financial assets at fair value", "v": ["175,423", "142,270"]},
+        {"label": "Level 3 financial assets at fair value", "v": ["146,864", "113,260"]}
+      ],
+      "subnotes": [
+        {"id": "(a)", "title": "Financial risk factors", "summary": "Market risk (foreign currency, price and interest rate with sensitivities), credit risk (BBB or above counterparties, simplified ECL for receivables) and liquidity risk."},
+        {"id": "(b)", "title": "Capital structure management", "summary": "Gearing ratio of 4.5% (2023: (6.3)%) based on net debt of SAR 78,078 million versus net cash of SAR 102,753 million in 2023."},
+        {"id": "(c)", "title": "Casualty loss risk retention", "summary": "Maximum risk retention of SAR 3,301 million per loss event with maximum insurance limit above retention of SAR 4,388 million."},
+        {"id": "(d)", "title": "Fair value estimation", "summary": "Fair value hierarchy tables: assets SAR 175,423 million (Level 3 SAR 146,864 million) and liabilities SAR 40,968 million (Level 3 SAR 39,288 million), with Level 3 securities movements."}
+      ],
+      "refs": ["2", "9", "10", "12", "20", "23", "30"],
+      "tags": ["risk", "gearing", "net-debt", "fair-value", "level-3", "liquidity", "hedging"],
+      "investorRelevance": "Shows the balance sheet swung from net cash of SAR 102,753 million to net debt of SAR 78,078 million in 2024 (gearing 4.5% versus (6.3)%), the key indicator of remaining debt capacity, alongside the fair-value hierarchy and Level 3 exposures.",
+      "flag": {
+        "level": "watch",
+        "text": "Net debt turned positive: SAR 78,078 million at December 31, 2024 versus net cash of SAR 102,753 million a year earlier, moving gearing from (6.3)% to 4.5% as short-term investments fell from SAR 184,343 million to SAR 13,186 million."
+      }
+    },
+    {
+      "n": "4",
+      "title": "Operating Segments",
+      "category": "income",
+      "summary": "Saudi Aramco reports two segments, Upstream and Downstream, with supporting functions in Corporate; the President & CEO is the Chief Operating Decision Maker and the pricing basis of inter-segment transactions changed effective October 1, 2024. External revenue was SAR 1,637,299 million (2023: SAR 1,653,281 million), split Upstream SAR 719,157 million and Downstream SAR 917,044 million. Earnings before interest, income taxes and zakat were SAR 772,296 million (2023: SAR 865,037 million): Upstream SAR 801,047 million, Downstream a loss of SAR (10,998) million (2023: profit SAR 21,184 million) and Corporate SAR (21,830) million. Cash capital expenditures rose to SAR 188,890 million (2023: SAR 158,308 million), SAR 147,135 million of it Upstream. In-Kingdom external revenue was SAR 954,139 million and out-of-Kingdom SAR 683,160 million, including SAR 190,011 million originating from the USA; non-current operating assets were SAR 1,500,218 million In-Kingdom and SAR 223,942 million outside.",
+      "keyFigures": [
+        {"label": "External revenue (consolidated)", "v": ["1,637,299", "1,653,281"]},
+        {"label": "Upstream earnings before interest, income taxes and zakat", "v": ["801,047", "863,549"]},
+        {"label": "Downstream earnings (losses) before interest, income taxes and zakat", "v": ["(10,998)", "21,184"]},
+        {"label": "Consolidated earnings before interest, income taxes and zakat", "v": ["772,296", "865,037"]},
+        {"label": "Capital expenditures - cash basis", "v": ["188,890", "158,308"]},
+        {"label": "Out-of-Kingdom external revenue", "v": ["683,160", "641,349"]}
+      ],
+      "subnotes": [],
+      "refs": ["2"],
+      "tags": ["segments", "upstream", "downstream", "geography", "capex"],
+      "investorRelevance": "Breaks results by Upstream, Downstream and geography (In-Kingdom versus out-of-Kingdom, including SAR 190,011 million of USA-originated revenue) and shows the SAR 188,890 million cash capex programme - the primary view of where the group earns and invests.",
+      "flag": {
+        "level": "watch",
+        "text": "Downstream swung to a loss before interest, income taxes and zakat of SAR (10,998) million in 2024 from a profit of SAR 21,184 million in 2023, while Upstream earned SAR 801,047 million."
+      }
+    },
+    {
+      "n": "5",
+      "title": "Property, Plant and Equipment",
+      "category": "balance-sheet",
+      "summary": "Net property, plant and equipment rose to SAR 1,494,318 million (2023: SAR 1,384,717 million) with additions of SAR 222,889 million, including SAR 8,692 million of capitalized borrowing costs at a 5.36% rate, and a depreciation charge of SAR 100,360 million. Construction-in-progress stood at SAR 346,603 million. An impairment charge of SAR 10,370 million (2023: SAR 3,110 million), mainly on plant, machinery and equipment of certain domestic and international downstream facilities, was recognized following revised cash flow projections, with the recoverable amount of SAR 68,417 million determined on value-in-use at pre-tax discount rates of 8.3% to 11.6%; a further write-down of SAR 1,070 million was recorded. Right-of-use assets had a net carrying amount of SAR 68,835 million with additions of SAR 20,989 million during the year.",
+      "keyFigures": [
+        {"label": "Property, plant and equipment - net", "v": ["1,494,318", "1,384,717"]},
+        {"label": "Additions (cost)", "v": ["222,889", "188,224"]},
+        {"label": "Construction-in-progress (cost)", "v": ["346,603", "305,724"]},
+        {"label": "Depreciation charge for the year", "v": ["(100,360)", "(94,680)"]},
+        {"label": "Impairment charge", "v": ["10,370", "3,110"]},
+        {"label": "Right-of-use assets - net carrying amount", "v": ["68,835", "63,079"]}
+      ],
+      "subnotes": [],
+      "refs": ["20", "35"],
+      "tags": ["ppe", "impairment", "capex", "leases", "depreciation"],
+      "investorRelevance": "Tracks the SAR 1,494,318 million asset base and SAR 346,603 million of construction-in-progress that underpin the capex pipeline, and discloses a SAR 10,370 million downstream impairment driven by revised market and operational assumptions.",
+      "flag": {
+        "level": "alert",
+        "text": "Impairment charge of SAR 10,370 million (2023: SAR 3,110 million), mainly on plant, machinery and equipment of certain domestic and international downstream facilities after revised cash flow projections, plus a further write-down of SAR 1,070 million including SAR 769 million on facilities under construction."
+      }
+    },
+    {
+      "n": "6",
+      "title": "Intangible Assets",
+      "category": "balance-sheet",
+      "summary": "Net intangible assets were SAR 164,581 million (2023: SAR 164,554 million), comprising goodwill of SAR 101,225 million, exploration and evaluation assets of SAR 20,904 million, brands and trademarks of SAR 21,926 million, franchise/customer relationships of SAR 16,145 million and other items. Cash spent on exploration and evaluation was SAR 6,227 million (operating) and SAR 8,649 million (investing). The annual impairment test of the SAR 99,116 million goodwill from the SABIC acquisition, allocated to Downstream, found no impairment using 10-year value-in-use projections, a 2.25% terminal growth rate and a pre-tax discount rate of 11.0% (2023: 9.9%); the SAR 18,140 million SABIC brand was tested at 10.1% (2023: 9.1%) with no impairment. Pre-tax discount rates of 11.8% and 13.4% respectively would bring recoverable amounts down to carrying amounts.",
+      "keyFigures": [
+        {"label": "Intangible assets - net", "v": ["164,581", "164,554"]},
+        {"label": "Goodwill", "v": ["101,225", "101,010"]},
+        {"label": "Exploration and evaluation", "v": ["20,904", "20,013"]},
+        {"label": "Brands and trademarks - net", "v": ["21,926", "22,187"]},
+        {"label": "Amortization charge for the year", "v": ["(2,080)", "(1,983)"]},
+        {"label": "Exploration and evaluation investing expenditures", "v": ["8,649", "6,918"]}
+      ],
+      "subnotes": [],
+      "refs": ["35"],
+      "tags": ["intangibles", "goodwill", "sabic", "impairment-test", "exploration"],
+      "investorRelevance": "SABIC goodwill of SAR 99,116 million passed its impairment test, but the pre-tax discount rate rose to 11.0% from 9.9% and headroom disappears at 11.8% - a sensitivity that matters for the Downstream segment's valuation.",
+      "flag": {
+        "level": "watch",
+        "text": "No impairment of the SAR 99,116 million SABIC goodwill or SAR 18,140 million SABIC brand, but the goodwill test's pre-tax discount rate increased to 11.0% (2023: 9.9%) and a rate of 11.8% would eliminate the headroom (13.4% for the brand)."
+      }
+    },
+    {
+      "n": "7",
+      "title": "Investments in Joint Ventures and Associates",
+      "category": "group",
+      "summary": "Equity-accounted investments totalled SAR 65,261 million (2023: SAR 69,474 million): joint ventures SAR 31,629 million and associates SAR 33,632 million. The largest carrying amounts are Yanpet SAR 9,320 million, Clariant SAR 5,690 million (31.5%), Kemya SAR 5,575 million, SSTPC SAR 4,658 million, Sharq SAR 4,364 million, MPC SAR 3,550 million, HAPCO SAR 3,410 million and Hyundai Oilbank SAR 3,385 million; Sadara (65%) is carried at nil (2023: SAR 1,139 million) with net assets of SAR (1,715) million. The share of results was a loss of SAR (3,402) million from joint ventures and SAR (1,564) million from associates, with 2024 net losses at Petro Rabigh of SAR (4,545) million, Sadara SAR (4,028) million and FREP SAR (2,046) million; additional investment in associates was SAR 4,937 million and ALBA (SAR 3,294 million) was transferred to held for sale. Fair values of listed associates were Petro Rabigh SAR 5,176 million, Marafiq SAR 4,795 million, Clariant SAR 4,378 million (below its SAR 5,690 million carrying value) and Bahri SAR 3,861 million.",
+      "keyFigures": [
+        {"label": "Investments in joint ventures", "v": ["31,629", "34,240"]},
+        {"label": "Investments in associates", "v": ["33,632", "35,234"]},
+        {"label": "Total investments in joint ventures and associates", "v": ["65,261", "69,474"]},
+        {"label": "Share of results - joint ventures", "v": ["(3,402)", "(2,831)"]},
+        {"label": "Share of results - associates", "v": ["(1,564)", "(1,170)"]},
+        {"label": "Distributions - joint ventures", "v": ["(2,002)", "(1,924)"]}
+      ],
+      "subnotes": [],
+      "refs": ["33", "34", "35"],
+      "tags": ["joint-ventures", "associates", "equity-method", "sadara", "petro-rabigh", "clariant"],
+      "investorRelevance": "Maps the equity-accounted portfolio (Yanpet, Kemya, Sharq, SSTPC, Clariant, Petro Rabigh, Hyundai Oilbank, HAPCO) and exposes loss-making partners such as Sadara (net loss SAR 4,028 million, carried at nil) and Petro Rabigh (net loss SAR 4,545 million) that also carry guarantees in Note 33.",
+      "flag": {
+        "level": "watch",
+        "text": "Persistent losses at equity-accounted entities: Sadara (65%) is carried at nil with negative net assets of SAR (1,715) million and a 2024 net loss of SAR (4,028) million, Petro Rabigh lost SAR (4,545) million, and Clariant's fair value of SAR 4,378 million is below its SAR 5,690 million carrying amount."
+      }
+    },
+    {
+      "n": "8",
+      "title": "Income Taxes and Zakat",
+      "category": "tax",
+      "summary": "The Company pays 50% income tax on most activities and 20% on Downstream and non-associated gas activities; the 20% Downstream rate, effective January 1, 2020, was conditional on separating Downstream into wholly-owned subsidiaries by December 31, 2024, failing which Downstream would be retroactively taxed at 50%, and an extension to December 31, 2030 is in progress and expected to be granted. Total income tax and zakat expense was SAR 383,588 million (2023: SAR 433,303 million) on income before tax of SAR 782,010 million, including current Kingdom tax of SAR 371,648 million and foreign taxes paid of SAR 3,193 million. The obligation to the Government fell to SAR 71,951 million (2023: SAR 82,539 million) after payments of SAR 176,523 million by the Company and SAR 188,642 million settled against amounts due from the Government. Net deferred tax liabilities were SAR 132,710 million; unrecognized deferred tax assets of SAR 17,113 million relate to SAR 68,705 million of unused losses. Saudi tax filings through 2019 were accepted, no significant claims are known, and no material Pillar Two exposure was identified.",
+      "keyFigures": [
+        {"label": "Income before income taxes and zakat", "v": ["782,010", "888,067"]},
+        {"label": "Total income tax and zakat expense", "v": ["383,588", "433,303"]},
+        {"label": "Current income tax - Kingdom", "v": ["371,648", "409,931"]},
+        {"label": "Income tax and zakat obligation to the Government, December 31", "v": ["71,951", "82,539"]},
+        {"label": "Net deferred income tax liabilities", "v": ["(132,710)", "(121,889)"]},
+        {"label": "Foreign taxes paid", "v": ["3,193", "7,519"]}
+      ],
+      "subnotes": [
+        {"id": "(a)", "title": "Kingdom income tax rates", "summary": "50% statutory rate, 20% for Downstream and gas activities subject to the Downstream separation condition; reconciliation of statutory charge to the SAR 383,588 million expense."},
+        {"id": "(b)", "title": "Income tax and zakat expense", "summary": "Current Kingdom tax SAR 371,648 million, foreign SAR 3,414 million, deferred Kingdom SAR 11,232 million, deferred foreign SAR (2,987) million, zakat SAR 281 million."},
+        {"id": "(c)", "title": "Income tax and zakat obligation to the Government", "summary": "Rollforward from SAR 82,539 million to SAR 71,951 million including SAR 188,642 million of settlements against amounts due from the Government."},
+        {"id": "(d)", "title": "Deferred income tax", "summary": "Net deferred tax liability of SAR 132,710 million driven by PP&E and intangibles; unrecognized deferred tax asset of SAR 17,113 million."},
+        {"id": "(e)", "title": "Income tax and zakat assessments", "summary": "Saudi returns through 2019 accepted as filed; other affiliates under examination with no significant claims known."},
+        {"id": "(f)", "title": "International Tax Reform - Pillar Two Model Rules", "summary": "Mandatory temporary exception applied; assessment found no material exposure to top-up taxes."}
+      ],
+      "refs": ["19", "28"],
+      "tags": ["tax", "zakat", "deferred-tax", "pillar-two", "government"],
+      "investorRelevance": "Defines the fiscal regime (50% statutory rate, 20% on Downstream and gas) and flags that the 20% Downstream rate hinges on a Government extension of the separation deadline to December 31, 2030 that is still in progress - a material condition for after-tax returns.",
+      "flag": {
+        "level": "alert",
+        "text": "The 20% Downstream tax rate was conditional on separating Downstream activities into wholly-owned subsidiaries by December 31, 2024, otherwise Downstream would be retroactively taxed at 50%; an extension to December 31, 2030 is in progress and expected to be granted, so the Company continues to apply 20%."
+      }
+    },
+    {
+      "n": "9",
+      "title": "Other Assets and Receivables",
+      "category": "balance-sheet",
+      "summary": "Non-current other assets and receivables were SAR 46,844 million (2023: SAR 48,265 million), led by employee home loans of SAR 13,199 million, loans and advances of SAR 7,285 million, loans to joint ventures and associates of SAR 6,839 million (2023: SAR 9,866 million), the SAR 5,596 million advance payment under the long-term sales agreement with Rongsheng and derivative assets of SAR 4,259 million. Current balances rose to SAR 42,388 million (2023: SAR 33,747 million), including employee and other receivables of SAR 13,428 million, tax receivables of SAR 8,472 million and SAR 3,080 million receivable from Government-related entities (2023: nil). Home loans are subsidized non-interest-bearing loans to Saudi employees with gross receivables of SAR 21,366 million and net receivables of SAR 15,706 million after a SAR 4,911 million discount and SAR 629 million allowance.",
+      "keyFigures": [
+        {"label": "Non-current other assets and receivables", "v": ["46,844", "48,265"]},
+        {"label": "Current other assets and receivables", "v": ["42,388", "33,747"]},
+        {"label": "Home loans - non-current", "v": ["13,199", "12,427"]},
+        {"label": "Loans to joint ventures and associates", "v": ["6,839", "9,866"]},
+        {"label": "Advance payment related to long-term sales agreement", "v": ["5,596", "5,833"]},
+        {"label": "Net home loans receivable", "v": ["15,706", "13,745"]}
+      ],
+      "subnotes": [
+        {"id": "(a)", "title": "Home loans", "summary": "Subsidized non-interest-bearing employee home loans: gross SAR 21,366 million less discount, allowance and subsidies gives net SAR 15,706 million."}
+      ],
+      "refs": ["3", "10", "29", "35"],
+      "tags": ["receivables", "home-loans", "related-parties", "derivatives"],
+      "investorRelevance": "Contains SAR 6,839 million of loans to joint ventures and associates and SAR 2,554 million non-current plus SAR 3,080 million current receivables from Government-related entities - related-party exposure sitting outside trade receivables.",
+      "flag": null
+    },
+    {
+      "n": "10",
+      "title": "Investments in Securities",
+      "category": "balance-sheet",
+      "summary": "Investments in securities totalled SAR 40,864 million (2023: SAR 35,223 million), of which equity securities SAR 29,480 million and debt securities SAR 11,384 million. Strategic equity stakes at FVOCI include Saudi Electricity Company 6.9% (SAR 4,878 million), Rongsheng Petrochemical 10.0% (SAR 4,707 million), Idemitsu 8.3% (SAR 2,858 million), HORSE Powertrain 10.0% (SAR 2,539 million, acquired December 2, 2024) and SUMED 15.0% (SAR 1,013 million); unlisted equities at FVPL were SAR 11,675 million. Debt securities are mostly unlisted USD instruments with ratings from AAA to BB. Net additions were SAR 6,563 million and net unrealized fair value losses SAR (893) million; unlisted securities are valued with discounted cash flow and similar techniques in Levels 2 and 3 of the hierarchy.",
+      "keyFigures": [
+        {"label": "Total investments in securities", "v": ["40,864", "35,223"]},
+        {"label": "Investments in equity securities", "v": ["29,480", "25,639"]},
+        {"label": "Investments in debt securities", "v": ["11,384", "9,584"]},
+        {"label": "Saudi Electricity Company (6.9%)", "v": ["4,878", "5,480"]},
+        {"label": "Rongsheng Petrochemical (10.0%)", "v": ["4,707", "5,536"]},
+        {"label": "Net unrealized fair value loss", "v": ["(893)", "(1,061)"]}
+      ],
+      "subnotes": [],
+      "refs": ["9", "35"],
+      "tags": ["securities", "fvoci", "strategic-stakes", "level-3"],
+      "investorRelevance": "Lists the strategic minority stakes (SEC, Rongsheng, Idemitsu, HORSE, SUMED) and SAR 11,675 million of unlisted FVPL equities whose values rest on Level 2 and Level 3 valuation techniques.",
+      "flag": {
+        "level": "info",
+        "text": "SAR 11,675 million of unlisted equity securities at FVPL and the unlisted FVOCI stakes are valued using Level 2 and Level 3 techniques; the Rongsheng stake fell to SAR 4,707 million from SAR 5,536 million."
+      }
+    },
+    {
+      "n": "11",
+      "title": "Inventories",
+      "category": "balance-sheet",
+      "summary": "Inventories were SAR 83,728 million (2023: SAR 85,951 million): crude oil, refined products and chemicals SAR 66,124 million, materials and supplies SAR 15,339 million and natural gas liquids and other SAR 2,265 million. A write-down to net realizable value of SAR 984 million (2023: SAR 914 million) was recognized on hydrocarbon and chemical inventories purchased from third parties by certain affiliates. The allowance for obsolete and surplus materials ended the year at SAR 2,890 million.",
+      "keyFigures": [
+        {"label": "Total inventories", "v": ["83,728", "85,951"]},
+        {"label": "Crude oil, refined products and chemicals", "v": ["66,124", "70,512"]},
+        {"label": "Materials and supplies - net", "v": ["15,339", "14,157"]},
+        {"label": "Allowance for obsolete and surplus materials, December 31", "v": ["2,890", "3,132"]}
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": ["inventories", "working-capital"],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "12",
+      "title": "Trade Receivables",
+      "category": "balance-sheet",
+      "summary": "Net trade receivables were SAR 167,884 million (2023: SAR 163,919 million), of which SAR 153,198 million arose from export and local sales at international prices and SAR 14,930 million from local sales at Kingdom regulated prices, less a loss allowance of SAR 244 million. Receivables under provisional pricing arrangements are measured at fair value using forward curves and are classified as Level 3. The Government, through the Ministry of Finance, guarantees amounts owed by Government, semi-Government and Government-controlled entities that cannot settle on agreed terms.",
+      "keyFigures": [
+        {"label": "Trade receivables - net", "v": ["167,884", "163,919"]},
+        {"label": "Arising from export and local sales at international prices", "v": ["153,198", "153,883"]},
+        {"label": "Arising from local sales at Kingdom regulated prices", "v": ["14,930", "10,287"]},
+        {"label": "Loss allowance", "v": ["(244)", "(251)"]}
+      ],
+      "subnotes": [],
+      "refs": ["2", "3"],
+      "tags": ["receivables", "government-guarantee", "level-3", "working-capital"],
+      "investorRelevance": "Trade receivables of SAR 167,884 million carry a negligible loss allowance of SAR 244 million, partly because the Ministry of Finance guarantees amounts owed by Government and semi-Government entities.",
+      "flag": null
+    },
+    {
+      "n": "13",
+      "title": "Due from the Government",
+      "category": "balance-sheet",
+      "summary": "Amounts due from the Government were SAR 38,274 million (2023: SAR 49,378 million), comprising SAR 35,844 million of price-equalization compensation recorded as other income related to sales, SAR 1,864 million under the Government guarantee of past-due receivables (2023: SAR (1,156) million) and SAR 566 million of other items. These balances are settled by offset against tax payments.",
+      "keyFigures": [
+        {"label": "Due from the Government", "v": ["38,274", "49,378"]},
+        {"label": "Other income related to sales", "v": ["35,844", "50,274"]},
+        {"label": "Government guarantee", "v": ["1,864", "(1,156)"]},
+        {"label": "Other", "v": ["566", "260"]}
+      ],
+      "subnotes": [],
+      "refs": ["2", "29"],
+      "tags": ["government", "price-equalization", "related-parties"],
+      "investorRelevance": "Quantifies the SAR 38,274 million receivable from the Government for price-equalization compensation and guaranteed receivables, settled by offset against taxes rather than in cash - a direct measure of fiscal interdependence.",
+      "flag": {
+        "level": "info",
+        "text": "SAR 38,274 million due from the Government (2023: SAR 49,378 million), mainly SAR 35,844 million of price-equalization compensation, is settled by offset against tax payments rather than in cash."
+      }
+    },
+    {
+      "n": "14",
+      "title": "Short-term Investments",
+      "category": "balance-sheet",
+      "summary": "Short-term investments fell sharply to SAR 13,186 million from SAR 184,343 million at the end of 2023. USD time deposits dropped to SAR 4,256 million (2023: SAR 123,851 million), SAR Murabaha time deposits to SAR 7,110 million (2023: SAR 19,583 million) and SAR repurchase agreements of SAR 21,648 million in 2023 were fully run off.",
+      "keyFigures": [
+        {"label": "Total short-term investments", "v": ["13,186", "184,343"]},
+        {"label": "USD time deposits", "v": ["4,256", "123,851"]},
+        {"label": "SAR Murabaha time deposits (non-conventional)", "v": ["7,110", "19,583"]},
+        {"label": "SAR repurchase agreements (non-conventional)", "v": ["–", "21,648"]}
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": ["liquidity", "treasury", "time-deposits"],
+      "investorRelevance": "Short-term investments dropped from SAR 184,343 million to SAR 13,186 million, the largest single change in the group's liquidity position during 2024.",
+      "flag": {
+        "level": "watch",
+        "text": "Short-term investments fell to SAR 13,186 million from SAR 184,343 million, with USD time deposits down to SAR 4,256 million from SAR 123,851 million - the main driver of the group's move from net cash to net debt."
+      }
+    },
+    {
+      "n": "15",
+      "title": "Cash and Cash Equivalents",
+      "category": "balance-sheet",
+      "summary": "Cash and cash equivalents were SAR 216,642 million (2023: SAR 198,973 million), comprising cash at bank and in hand of SAR 64,132 million, USD time deposits of SAR 97,326 million, USD Murabaha time deposits of SAR 24,161 million, SAR Murabaha time deposits of SAR 25,350 million, SAR time deposits of SAR 5,209 million and South Korean Won deposits of SAR 464 million.",
+      "keyFigures": [
+        {"label": "Total cash and cash equivalents", "v": ["216,642", "198,973"]},
+        {"label": "Cash at bank and in hand", "v": ["64,132", "67,348"]},
+        {"label": "USD time deposits", "v": ["97,326", "87,783"]},
+        {"label": "SAR Murabaha time deposits (non-conventional)", "v": ["25,350", "11,588"]}
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": ["cash", "liquidity", "treasury"],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "16",
+      "title": "Treasury Shares",
+      "category": "equity",
+      "summary": "Treasury shares are held for issuance under employee share plans. The number of treasury shares rose from 51.3 million to 145.3 million during 2024 after the Company acquired 137.6 million shares from the Government in connection with the secondary offering and issued 43.6 million shares to employees (2023: 31.4 million).",
+      "keyFigures": [
+        {"label": "Treasury shares, January 1 (millions of shares)", "v": ["51.3", "76.6"]},
+        {"label": "Acquisition of treasury shares (millions of shares)", "v": ["137.6", "–"]},
+        {"label": "Shares issued to employees (millions of shares)", "v": ["(43.6)", "(31.4)"]},
+        {"label": "Treasury shares, December 31 (millions of shares)", "v": ["145.3", "51.3"]}
+      ],
+      "subnotes": [],
+      "refs": ["1", "17", "36"],
+      "tags": ["treasury-shares", "employee-share-plans", "equity"],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "17",
+      "title": "Share-based Compensation",
+      "category": "equity",
+      "summary": "Share-based compensation expense was SAR 593 million (2023: SAR 482 million), of which SAR 582 million equity-settled and SAR 11 million cash-settled. Awards were made under the executive (ELTIP), management (MLTIP) and employee (LTIP) long-term incentive plans and the Employee Share Purchase Plan, under which shares are issued at a 20% discount; 34 million ESPP shares were granted at a weighted average fair value of SAR 29.19 per share. 43.6 million awards were settled in shares during 2024 (2023: 31.4 million) and the liability for cash-settled elements was SAR 30 million.",
+      "keyFigures": [
+        {"label": "Share-based compensation expense - total", "v": ["593", "482"]},
+        {"label": "Equity-settled", "v": ["582", "472"]},
+        {"label": "Cash-settled", "v": ["11", "10"]}
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": ["share-based-compensation", "employee-share-plans", "equity"],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "18",
+      "title": "Other Reserves",
+      "category": "equity",
+      "summary": "Other reserves moved to a deficit of SAR (3,251) million at December 31, 2024 from SAR 1,514 million, driven by a SAR (5,549) million current-period charge to currency translation differences, which ended at SAR (7,542) million (2023: SAR (3,840) million), and a SAR (977) million decline in the FVOCI investments reserve to SAR 3,121 million. Post-employment remeasurement gains of SAR 5,636 million were recognized and SAR (3,015) million transferred to retained earnings after a SAR (2,498) million tax effect.",
+      "keyFigures": [
+        {"label": "Total other reserves, December 31", "v": ["(3,251)", "1,514"]},
+        {"label": "Currency translation differences", "v": ["(7,542)", "(3,840)"]},
+        {"label": "Investments in securities at FVOCI", "v": ["3,121", "3,979"]},
+        {"label": "Remeasurement gain (loss) on post-employment benefits", "v": ["5,541", "570"]}
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": ["reserves", "oci", "currency-translation", "equity"],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "19",
+      "title": "Non-controlling Interests",
+      "category": "equity",
+      "summary": "Summarized 100% financial information is given for the subsidiaries with material non-controlling interests: SABIC, Aramco Oil Pipelines Company (AOPC), Aramco Gas Pipelines Company (AGPC) and S-Oil Corporation. Accumulated non-controlling interest was SAR 89,089 million in SABIC, SAR 38,318 million in AOPC, SAR 54,387 million in AGPC and SAR 9,053 million in S-Oil. SABIC reported a net loss of SAR (1,493) million and S-Oil a net loss of SAR (919) million in 2024, while AOPC and AGPC earned SAR 4,916 million and SAR 2,288 million after unrealized losses of SAR 947 million and SAR 3,387 million on FVPL financial assets; dividends paid to non-controlling interests were SAR 5,775 million (SABIC), SAR 2,595 million (AOPC) and SAR 2,914 million (AGPC). The 49% stakes in AOPC and AGPC were sold to EIG for SAR 46,547 million (2021) and GreenSaif for SAR 58,125 million (2022), with proceeds recognized as non-controlling interest in equity because distributions are discretionary.",
+      "keyFigures": [
+        {"label": "SABIC - accumulated non-controlling interest", "v": ["89,089", "94,511"]},
+        {"label": "AOPC - accumulated non-controlling interest", "v": ["38,318", "38,501"]},
+        {"label": "AGPC - accumulated non-controlling interest", "v": ["54,387", "56,180"]},
+        {"label": "S-Oil Corporation - accumulated non-controlling interest", "v": ["9,053", "10,859"]},
+        {"label": "SABIC - net (loss) income (100%)", "v": ["(1,493)", "(3,705)"]},
+        {"label": "S-Oil Corporation - net (loss) income (100%)", "v": ["(919)", "2,516"]}
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": ["nci", "sabic", "s-oil", "pipelines", "eig", "greensaif"],
+      "investorRelevance": "Identifies the partially owned pillars of the group - SABIC (70%), S-Oil (61.6%) and the AOPC/AGPC pipeline companies whose 49% stakes were sold to EIG (SAR 46,547 million) and GreenSaif (SAR 58,125 million) - and how much of their equity belongs to outside investors.",
+      "flag": {
+        "level": "info",
+        "text": "SABIC posted a net loss of SAR (1,493) million and S-Oil a net loss of SAR (919) million in 2024; AOPC and AGPC results include unrealized losses of SAR 947 million and SAR 3,387 million on financial assets at FVPL."
+      }
+    },
+    {
+      "n": "20",
+      "title": "Borrowings",
+      "category": "balance-sheet",
+      "summary": "Total borrowings were SAR 319,290 million (2023: SAR 290,147 million): SAR 256,807 million other than leases and SAR 62,483 million of lease liabilities, with conventional debt of SAR 192,068 million (debentures SAR 106,283 million) and non-conventional debt of SAR 64,739 million (Sukuk SAR 41,389 million). In 2024 the Company issued SAR 22,500 million ($6,000) of 10-, 30- and 40-year notes at 5.250%, 5.750% and 5.875% (July 17) and SAR 11,250 million ($3,000) of five- and 10-year Sukuk at 4.25% and 4.75% (October 2), while repaying SAR 7,500 million of 2.875% notes and SAR 3,750 million of 0.946% Sukuk. Finance costs were SAR 10,540 million (2023: SAR 8,186 million) with a further SAR 8,692 million capitalized. Certain arrangements are secured over PP&E of SAR 108,561 million and all covenants were complied with; the SAR 37,500 million ($10,000) revolving credit facilities remain undrawn with maturity extended to April 2029. Contractual maturities total SAR 472,574 million, of which SAR 62,466 million falls due within one year, SAR 142,130 million in one to five years and SAR 267,978 million beyond five years; the fair value of borrowings excluding leases was SAR 235,552 million.",
+      "keyFigures": [
+        {"label": "Total borrowings", "v": ["319,290", "290,147"]},
+        {"label": "Borrowings - other than leases", "v": ["256,807", "232,816"]},
+        {"label": "Lease liabilities", "v": ["62,483", "57,331"]},
+        {"label": "Debentures", "v": ["106,283", "90,775"]},
+        {"label": "Sukuk", "v": ["41,389", "33,689"]},
+        {"label": "Finance costs", "v": ["10,540", "8,186"]}
+      ],
+      "subnotes": [
+        {"id": "(a)", "title": "Debentures", "summary": "SABIC bonds, the Company's GMTN notes including the SAR 22,500 million July 2024 issue at 5.250%-5.875%, and SAR 8,025 million of Korean Won debentures."},
+        {"id": "(b)", "title": "Bank borrowings", "summary": "SATORP expansion financing (Company share SAR 4,758 million conventional, SAR 6,094 million ECA, SAR 3,750 million SIDF, SAR 1,547 million Wakala) and other bank facilities of SAR 24,921 million."},
+        {"id": "(c)", "title": "Short-term borrowings", "summary": "SAR 21,242 million including SAR 9,157 million of debt factoring; SAR 16,241 million available for drawdown."},
+        {"id": "(d)", "title": "Revolving credit facilities", "summary": "SAR 37,500 million ($10,000) facilities fully undrawn, extended to April 2029; other revolvers SAR 703 million drawn and SAR 6,176 million undrawn."},
+        {"id": "(e)", "title": "Export credit agencies (\"ECA\")", "summary": "Carrying amount SAR 881 million repayable to December 2039; SAR 6,094 million undrawn SATORP ECA facility."},
+        {"id": "(f)", "title": "Public Investment Fund", "summary": "Borrowings from PIF of SAR 416 million (2023: SAR 820 million) repayable to December 2025."},
+        {"id": "(g)", "title": "Other financing arrangements", "summary": "SAR 44,063 million financing arrangement with JIGPC repayable monthly to October 2046; SAR 1,968 million remains to be received."},
+        {"id": "(h)", "title": "Sukuk", "summary": "SAR 11,250 million 2017 SAIBOR-linked Sukuk extended to April 2025, 2021 USD Sukuk programme and the SAR 11,250 million October 2024 issue at 4.25% and 4.75%."},
+        {"id": "(i)", "title": "Murabaha", "summary": "Facilities repayable to 2032; SAR 938 million early settled in 2024; SAR 11,055 million unutilized."},
+        {"id": "(j)", "title": "Saudi Industrial Development Fund", "summary": "Non-interest-bearing loans repayable to 2035; SAR 3,244 million undrawn."},
+        {"id": "(k)", "title": "Ijarah/Procurement", "summary": "Bank facilities repayable 2014 to 2039; SAR 165 million undrawn."},
+        {"id": "(l)", "title": "Wakala", "summary": "Agency-structured facilities repayable 2019 to 2038; SAR 1,208 million undrawn."}
+      ],
+      "refs": ["5"],
+      "tags": ["debt", "bonds", "sukuk", "maturities", "covenants", "liquidity", "leases"],
+      "investorRelevance": "Full debt profile: SAR 319,290 million of borrowings, SAR 22,500 million of USD notes and SAR 11,250 million of Sukuk issued in 2024 at 4.25%-5.875%, an undrawn SAR 37,500 million revolver to April 2029, covenant compliance, and a maturity ladder with SAR 267,978 million contractually due beyond five years.",
+      "flag": {
+        "level": "info",
+        "text": "Saudi Aramco returned to the capital markets in 2024 with SAR 22,500 million of notes at 5.250%-5.875% and SAR 11,250 million of Sukuk at 4.25%-4.75%; financing arrangements are secured over PP&E of SAR 108,561 million and all covenants were complied with throughout the period."
+      }
+    },
+    {
+      "n": "21",
+      "title": "Post-employment Benefits",
+      "category": "balance-sheet",
+      "summary": "Saudi Aramco sponsors funded and unfunded defined benefit pension and other post-employment (mainly medical) plans, primarily in the Kingdom. The net position moved to a net benefit asset of SAR (499) million (2023: liability of SAR 1,486 million), comprising a pension surplus of SAR (8,693) million and a medical and other benefit liability of SAR 8,194 million, presented as non-current assets of SAR 27,365 million and non-current liabilities of SAR 26,866 million. Benefit obligations were SAR 72,600 million (pension) and SAR 103,542 million (other) against plan assets of SAR 81,293 million and SAR 95,348 million (total SAR 176,641 million). Discount rates rose to 5.6% (pension) and 5.8% (other), producing remeasurement gains of SAR (2,081) million and SAR (3,555) million in OCI; a 0.5% rise in the health care cost-trend rate would add SAR 8,546 million to obligations. The new Social Insurance Law effective July 3, 2024 had no material impact and 2025 employer contributions are estimated at SAR 2,760 million.",
+      "keyFigures": [
+        {"label": "Net benefit (asset) liability", "v": ["(499)", "1,486"]},
+        {"label": "Pension plans - net (asset)", "v": ["(8,693)", "(7,784)"]},
+        {"label": "Medical and other post-employment benefit plans - net liability", "v": ["8,194", "9,270"]},
+        {"label": "Pension benefit obligations, December 31", "v": ["72,600", "72,474"]},
+        {"label": "Other benefit obligations, December 31", "v": ["103,542", "103,650"]},
+        {"label": "Total plan assets", "v": ["176,641", "174,638"]}
+      ],
+      "subnotes": [],
+      "refs": ["26"],
+      "tags": ["pensions", "post-employment", "actuarial", "defined-benefit"],
+      "investorRelevance": "Defined benefit plans with SAR 176,641 million of assets are broadly fully funded (net asset SAR 499 million), limiting balance-sheet drag from the large Kingdom-based workforce, though a 0.5% rise in medical cost trends would add SAR 8,546 million to obligations.",
+      "flag": null
+    },
+    {
+      "n": "22",
+      "title": "Provisions and Other Liabilities",
+      "category": "balance-sheet",
+      "summary": "Provisions and other non-current liabilities were SAR 31,044 million (2023: SAR 28,205 million): asset retirement provisions of SAR 13,529 million for plugging and abandoning wells and decommissioning certain Downstream assets, an environmental provision of SAR 706 million, derivative liabilities of SAR 1,980 million and other non-current liabilities of SAR 14,829 million (2023: SAR 10,346 million). The asset retirement provision fell from SAR 15,150 million after a SAR (2,513) million revision to estimate, SAR 450 million of additions and SAR 476 million of discount unwinding; settlement timing can exceed 50 years.",
+      "keyFigures": [
+        {"label": "Total provisions and other liabilities", "v": ["31,044", "28,205"]},
+        {"label": "Asset retirement", "v": ["13,529", "15,150"]},
+        {"label": "Environmental", "v": ["706", "698"]},
+        {"label": "Derivative liabilities", "v": ["1,980", "2,011"]},
+        {"label": "Other non-current liabilities", "v": ["14,829", "10,346"]}
+      ],
+      "subnotes": [],
+      "refs": ["3"],
+      "tags": ["provisions", "decommissioning", "environmental"],
+      "investorRelevance": "Decommissioning and environmental liabilities (SAR 13,529 million and SAR 706 million) were reduced by a SAR 2,513 million revision to estimate in 2024, with settlement stretching over asset lives that can exceed 50 years.",
+      "flag": null
+    },
+    {
+      "n": "23",
+      "title": "Trade Payables and Other Liabilities",
+      "category": "balance-sheet",
+      "summary": "Trade payables and other liabilities were SAR 157,467 million (2023: SAR 151,553 million), comprising trade payables of SAR 78,439 million, accrued materials and services of SAR 42,480 million, amounts due to related parties of SAR 13,740 million, employee related payables of SAR 12,319 million, derivative liabilities of SAR 1,680 million and other items of SAR 8,809 million. Trade payables under provisional pricing arrangements are measured at fair value using forward curves and classified as Level 3.",
+      "keyFigures": [
+        {"label": "Total trade payables and other liabilities", "v": ["157,467", "151,553"]},
+        {"label": "Trade payables", "v": ["78,439", "71,993"]},
+        {"label": "Accrued materials and services", "v": ["42,480", "44,633"]},
+        {"label": "Amounts due to related parties", "v": ["13,740", "13,823"]},
+        {"label": "Derivative liabilities", "v": ["1,680", "3,197"]}
+      ],
+      "subnotes": [],
+      "refs": ["3", "29"],
+      "tags": ["payables", "working-capital", "related-parties", "level-3"],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "24",
+      "title": "Revenue",
+      "category": "income",
+      "summary": "Revenue was SAR 1,637,299 million (2023: SAR 1,653,281 million), comprising SAR 1,630,366 million from contracts with customers, a SAR (637) million movement between provisional and final prices and SAR 7,570 million of other revenue (services to Government-related entities SAR 936 million, third parties SAR 2,708 million, freight SAR 694 million). By product, crude oil contributed SAR 803,140 million (2023: SAR 838,634 million), refined and chemical products SAR 768,438 million, natural gas and NGLs SAR 53,577 million and metal products SAR 5,211 million (2023: SAR 13,054 million); Upstream generated SAR 718,716 million and Downstream SAR 911,650 million of contract revenue. Payment is due within 10 to 120 days of invoice and no contracts have financing periods exceeding one year.",
+      "keyFigures": [
+        {"label": "Revenue", "v": ["1,637,299", "1,653,281"]},
+        {"label": "Revenue from contracts with customers", "v": ["1,630,366", "1,644,114"]},
+        {"label": "Crude oil", "v": ["803,140", "838,634"]},
+        {"label": "Refined and chemical products", "v": ["768,438", "750,355"]},
+        {"label": "Natural gas and NGLs", "v": ["53,577", "42,071"]},
+        {"label": "Other revenue", "v": ["7,570", "9,716"]}
+      ],
+      "subnotes": [],
+      "refs": ["29"],
+      "tags": ["revenue", "crude-oil", "refined-products", "gas", "segments"],
+      "investorRelevance": "Disaggregates SAR 1,637,299 million of revenue by product and segment: crude oil SAR 803,140 million, refined and chemical products SAR 768,438 million and natural gas and NGLs SAR 53,577 million, the latter growing from SAR 42,071 million.",
+      "flag": null
+    },
+    {
+      "n": "25",
+      "title": "Purchases",
+      "category": "income",
+      "summary": "Purchases rose to SAR 509,430 million (2023: SAR 471,225 million): refined and chemical products SAR 287,873 million, crude oil SAR 185,912 million (2023: SAR 162,236 million) and NGL and other products SAR 35,645 million. Purchases are mainly third-party products for Downstream operations and to meet Kingdom demand when it exceeds Saudi Aramco's own production.",
+      "keyFigures": [
+        {"label": "Total purchases", "v": ["509,430", "471,225"]},
+        {"label": "Refined and chemical products", "v": ["287,873", "277,022"]},
+        {"label": "Crude oil", "v": ["185,912", "162,236"]},
+        {"label": "NGL and other products", "v": ["35,645", "31,967"]}
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": ["purchases", "cost-of-sales", "downstream"],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "26",
+      "title": "Employee Benefit Expense",
+      "category": "income",
+      "summary": "Employee benefit expense was SAR 67,401 million (2023: SAR 60,329 million), comprising salaries and wages of SAR 55,528 million, social security costs of SAR 3,209 million, defined benefit plan costs of SAR 6,642 million, defined contribution plan costs of SAR 1,429 million and share-based compensation of SAR 593 million.",
+      "keyFigures": [
+        {"label": "Total employee benefit expense", "v": ["67,401", "60,329"]},
+        {"label": "Salaries and wages", "v": ["55,528", "49,530"]},
+        {"label": "Post-retirement benefits - defined benefit plans", "v": ["6,642", "5,715"]},
+        {"label": "Post-retirement benefits - defined contribution plans", "v": ["1,429", "1,322"]},
+        {"label": "Share-based compensation", "v": ["593", "482"]}
+      ],
+      "subnotes": [],
+      "refs": ["17", "21"],
+      "tags": ["employee-costs", "payroll"],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "27",
+      "title": "Finance and Other Income",
+      "category": "income",
+      "summary": "Finance and other income fell to SAR 22,891 million (2023: SAR 31,967 million). Interest income declined to SAR 16,868 million from SAR 22,275 million, investment income was SAR 3,386 million and dividend income from investments in securities SAR 463 million; 2023 also included a SAR 5,775 million gain on partial prepayment of deferred consideration to PIF, while other income rose to SAR 2,174 million from SAR 340 million.",
+      "keyFigures": [
+        {"label": "Total finance and other income", "v": ["22,891", "31,967"]},
+        {"label": "Interest income", "v": ["16,868", "22,275"]},
+        {"label": "Investment income", "v": ["3,386", "3,166"]},
+        {"label": "Dividend income from investments in securities", "v": ["463", "411"]},
+        {"label": "Gain on partial prepayment of deferred consideration to PIF", "v": ["–", "5,775"]}
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": ["finance-income", "interest", "pif"],
+      "investorRelevance": "Interest income fell to SAR 16,868 million from SAR 22,275 million, and 2023 was flattered by a one-off SAR 5,775 million gain on prepayment of deferred consideration to PIF.",
+      "flag": null
+    },
+    {
+      "n": "28",
+      "title": "Payments to the Government by Saudi Arabian Oil Company",
+      "category": "disclosure",
+      "summary": "The Company paid the Government SAR 176,523 million of income taxes (2023: SAR 200,189 million), SAR 187,982 million of royalties (2023: SAR 213,216 million) and SAR 381,426 million of dividends (2023: SAR 333,699 million) during 2024.",
+      "keyFigures": [
+        {"label": "Income taxes", "v": ["176,523", "200,189"]},
+        {"label": "Royalties", "v": ["187,982", "213,216"]},
+        {"label": "Dividends", "v": ["381,426", "333,699"]}
+      ],
+      "subnotes": [],
+      "refs": ["8"],
+      "tags": ["government", "royalties", "dividends", "tax"],
+      "investorRelevance": "Quantifies the Company's direct fiscal contribution to the Government - SAR 176,523 million of income taxes, SAR 187,982 million of royalties and SAR 381,426 million of dividends in 2024.",
+      "flag": {
+        "level": "info",
+        "text": "Dividends paid to the Government rose to SAR 381,426 million from SAR 333,699 million even as income taxes and royalties paid fell to SAR 176,523 million and SAR 187,982 million respectively."
+      }
+    },
+    {
+      "n": "29",
+      "title": "Related Party Transactions",
+      "category": "disclosure",
+      "summary": "Transactions with joint ventures included sales of SAR 25,894 million and purchases of SAR 27,773 million; with associates, sales of SAR 85,766 million and purchases of SAR 57,818 million (2023: SAR 46,260 million). Transactions with Government, semi-Government and Government-controlled entities included sales of SAR 37,376 million (2023: SAR 23,355 million), other income related to sales of SAR 164,375 million (2023: SAR 203,092 million), purchases of SAR 10,215 million and lease expenses of SAR 1,178 million. Year-end balances with Government-related entities comprised SAR 38,274 million due from the Government, SAR 4,556 million of trade receivables, SAR 48,762 million of cash held with Government-related banks, SAR 5,749 million of short-term investments (2023: SAR 38,138 million) and SAR 26,393 million of borrowings; trade receivables from associates rose to SAR 18,739 million from SAR 12,971 million. Key management compensation was SAR 182 million and there were no other reportable transactions with key management.",
+      "keyFigures": [
+        {"label": "Government entities - other income related to sales", "v": ["164,375", "203,092"]},
+        {"label": "Government entities - revenue from sales", "v": ["37,376", "23,355"]},
+        {"label": "Associates - revenue from sales", "v": ["85,766", "90,045"]},
+        {"label": "Associates - purchases", "v": ["57,818", "46,260"]},
+        {"label": "Government entities - cash and cash equivalents held with banks", "v": ["48,762", "33,878"]},
+        {"label": "Government entities - borrowings", "v": ["26,393", "26,466"]}
+      ],
+      "subnotes": [
+        {"id": "(a)", "title": "Transactions", "summary": "Sales, purchases, services, interest and lease transactions with joint ventures, associates and Government-related entities, including SAR 164,375 million of price-equalization income."},
+        {"id": "(b)", "title": "Balances", "summary": "Receivables, payables, deposits and borrowings with joint ventures, associates and Government-related entities, including SAR 38,274 million due from the Government."},
+        {"id": "(c)", "title": "Compensation of key management personnel", "summary": "Total compensation of SAR 182 million (2023: SAR 186 million) for directors and senior executives."},
+        {"id": "(d)", "title": "Other transactions with key management personnel", "summary": "No other reportable transactions with key management or their close family members (2023: nil)."}
+      ],
+      "refs": ["9", "13", "23", "24", "33"],
+      "tags": ["related-parties", "government", "joint-ventures", "associates", "key-management"],
+      "investorRelevance": "The single best view of Government interdependence: SAR 164,375 million of price-equalization income, SAR 37,376 million of sales to Government-related entities, SAR 38,274 million due from the Government, and SAR 48,762 million of cash plus SAR 26,393 million of borrowings with Government-related banks.",
+      "flag": {
+        "level": "watch",
+        "text": "Large related-party balances with the Government: other income related to sales of SAR 164,375 million (2023: SAR 203,092 million), SAR 38,274 million due from the Government, SAR 48,762 million of cash held with Government-related banks and SAR 26,393 million of borrowings from them."
+      }
+    },
+    {
+      "n": "30",
+      "title": "Hedging Activities",
+      "category": "risk",
+      "summary": "Interest rate swaps designated as cash flow hedges manage borrowing-related interest rate risk, and currency forward contracts hedge firm procurement commitments (fair value hedges) and highly probable forecast transactions (cash flow hedges). Notional amounts of designated hedging instruments were SAR 17,816 million (2023: SAR 15,193 million): interest rate swaps SAR 9,900 million and currency forwards SAR 7,916 million.",
+      "keyFigures": [
+        {"label": "Interest rate swaps (notional)", "v": ["9,900", "10,399"]},
+        {"label": "Currency forward contracts (notional)", "v": ["7,916", "4,794"]},
+        {"label": "Total notional amounts of designated hedges", "v": ["17,816", "15,193"]}
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": ["hedging", "derivatives", "interest-rate", "fx"],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "31",
+      "title": "Non-cash Investing and Financing Activities",
+      "category": "cash-flow",
+      "summary": "Non-cash items in 2024 included the SAR 1,935 million increase in the Petro Rabigh investment from waiving a shareholder loan and accrued commission, deferred consideration of SAR 4,826 million on the sale of Hadeed and SAR 375 million on the Film & Sheet business, additions to right-of-use assets of SAR 20,989 million (2023: SAR 18,083 million), asset retirement provisions of SAR 343 million and equity awards issued to employees of SAR 381 million.",
+      "keyFigures": [
+        {"label": "Additions to right-of-use assets", "v": ["20,989", "18,083"]},
+        {"label": "Deferred consideration on sale of Hadeed", "v": ["4,826", "–"]},
+        {"label": "Petro Rabigh shareholder loan waiver", "v": ["1,935", "–"]},
+        {"label": "Asset retirement provisions", "v": ["343", "295"]},
+        {"label": "Equity awards issued to employees", "v": ["381", "212"]}
+      ],
+      "subnotes": [],
+      "refs": ["34", "35"],
+      "tags": ["cash-flow", "non-cash", "leases", "disposals"],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "32",
+      "title": "Commitments",
+      "category": "disclosure",
+      "summary": "Capital expenditures contracted but not yet incurred were SAR 223,301 million (2023: SAR 222,938 million) and leases contracted but not commenced SAR 38,496 million (2023: SAR 26,369 million). Through SADCO, Saudi Aramco owns 40.1% of International Maritime Industries (IMI), has fully funded its SAR 1,053 million equity commitment and has guaranteed the purchase of 20 offshore rigs over 10 years from 2023, with SAR 20,250 million committed for the 18 rigs still to be delivered; it also committed SAR 225 million to Arabian Rig Manufacturing (ARM) and guaranteed the purchase of 50 onshore rigs, leaving SAR 7,667 million outstanding with a SAR 1,050 million maximum cancellation exposure. Other commitments include SAR 188 million for the Dow feedstock agreement, remaining social responsibility spending of SAR 217 million (SATORP) and SAR 131 million (YASREF), SAR 569 million of private equity commitments and SAR 3,865 million (2023: SAR 1,175 million) of capital contributions to other affiliates; past Government directives require the Company to sell portions of SATORP and YASREF through public offerings in Saudi Arabia.",
+      "keyFigures": [
+        {"label": "Capital expenditures contracted for but not yet incurred", "v": ["223,301", "222,938"]},
+        {"label": "Leases contracted for but not yet commenced", "v": ["38,496", "26,369"]},
+        {"label": "IMI offshore rig purchase commitment (18 remaining rigs)", "v": ["20,250", "–"]},
+        {"label": "ARM onshore rig purchase commitment (remaining)", "v": ["7,667", "–"]},
+        {"label": "Private equity investment commitments", "v": ["569", "492"]},
+        {"label": "Capital contributions for certain other affiliates", "v": ["3,865", "1,175"]}
+      ],
+      "subnotes": [
+        {"id": "(a)", "title": "Capital commitments", "summary": "SAR 223,301 million of contracted capex and SAR 38,496 million of leases not yet commenced."},
+        {"id": "(b)", "title": "International Maritime Industries Company (\"IMI\")", "summary": "40.1% stake via Sofon Industries, SAR 1,053 million equity fully drawn, and a guaranteed purchase of 20 offshore rigs with SAR 20,250 million remaining for 18 rigs."},
+        {"id": "(c)", "title": "Arabian Rig Manufacturing Company (\"ARM\")", "summary": "SAR 225 million investment commitment (SAR 207 million invested) and a guaranteed purchase of 50 onshore rigs with SAR 7,667 million remaining and SAR 1,050 million maximum cancellation exposure."},
+        {"id": "(d)", "title": "Other", "summary": "Dow Chemical Value Parks commitment, expected public offerings of SATORP and YASREF stakes, social responsibility spending guarantees, private equity and affiliate capital contribution commitments."}
+      ],
+      "refs": ["39", "40"],
+      "tags": ["commitments", "capex", "rigs", "localization", "satorp", "yasref"],
+      "investorRelevance": "SAR 223,301 million of contracted capex plus rig purchase guarantees of SAR 20,250 million (IMI) and SAR 7,667 million (ARM) define the forward investment pipeline, and Government directives require eventual public offerings of portions of SATORP and YASREF.",
+      "flag": {
+        "level": "watch",
+        "text": "Capital commitments of SAR 223,301 million plus guaranteed rig purchases of SAR 20,250 million (18 offshore rigs from IMI) and SAR 7,667 million (onshore rigs from ARM), with Government directives requiring future public offerings of portions of SATORP and YASREF."
+      }
+    },
+    {
+      "n": "33",
+      "title": "Contingencies",
+      "category": "disclosure",
+      "summary": "Beyond ordinary-course disputes expected to have no material effect, Saudi Aramco discloses several guarantees. For Sadara's SAR 37,280 million senior debt restructured in 2021 (grace period to June 2026, maturity extended to 2038), the Company and Dow guarantee up to SAR 13,875 million of principal and interest in proportion to ownership, cover interest shortfalls until June 2026 and SAR 1,875 million of working capital shortfall in 2030, and have a SAR 1,500 million subordinated revolver (unutilized) plus letters of credit of SAR 169 million and SAR 152 million. For Petro Rabigh, the Company and Sumitomo each undertake to fund 50% of scheduled Rabigh II debt-service shortfalls until June 2032, SAR 5,625 million of shareholder revolving facilities were fully drawn (a phased waiver was agreed in August 2024), and the Company provided SAR 3,000 million of equity bridge loans and guaranteed a further SAR 1,655 million maturing December 20, 2027. The Company guaranteed SAPCO's 30% share of equity bridge loans (approximately SAR 800 million plus SAR 347 million of other guarantees) for the 2.6 gigawatt Al Shuaibah solar projects costing SAR 8,919 million, and provided SAR 816 million of guarantees for the 5.5 gigawatt Haden, Muwayh and Al-Khushaybi projects costing SAR 12,042 million. Other guarantees for affiliates total SAR 1,855 million (2023: SAR 1,863 million).",
+      "keyFigures": [
+        {"label": "Sadara senior debt guaranteed by the Company and Dow (aggregate)", "v": ["13,875", "–"]},
+        {"label": "Petro Rabigh shareholder revolving loan facilities drawn", "v": ["5,625", "3,525"]},
+        {"label": "Petro Rabigh equity bridge loans guaranteed by the Company", "v": ["1,655", "–"]},
+        {"label": "Guarantees for borrowings and obligations of other affiliates", "v": ["1,855", "1,863"]}
+      ],
+      "subnotes": [
+        {"id": "(a)", "title": "Sadara", "summary": "Guarantees with Dow of up to SAR 13,875 million of restructured senior debt, interest shortfall support to June 2026, SAR 1,875 million working capital support in 2030, and an unutilized SAR 1,500 million subordinated revolver."},
+        {"id": "(b)", "title": "Petro Rabigh", "summary": "50% debt service undertaking for Rabigh II until June 2032, SAR 5,625 million of drawn shareholder facilities subject to phased waiver, and SAR 3,000 million of equity bridge loans provided plus SAR 1,655 million guaranteed."},
+        {"id": "(c)", "title": "Noor Al Shuaibah Holding Company", "summary": "2.6 gigawatt solar projects with Badeel (PIF) and ACWA Power costing SAR 8,919 million; approximately SAR 800 million of equity bridge loan guarantees plus SAR 347 million of other guarantees."},
+        {"id": "(d)", "title": "Haden, Muwayh and Al-Khushaybi Solar Power Projects", "summary": "5.5 gigawatt solar projects costing SAR 12,042 million; SAPCO's SAR 833 million equity bridge loan share (SAR 311 million drawn) and SAR 816 million of guarantees."},
+        {"id": "(e)", "title": "Other", "summary": "Guarantees of SAR 1,855 million (2023: SAR 1,863 million) for borrowings and obligations of other affiliates."}
+      ],
+      "refs": ["35"],
+      "tags": ["contingencies", "guarantees", "sadara", "petro-rabigh", "solar", "acwa-power", "pif"],
+      "investorRelevance": "Catalogues off-balance-sheet support: guarantees of up to SAR 13,875 million (with Dow) on Sadara's SAR 37,280 million restructured debt, Petro Rabigh debt-service undertakings to 2032, equity-bridge guarantees on the Al Shuaibah (2.6 GW) and Haden/Muwayh/Al-Khushaybi (5.5 GW) solar projects with PIF's Badeel and ACWA Power, and SAR 1,855 million of other affiliate guarantees.",
+      "flag": {
+        "level": "alert",
+        "text": "Significant guarantees: with Dow, up to SAR 13,875 million of Sadara senior debt plus interest shortfall support to June 2026 and SAR 1,875 million of working capital support in 2030; 50% of Petro Rabigh's Rabigh II debt-service shortfalls until June 2032 and SAR 1,655 million of its equity bridge loans; approximately SAR 800 million, SAR 347 million and SAR 816 million for solar projects; and SAR 1,855 million for other affiliates."
+      }
+    },
+    {
+      "n": "34",
+      "title": "Assets Held for Sale",
+      "category": "balance-sheet",
+      "summary": "SABIC completed the sale of its 100% shareholding in Saudi Iron and Steel Company (Hadeed) to PIF on May 31, 2024, receiving SAR 1,163 million in cash and recognizing deferred consideration of SAR 3,032 million (current) and SAR 1,794 million (non-current); assets of SAR 19,072 million and liabilities of SAR 9,848 million were derecognized after a SAR 3,219 million fair value loss recognized in 2023 and a further SAR 304 million in 2024. SABIC also sold its Film & Sheet business for SAR 937 million (SAR 562 million cash, SAR 375 million deferred), recognizing a gain of SAR 291 million. On September 17, 2024 SABIC agreed to sell its 20.62% stake in ALBA to Ma'aden; the investment was held for sale at SAR 3,294 million at December 31, 2024 and the sale completed on February 19, 2025 for BHD 363 million (approximately SAR 3,612 million).",
+      "keyFigures": [
+        {"label": "ALBA investment classified as held for sale", "v": ["3,294", "–"]},
+        {"label": "Hadeed total assets derecognized on sale", "v": ["19,072", "–"]},
+        {"label": "Hadeed fair value loss recognized", "v": ["304", "3,219"]},
+        {"label": "Film & Sheet business sale consideration", "v": ["937", "–"]}
+      ],
+      "subnotes": [
+        {"id": "(a)", "title": "Saudi Iron and Steel Company (\"Hadeed\")", "summary": "Sold to PIF on May 31, 2024 for SAR 1,163 million cash plus SAR 3,032 million and SAR 1,794 million deferred; fair value losses of SAR 3,219 million (2023) and SAR 304 million (2024)."},
+        {"id": "(b)", "title": "Film & Sheet business", "summary": "Sold in 2024 for SAR 937 million with a SAR 291 million consolidated gain."},
+        {"id": "(c)", "title": "ALBA", "summary": "20.62% stake held for sale at SAR 3,294 million; sale to Ma'aden completed February 19, 2025 for approximately SAR 3,612 million."}
+      ],
+      "refs": [],
+      "tags": ["held-for-sale", "disposals", "sabic", "hadeed", "alba", "pif"],
+      "investorRelevance": "Documents SABIC's portfolio pruning - Hadeed sold to PIF (a related party) at a cumulative fair value loss, the Film & Sheet exit, and the ALBA stake sold to Ma'aden after year-end for approximately SAR 3,612 million.",
+      "flag": {
+        "level": "watch",
+        "text": "Hadeed was sold to PIF on May 31, 2024 for SAR 1,163 million cash plus SAR 3,032 million and SAR 1,794 million of deferred consideration after fair value losses of SAR 3,219 million (2023) and SAR 304 million (2024); the SAR 3,294 million ALBA stake remained held for sale at year-end and was sold on February 19, 2025."
+      }
+    },
+    {
+      "n": "35",
+      "title": "Investments in Affiliates and Securities",
+      "category": "group",
+      "summary": "Describes 2024 and 2023 portfolio transactions. Saudi Aramco acquired 100% of Chilean fuels retailer Esmax on March 1, 2024 for SAR 1,373 million (net assets SAR 1,096 million, goodwill SAR 255 million; post-acquisition revenue SAR 7,796 million), following the March 1, 2023 purchase of Valvoline's global products business for SAR 10,338 million (goodwill SAR 410 million). It agreed on August 7, 2024 to buy a further 22.5% of Petro Rabigh from Sumitomo for SAR 2,632 million, taking its stake to 60% with completion expected in the second quarter of 2025, alongside matching capital injections and a phased waiver of SAR 5,625 million of shareholder loans (SAR 1,935 million recognized in 2024). Other investments include a 40% stake in Gas & Oil Pakistan for SAR 279 million, SAR 195 million plus SAR 969 million in the MidOcean LNG associate, a 30% interest in the HAPCO refinery and petrochemical complex in China (construction cost SAR 43,000 million, Aramco equity share SAR 4,315 million with SAR 976 million undrawn), a 50% stake in Blue Hydrogen Industrial Gases closed on January 27, 2025, and a 10% stake in HORSE Powertrain for SAR 2,576 million. The 2023 acquisition of 10% of Rongsheng Petrochemical for SAR 12,767 million was recorded as a SAR 6,399 million FVOCI investment and a SAR 5,932 million asset for the long-term agreement to supply 480,000 bpd of crude oil to ZPC.",
+      "keyFigures": [
+        {"label": "Esmax acquisition - cash consideration", "v": ["1,373", "–"]},
+        {"label": "Valvoline global products acquisition - cash consideration", "v": ["–", "10,338"]},
+        {"label": "Petro Rabigh additional 22.5% stake - agreed price", "v": ["2,632", "–"]},
+        {"label": "HORSE Powertrain 10% stake - purchase price", "v": ["2,576", "–"]},
+        {"label": "Rongsheng Petrochemical 10% stake - total transaction value", "v": ["–", "12,767"]}
+      ],
+      "subnotes": [
+        {"id": "(a)", "title": "Investments in subsidiaries", "summary": "Esmax (Chile, SAR 1,373 million, 2024) and Valvoline global products (SAR 10,338 million, 2023) acquisitions with purchase price allocations."},
+        {"id": "(b)", "title": "Investments in joint ventures and associates", "summary": "Petro Rabigh stake increase to 60% for SAR 2,632 million and loan waivers, BHIG 50% (closed January 2025), Gas & Oil Pakistan 40%, MidOcean LNG and the 30% HAPCO complex in China."},
+        {"id": "(c)", "title": "Investment in securities", "summary": "10% of HORSE Powertrain for SAR 2,576 million (December 2024) and 10% of Rongsheng Petrochemical for SAR 12,767 million (July 2023) with a 480,000 bpd long-term crude supply agreement."}
+      ],
+      "refs": ["5", "6", "9", "10", "33"],
+      "tags": ["acquisitions", "m&a", "downstream", "retail", "lng", "china", "petro-rabigh", "valvoline"],
+      "investorRelevance": "Chronicles the inorganic growth programme - Esmax (Chile), Valvoline, Gas & Oil Pakistan, MidOcean LNG, HAPCO (China), HORSE and Rongsheng - and the pending move to 60% control of Petro Rabigh for SAR 2,632 million with matching capital injections.",
+      "flag": {
+        "level": "info",
+        "text": "Post-year-end events: the SAR 2,632 million purchase of a further 22.5% of Petro Rabigh (to 60%) is expected to complete in the second quarter of 2025 and the 50% BHIG stake closed on January 27, 2025; HAPCO's SAR 43,000 million complex is due in 2026 with SAR 976 million of Aramco's equity contribution still undrawn."
+      }
+    },
+    {
+      "n": "36",
+      "title": "Dividends",
+      "category": "equity",
+      "summary": "Dividends declared and paid in 2024 totalled SAR 465,918 million (2023: SAR 366,674 million), or SAR 1.9260 per share (2023: SAR 1.5458), paid in quarterly instalments of SAR 116,503 million, SAR 116,517 million, SAR 116,447 million and SAR 116,451 million at SAR 0.4815 per share each; this included SAR 161,593 million (SAR 0.6680 per share) of performance-linked dividends, first introduced in the third quarter of 2023 (2023: SAR 74,035 million). On March 3, 2025 the Board declared a dividend of SAR 80,104 million (SAR 0.3312 per share), comprising a base dividend of SAR 79,282 million and a performance-linked dividend of SAR 822 million, to be deducted from retained earnings in the first quarter of 2025. The May 8, 2023 bonus issue raised share capital to SAR 90,000 million and shares to 242 billion.",
+      "keyFigures": [
+        {"label": "Total dividends declared and paid", "v": ["465,918", "366,674"]},
+        {"label": "Dividends per share (SAR)", "v": ["1.9260", "1.5458"]},
+        {"label": "Performance-linked dividends included in total", "v": ["161,593", "74,035"]},
+        {"label": "Dividend declared after year-end (March 3, 2025 / March 8, 2024)", "v": ["80,104", "116,503"]},
+        {"label": "Dividend per share declared after year-end (SAR)", "v": ["0.3312", "0.4815"]}
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": ["dividends", "performance-linked", "shareholder-returns", "share-capital"],
+      "investorRelevance": "Dividends paid rose to SAR 465,918 million (SAR 1.9260 per share) including SAR 161,593 million performance-linked, while the post-year-end declaration dropped to SAR 80,104 million with the performance-linked element cut to SAR 822 million - a key signal on future payout capacity.",
+      "flag": {
+        "level": "watch",
+        "text": "Dividends of SAR 465,918 million in 2024 (2023: SAR 366,674 million), including SAR 161,593 million of performance-linked dividends, were paid as the group moved into net debt; the dividend declared on March 3, 2025 fell to SAR 80,104 million (SAR 0.3312 per share) with the performance-linked component reduced to SAR 822 million."
+      }
+    },
+    {
+      "n": "37",
+      "title": "Earnings per Share",
+      "category": "income",
+      "summary": "Net income attributable to ordinary shareholders of the Company was SAR 393,891 million (2023: SAR 452,753 million) on a weighted average of 241,894 million shares (2023: 241,933 million, retrospectively adjusted for the 2023 bonus issue), giving earnings per share of SAR 1.63 (2023: SAR 1.87). Employee share plans had no significant dilutive effect.",
+      "keyFigures": [
+        {"label": "Net income attributable to ordinary shareholders of the Company", "v": ["393,891", "452,753"]},
+        {"label": "Weighted average number of ordinary shares (millions)", "v": ["241,894", "241,933"]},
+        {"label": "Earnings per share (SAR)", "v": ["1.63", "1.87"]}
+      ],
+      "subnotes": [],
+      "refs": ["2", "17", "36"],
+      "tags": ["eps", "net-income"],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "38",
+      "title": "Subsidiaries of Saudi Arabian Oil Company",
+      "category": "group",
+      "summary": "Lists around 300 subsidiaries with principal activity, effective ownership, country of incorporation and, for entities not listed on the Saudi Exchange, conventional financial assets, conventional financial liabilities and interest income. Section A covers 136 wholly-owned entities, including Aramco Overseas Company B.V., Aramco Trading Company and its international arms, Motiva Enterprises, Saudi Refining, the Valvoline, ARLANXEO and Esmax groups, Aramco Power Company and Stellar Insurance; Section B covers 166 non-wholly-owned entities, led by SABIC (70%) and its subsidiaries, S-Oil Corporation (61.6%), Aramco Oil Pipelines Company and Aramco Gas Pipelines Company (51%), Luberef (70%), Johns Hopkins Aramco Healthcare (80%) and the 50% Nabors and Rowan drilling companies. Saudi Arabia, the USA and the Netherlands are the most common jurisdictions. The largest conventional financial assets are held by Aramco Asia Singapore (SAR 32,765 million), Aramco Overseas Company (SAR 16,587 million) and Aramco Trading Company (SAR 15,177 million); the largest conventional financial liabilities sit in S-Oil (SAR 35,872 million), Aramco Trading Americas (SAR 22,103 million) and Motiva (SAR 13,731 million).",
+      "keyFigures": [
+        {"label": "Aramco Asia Singapore Pte. Ltd. - conventional financial assets", "v": ["32,765", "–"]},
+        {"label": "Aramco Overseas Company B.V. - conventional financial assets", "v": ["16,587", "–"]},
+        {"label": "Aramco Trading Company - conventional financial assets", "v": ["15,177", "–"]},
+        {"label": "S-Oil Corporation - conventional financial liabilities", "v": ["35,872", "–"]},
+        {"label": "Aramco Trading Americas LLC - conventional financial liabilities", "v": ["22,103", "–"]}
+      ],
+      "subnotes": [
+        {"id": "A", "title": "Wholly-owned", "summary": "136 entities at 100% effective ownership spanning trading, refining, retail, lubricants, rubber, ventures, insurance and support services worldwide."},
+        {"id": "B", "title": "Non-wholly owned", "summary": "166 entities including SABIC (70%) and its group, S-Oil (61.6%), the 51% pipeline companies, Luberef (70%), Johns Hopkins Aramco Healthcare (80%) and 50% drilling and rubber ventures where agreements provide control."}
+      ],
+      "refs": [],
+      "tags": ["subsidiaries", "group-structure", "sabic", "s-oil", "motiva", "valvoline", "jurisdictions"],
+      "investorRelevance": "The definitive map of legal entities and effective ownership - SABIC (70%), S-Oil (61.6%), the 51% pipeline companies, 50/50 drilling ventures and the global Valvoline, ARLANXEO and Esmax networks - needed to trace control and jurisdiction.",
+      "flag": null
+    },
+    {
+      "n": "39",
+      "title": "Joint Operations of Saudi Arabian Oil Company",
+      "category": "group",
+      "summary": "Lists 17 joint operations whose assets, liabilities, revenues and expenses are recognized in proportion to Saudi Aramco's interest, with activity, effective ownership, country and Saudi Aramco's share of conventional financial assets, liabilities and interest income. They include Al-Khafji Joint Operations (50%, Saudi-Kuwaiti Partitioned Zone), SATORP (62.5%), Yanbu Aramco Sinopec Refining Company (62.5%), Saudi Aramco Mobil Refinery (50%), Pengerang Refining and Pengerang Petrochemical in Malaysia (50%), Jazan Integrated Gasification and Power Company (20%), Fadhili Plant Cogeneration (30%), Korea Electric Power Corporation for Power (40%), Tanajib Cogeneration (40%), Power Cogeneration Plant Company (50%), the Maasvlakte tank storage entities in the Netherlands, and SABIC-related Geismar (8.1%), Gulf Coast Growth Venture (35%), SABUCO (8.2%) and SAMAC (35%). SATORP and YASREF are not subsidiaries despite 62.5% ownership because no single shareholder has control. The largest attributable financial liabilities are Pengerang Refining SAR 25,747 million, SATORP SAR 9,265 million, JIGPC SAR 3,005 million and YASREF SAR 2,832 million.",
+      "keyFigures": [
+        {"label": "Pengerang Refining Company - share of conventional financial liabilities", "v": ["25,747", "–"]},
+        {"label": "SATORP - share of conventional financial liabilities", "v": ["9,265", "–"]},
+        {"label": "SATORP - share of conventional financial assets", "v": ["3,129", "–"]},
+        {"label": "Jazan Integrated Gasification and Power Company - share of conventional financial liabilities", "v": ["3,005", "–"]}
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": ["joint-operations", "satorp", "yasref", "pengerang", "samref", "khafji", "power"],
+      "investorRelevance": "Shows the proportionately consolidated refining and power assets - SATORP and YASREF (62.5% but jointly controlled), SAMREF, Pengerang in Malaysia with SAR 25,747 million of attributable financial liabilities, and the Al-Khafji Partitioned Zone operation with Kuwait.",
+      "flag": null
+    },
+    {
+      "n": "40",
+      "title": "Joint Ventures and Associates of Saudi Arabian Oil Company",
+      "category": "group",
+      "summary": "Lists 43 joint ventures and 34 associates with activity, effective ownership, country and (for entities not listed on the Saudi Exchange) 100% conventional financial assets, liabilities and interest income. Joint ventures include Sadara Chemical Company (65%, SAR 3,900 million of financial assets against SAR 44,500 million of financial liabilities), Arabian Rig Manufacturing (30%), Gas & Oil Pakistan (40%), Tas'helat Marketing (50%), Saudi Engines Manufacturing (55%), Energy City Logistics (51%) and SABIC's Kemya, Sharq, Yanpet and SSTPC at 35% effective ownership. Associates include Hyundai Oilbank (17%, SAR 36,909 million of financial liabilities), Fujian Refining and Petrochemical (25%, SAR 9,146 million), HAPCO (30%), Sinopec Senmei (22.5%), MidOcean Holdings II (49%), Rafineria Gdanska (30%), International Maritime Industries (40.1%), Noor Al Shuaibah (30%), Petro Rabigh (37.5%), Marafiq (29.8%), Bahri (20%), Clariant (22.1% effective), MPC (21%) and ALBA (14.4%, held for sale).",
+      "keyFigures": [
+        {"label": "Sadara Chemical Company - conventional financial liabilities (100%)", "v": ["44,500", "–"]},
+        {"label": "Sadara Chemical Company - conventional financial assets (100%)", "v": ["3,900", "–"]},
+        {"label": "Hyundai Oilbank Co., Ltd. - conventional financial liabilities (100%)", "v": ["36,909", "–"]},
+        {"label": "Fujian Refining and Petrochemical Company Limited - conventional financial liabilities (100%)", "v": ["9,146", "–"]},
+        {"label": "Huajin Aramco Petrochemical Co., Ltd. - conventional financial liabilities (100%)", "v": ["5,711", "–"]}
+      ],
+      "subnotes": [
+        {"id": "A", "title": "Joint ventures", "summary": "43 jointly controlled entities including Sadara (65%), ARM (30%), Gas & Oil Pakistan (40%), Tas'helat (50%) and SABIC's petrochemical ventures at 35% effective ownership."},
+        {"id": "B", "title": "Associates", "summary": "34 entities under significant influence including Hyundai Oilbank (17%), FREP (25%), HAPCO (30%), MidOcean (49%), Petro Rabigh (37.5%), Marafiq (29.8%), Bahri (20%), Clariant (22.1%) and ALBA (14.4%, held for sale)."}
+      ],
+      "refs": ["34"],
+      "tags": ["joint-ventures", "associates", "sadara", "hyundai-oilbank", "group-structure"],
+      "investorRelevance": "Complete register of 43 joint ventures and 34 associates with effective ownership and jurisdiction, highlighting leverage at key partners such as Sadara (SAR 44,500 million of financial liabilities) and Hyundai Oilbank (SAR 36,909 million).",
+      "flag": {
+        "level": "info",
+        "text": "Sadara, a 65% joint venture that is not consolidated, carries SAR 44,500 million of conventional financial liabilities against SAR 3,900 million of conventional financial assets."
+      }
+    }
+  ]
+}

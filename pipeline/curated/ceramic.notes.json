@@ -1,0 +1,2021 @@
+{
+  "id": "ceramic",
+  "notes": [
+    {
+      "n": "1",
+      "title": "Organization Activities",
+      "category": "group",
+      "summary": "Saudi Ceramic Company is a Saudi joint stock company established by Royal Decree No. (M/16) on 14 April 1977 (Commercial Register 1010014590, Riyadh), engaged in the production and sale of ceramic products, water heaters and related components, and the import of related machinery and equipment. The consolidated financial statements for the year ended 31 December 2024 cover the parent and three subsidiaries: Ceramic Pipes Company (77.89%; 2023: 73.89%), Arzan Company (100%) and Ceramics Investment Company (98.69% per the table; the footnote states 98.89%, being 95% direct and 3.89% indirect through Ceramic Pipes Company). On 4 July 2024 the Company acquired an additional 4% of Ceramic Pipes Company under a waiver agreement with shareholder Khaled Saleh Abdulaziz Al Rajhi. Arzan Company and Ceramics Investment Company had not started commercial operations by 31 December 2024.",
+      "keyFigures": [
+        {
+          "label": "Ceramic Pipes Company – ownership %",
+          "v": [
+            "77.89%",
+            "73.89%"
+          ]
+        },
+        {
+          "label": "Arzan Company – ownership %",
+          "v": [
+            "100%",
+            "100%"
+          ]
+        },
+        {
+          "label": "Ceramics Investment Company – ownership %",
+          "v": [
+            "98.69%",
+            "98.69%"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "A",
+          "title": "Establishment and activities",
+          "summary": "Saudi joint stock company formed by Royal Decree No. (M/16) in 1977, producing and selling ceramic products and water heaters."
+        },
+        {
+          "id": "B",
+          "title": "Subsidiaries included in the consolidation",
+          "summary": "Ceramic Pipes Company (77.89%), Arzan Company (100%) and Ceramics Investment Company (98.69%); the latter two are dormant."
+        },
+        {
+          "id": "C",
+          "title": "Scope of the consolidated financial statements",
+          "summary": "Covers the main and sub-commercial registrations of the parent plus the three subsidiaries (one closed joint stock company, two limited liability companies)."
+        },
+        {
+          "id": "D",
+          "title": "Headquarters address",
+          "summary": "Riyadh, Al-Olayya District, King Fahad Road, P.O. Box 3893, Zip Code 11481."
+        }
+      ],
+      "refs": [],
+      "tags": [
+        "organization",
+        "subsidiaries",
+        "ownership",
+        "group-structure"
+      ],
+      "investorRelevance": "Identifies the legal entity, its registration and the three subsidiaries, including the 4 July 2024 increase in the Ceramic Pipes Company stake to 77.89% and two subsidiaries that have never traded.",
+      "flag": {
+        "level": "info",
+        "text": "Group ownership of Ceramic Pipes Company rose from 73.89% to 77.89% on 4 July 2024 through a 4% waiver agreement with shareholder Khaled Saleh Abdulaziz Al Rajhi; the table (98.69%) and footnote (98.89%) give inconsistent ownership percentages for Ceramics Investment Company."
+      }
+    },
+    {
+      "n": "2",
+      "title": "Basis of Preparation",
+      "category": "policy",
+      "summary": "The consolidated financial statements are prepared under IFRS as endorsed in the Kingdom of Saudi Arabia and other SOCPA pronouncements, on the historical cost convention except where IFRS requires another measurement basis (Note 4). They are presented in Saudi Riyals rounded to the nearest thousand and consolidate the parent and all subsidiaries listed in Note 1, all with a 31 December year-end, with intra-group balances eliminated. Amendments effective 1 January 2024 (IAS 1 classification of liabilities, IFRS 16 sale and leaseback, IAS 7/IFRS 7 supplier finance arrangements) had no material effect; IAS 21 (2025), IFRS 9/IFRS 7 (2026), IFRS 18 and IFRS 19 (2027) are not yet applied and are expected to have no material impact.",
+      "keyFigures": [],
+      "subnotes": [
+        {
+          "id": "2.1",
+          "title": "Statement of compliance",
+          "summary": "IFRS as endorsed in KSA and other SOCPA standards and pronouncements."
+        },
+        {
+          "id": "2.2",
+          "title": "Basis of measurement",
+          "summary": "Historical cost except where IFRS requires otherwise; judgements and estimates per Note 4."
+        },
+        {
+          "id": "2.3",
+          "title": "Functional and presentation currency",
+          "summary": "Saudi Riyal; all amounts rounded to the nearest thousand unless otherwise indicated."
+        },
+        {
+          "id": "2.4",
+          "title": "Basis of consolidation",
+          "summary": "Parent and all subsidiaries consolidated from the date control commences; intra-group transactions eliminated; NCI allocated by ownership interest."
+        },
+        {
+          "id": "2.5",
+          "title": "New standards and amendments to standards and interpretations",
+          "summary": "2024 amendments (IAS 1, IFRS 16, IAS 7/IFRS 7) had no material effect; IAS 21, IFRS 9/7, IFRS 18 and IFRS 19 not yet effective."
+        }
+      ],
+      "refs": [
+        "1",
+        "4"
+      ],
+      "tags": [
+        "basis-of-preparation",
+        "ifrs",
+        "consolidation",
+        "new-standards"
+      ],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "3",
+      "title": "Material Accounting Estimates and Assumptions",
+      "category": "policy",
+      "summary": "The note lists the areas of significant judgement: employees' post-employment benefits (actuarial valuation using the projected unit credit method), impairment of inventories (net realisable value, with replacement cost used for raw materials and spare parts), impairment of non-financial assets (recoverable amount as the higher of value in use and fair value less costs to sell at CGU level), fair value measurement (three-level hierarchy; no transfers between levels in 2024 or 2023) and useful lives of property, plant and equipment. A change in accounting estimate effective 1 January 2024 depreciates leasehold improvements over the lower of useful life or the expected (rather than contractual) lease term, applied prospectively, decreasing depreciation expense and increasing net profit by SAR 2.3 million. Management concluded there are no material doubts about the Group's ability to continue as a going concern.",
+      "keyFigures": [],
+      "subnotes": [],
+      "refs": [
+        "16"
+      ],
+      "tags": [
+        "estimates",
+        "judgements",
+        "going-concern",
+        "change-in-estimate"
+      ],
+      "investorRelevance": "Contains the explicit going-concern conclusion and a prospective change in depreciation estimate that lifted 2024 net profit by SAR 2.3 million.",
+      "flag": {
+        "level": "info",
+        "text": "Change in accounting estimate from 1 January 2024: leasehold improvements now depreciated over the lower of useful life or expected lease term, reducing depreciation and increasing net profit by SAR 2.3 million; management reports no material doubt about going concern."
+      }
+    },
+    {
+      "n": "4",
+      "title": "Material Accounting Policies",
+      "category": "policy",
+      "summary": "Sets out the accounting policies applied consistently to all periods presented. It covers cash and cash equivalents, property, plant and equipment (straight-line depreciation; buildings 10-33.33 years, furniture 4-10, vehicles 4, tools 10; leasehold improvements over the lower of useful life or expected lease term, extended to 10 years for some locations in 2024), capital work in progress, assets held for sale, IFRS 16 leases, intangible assets (15 years), the equity method for associates, inventories at the lower of weighted-average cost and net realisable value, borrowings and borrowing costs, payables, unfunded end-of-service benefits under IAS 19, foreign currency, zakat, provisions and contingent liabilities, earnings per share, segment reporting, treasury shares, IFRS 15 revenue recognition (including trade discounts, sale-or-return showroom sales with a refund liability and target-based wholesale incentives netted against receivables), expense classification, IFRS 9 classification of financial assets (amortised cost or FVOCI) and liabilities, and impairment of financial (simplified ECL) and non-financial assets.",
+      "keyFigures": [],
+      "subnotes": [
+        {
+          "id": null,
+          "title": "Cash and cash equivalents",
+          "summary": "Cash, bank balances and highly liquid investments maturing within three months, available without restriction; cash flow statement prepared under the indirect method."
+        },
+        {
+          "id": null,
+          "title": "Property, plant and equipment",
+          "summary": "Cost less depreciation and impairment, straight-line over useful lives (buildings 10-33.33 years, furniture 4-10, vehicles 4, tools 10, leasehold improvements over the lower of useful life or expected lease term); 2024 internal review extended the maximum leasehold improvement life to 10 years for some locations instead of 4."
+        },
+        {
+          "id": null,
+          "title": "Capital work in progress (CWIP)",
+          "summary": "Stated at cost less impairment and transferred to the relevant PP&E category when ready for use."
+        },
+        {
+          "id": null,
+          "title": "Assets held for sale",
+          "summary": "Measured at the lower of carrying amount and fair value less costs to sell when sale is highly probable within twelve months; not depreciated and presented as current."
+        },
+        {
+          "id": null,
+          "title": "Right-of-use assets and lease liabilities",
+          "summary": "Leases of warehouses, offices and showrooms recognised on balance sheet; ROU assets depreciated over the shorter of useful life and lease term; short-term and low-value leases expensed; extension options included only when reasonably certain."
+        },
+        {
+          "id": null,
+          "title": "Trade receivables",
+          "summary": "Stated net of the provision for expected credit losses and the provision for customers' incentive."
+        },
+        {
+          "id": null,
+          "title": "Intangible assets",
+          "summary": "Cost less amortisation and impairment, amortised straight-line over 15 years."
+        },
+        {
+          "id": null,
+          "title": "Investments in associate",
+          "summary": "Entities over which the Group has significant influence are accounted for using the equity method."
+        },
+        {
+          "id": null,
+          "title": "Inventories",
+          "summary": "Lower of cost (weighted average, including production overheads at normal capacity) and net realisable value."
+        },
+        {
+          "id": null,
+          "title": "Borrowings",
+          "summary": "Initially at fair value net of transaction costs, then amortised cost using the effective interest method; classified as current unless settlement can be deferred at least 12 months."
+        },
+        {
+          "id": null,
+          "title": "Borrowing costs",
+          "summary": "Capitalised on qualifying assets taking more than one year to get ready for use, excluding idle periods; all other borrowing costs expensed."
+        },
+        {
+          "id": null,
+          "title": "Trade and other payables",
+          "summary": "Trade payables recognised at invoice amount and measured at amortised cost; accruals at the best estimate of amounts payable."
+        },
+        {
+          "id": null,
+          "title": "Employees' post-employment benefits",
+          "summary": "Unfunded end-of-service defined benefit plan under Saudi Labor Law, valued annually by the projected unit credit method with remeasurements in OCI; short-term benefits accrued undiscounted."
+        },
+        {
+          "id": null,
+          "title": "Foreign currency transactions",
+          "summary": "Recorded at spot rate; monetary items retranslated at the reporting-date rate with differences taken to profit or loss."
+        },
+        {
+          "id": null,
+          "title": "Zakat provision",
+          "summary": "Calculated under ZATCA rules and charged as a separate line in profit or loss; differences on prior-year assessments recognised in the year of final settlement."
+        },
+        {
+          "id": null,
+          "title": "Provisions",
+          "summary": "Recognised for probable, reliably measurable obligations from past events, discounted at a pre-zakat rate with unwinding charged as interest expense."
+        },
+        {
+          "id": null,
+          "title": "Contingent Liability",
+          "summary": "Possible obligations, or present obligations with improbable or unmeasurable outflows, are disclosed but not recognised."
+        },
+        {
+          "id": null,
+          "title": "Earnings per share",
+          "summary": "Net profit for the year divided by the weighted average number of shares outstanding."
+        },
+        {
+          "id": null,
+          "title": "Segmental reporting",
+          "summary": "Operating segments reviewed by the Chief Operating Decision Maker, aggregated where economic characteristics are similar."
+        },
+        {
+          "id": null,
+          "title": "Treasury Shares",
+          "summary": "Own shares acquired for the Employee Share Program are held at cost as a deduction from equity; no gain or loss is recognised in profit or loss."
+        },
+        {
+          "id": null,
+          "title": "Revenue recognition",
+          "summary": "IFRS 15 five-step model with revenue at a point in time on delivery; retail discounts deducted upfront, wholesale discounts accrued monthly and settled by credit note, showroom sale-or-return with a refund liability, and target-based wholesale incentives provided monthly and netted against receivables."
+        },
+        {
+          "id": null,
+          "title": "Expenses",
+          "summary": "Accrual basis; production costs classified as cost of sales, selling costs as selling and marketing expenses, remainder as general and administrative."
+        },
+        {
+          "id": null,
+          "title": "Financial instruments",
+          "summary": "Financial assets measured at amortised cost (SPPI) or FVOCI (irrevocable election for equity investments, gains held in other reserve and never recycled); financial liabilities (bank borrowings, trade and other payables) at amortised cost; offsetting only with a legal right and intention to net settle."
+        },
+        {
+          "id": null,
+          "title": "Impairment of financial assets",
+          "summary": "Forward-looking expected credit losses; simplified lifetime ECL for trade receivables grouped by credit characteristics and days past due, adjusted for macroeconomic factors such as inflation and GDP growth."
+        },
+        {
+          "id": null,
+          "title": "Impairment of Non-Financial Assets",
+          "summary": "Recoverable amount is the higher of fair value less costs to sell and value in use at CGU level; impairment recognised immediately in profit or loss and reversed only up to the carrying amount net of depreciation that would otherwise have existed."
+        }
+      ],
+      "refs": [],
+      "tags": [
+        "accounting-policies",
+        "ifrs",
+        "revenue-recognition",
+        "impairment",
+        "financial-instruments"
+      ],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "5",
+      "title": "Property, Plant and Equipment, Net",
+      "category": "balance-sheet",
+      "summary": "Property, plant and equipment had a net book value of SAR 1,546,358 thousand at 31 December 2024 (2023: 1,513,398) after additions of 203,034 (of which 166,531 to assets under construction, mainly the new porcelain tile factory and production-line efficiency projects), depreciation of 117,142 (2023: 122,954) and impairment losses of 51,070 (2023: 78,224 plus 136,880 of fire damage). The 2024 impairment comprises SAR 45 million on the Red Bricks business unit, whose recoverable amount of SAR 76 million (fair value less cost of disposal) was below its SAR 121 million carrying amount after five-year budgets showed negative operating income, and SAR 5.7 million on Ceramic Pipes Company (2023: SAR 78.2 million), whose value in use of SAR 88.1 million uses a 12% pre-tax discount rate, a negative gross margin of 42% and management's intention to liquidate the business post 2027. Buildings, machinery and equipment with a carrying amount of SAR 379 million (2023: SAR 908 million) are pledged as security for SIDF loans (Note 16), and borrowing costs of SAR 9.1 million (2023: SAR 8.5 million) were capitalised to assets under construction.",
+      "keyFigures": [
+        {
+          "label": "Net book value at 31 December",
+          "v": [
+            "1,546,358",
+            "1,513,398"
+          ]
+        },
+        {
+          "label": "Additions (cost)",
+          "v": [
+            "203,034",
+            "263,363"
+          ]
+        },
+        {
+          "label": "Depreciation charge for the year",
+          "v": [
+            "117,142",
+            "122,954"
+          ]
+        },
+        {
+          "label": "Impairment loss (Note 5E, 5F)",
+          "v": [
+            "51,070",
+            "78,224"
+          ]
+        },
+        {
+          "label": "Impairment loss due to fire",
+          "v": [
+            "–",
+            "136,880"
+          ]
+        },
+        {
+          "label": "Assets under construction, net book value",
+          "v": [
+            "351,889",
+            "218,102"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "A",
+          "title": "Assets pledged to SIDF",
+          "summary": "Buildings, machinery and equipment with carrying amount SAR 379 million (2023: SAR 908 million) secure loans from the Saudi Industrial Development Fund."
+        },
+        {
+          "id": "B",
+          "title": "Assets under construction",
+          "summary": "Mainly the new porcelain tile factory, production-line efficiency improvement projects and civil works."
+        },
+        {
+          "id": "C",
+          "title": "Capitalised borrowing costs",
+          "summary": "SAR 9.1 million of borrowing costs capitalised to assets under construction (2023: SAR 8.5 million)."
+        },
+        {
+          "id": "D",
+          "title": "Allocation of depreciation",
+          "summary": "Depreciation of 117,142 split between cost of revenue 100,767, selling and marketing 13,514 and general and administrative 2,861."
+        },
+        {
+          "id": "E",
+          "title": "Impairment loss for a subsidiary",
+          "summary": "Ceramic Pipes Company impaired by SAR 5.7 million (2023: SAR 78.2 million) based on value in use at a 12% pre-tax discount rate, FY25-FY27 budgets, a negative 42% gross margin and the intention to liquidate post 2027; net carrying amount SAR 88.1 million."
+        },
+        {
+          "id": "F",
+          "title": "Property, plant and equipment for internal business unit – Red Bricks",
+          "summary": "Red Bricks factory impaired by SAR 45 million to a recoverable amount of SAR 76 million (fair value less cost of disposal) against a carrying amount of SAR 121 million after five-year projections showed negative operating income."
+        }
+      ],
+      "refs": [
+        "16",
+        "21",
+        "22",
+        "23",
+        "35"
+      ],
+      "tags": [
+        "ppe",
+        "impairment",
+        "security",
+        "capex",
+        "sidf"
+      ],
+      "investorRelevance": "Shows SAR 51,070 thousand of 2024 impairments (Red Bricks SAR 45 million, Ceramic Pipes Company SAR 5.7 million with a planned liquidation post 2027), SAR 379 million of PP&E mortgaged to SIDF and SAR 351,889 thousand of assets under construction for the new porcelain tile factory.",
+      "flag": {
+        "level": "alert",
+        "text": "Impairment losses of SAR 51,070 thousand in 2024: SAR 45 million on the Red Bricks factory (fair value less cost of disposal SAR 76 million against a carrying amount of SAR 121 million) and SAR 5.7 million on Ceramic Pipes Company, whose value in use assumes management's intention to liquidate the business post 2027; 2023 carried a further 78,224 of CPC impairment and 136,880 of fire damage, and PP&E of SAR 379 million is mortgaged to SIDF."
+      }
+    },
+    {
+      "n": "6",
+      "title": "Right of Use Assets, Net and Lease Liabilities",
+      "category": "balance-sheet",
+      "summary": "Right-of-use assets had a net book value of 105,967 at 31 December 2024 (2023: 86,446) after additions of 39,060 (2023: 15,368), depreciation of 19,539 (2023: 16,454) and the removal of 70,054 of cost and accumulated depreciation on completed leases. Lease liabilities rose to 97,228 (2023: 81,343), split 34,645 current and 62,583 non-current, after new liabilities of 39,060, interest of 6,167 (2023: 3,665) and payments of 29,342. The leases relate to showrooms, warehouses and factory-related facilities, with finance cost charged over the lease period at the effective interest rate.",
+      "keyFigures": [
+        {
+          "label": "Right of use assets, net book value",
+          "v": [
+            "105,967",
+            "86,446"
+          ]
+        },
+        {
+          "label": "Additions to right of use assets",
+          "v": [
+            "39,060",
+            "15,368"
+          ]
+        },
+        {
+          "label": "Depreciation charge for the year",
+          "v": [
+            "19,539",
+            "16,454"
+          ]
+        },
+        {
+          "label": "Lease liabilities at 31 December",
+          "v": [
+            "97,228",
+            "81,343"
+          ]
+        },
+        {
+          "label": "Current portion of lease liabilities",
+          "v": [
+            "34,645",
+            "15,773"
+          ]
+        },
+        {
+          "label": "Interest expense on lease liabilities",
+          "v": [
+            "6,167",
+            "3,665"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "A",
+          "title": "Movement in right of use assets",
+          "summary": "Cost 128,433 less accumulated depreciation 22,466 gives a net book value of 105,967 (2023: 86,446)."
+        },
+        {
+          "id": "B",
+          "title": "Allocation of depreciation",
+          "summary": "Depreciation of 19,539 charged to cost of revenue 2,724 and selling and marketing 16,815."
+        },
+        {
+          "id": "C",
+          "title": "Lease liabilities",
+          "summary": "Movement from 81,343 to 97,228 after additions 39,060, interest 6,167 and payments (29,342)."
+        },
+        {
+          "id": "D",
+          "title": "Maturity classification",
+          "summary": "Within 1 year 34,645; 1-5 years 33,677; more than 5 years 28,906."
+        },
+        {
+          "id": "E",
+          "title": "Nature of leased assets",
+          "summary": "Showrooms, warehouses and factory-related facilities."
+        },
+        {
+          "id": "F",
+          "title": "Finance cost policy",
+          "summary": "Financing cost charged to profit or loss over the lease period using the effective interest rate."
+        }
+      ],
+      "refs": [
+        "21",
+        "22",
+        "23",
+        "24"
+      ],
+      "tags": [
+        "leases",
+        "ifrs16",
+        "right-of-use"
+      ],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "7",
+      "title": "Investment in Associate",
+      "category": "balance-sheet",
+      "summary": "The Group held nil % of Natural Gas Distribution Company (NGDC), a Saudi listed company, at 31 December 2024 (2023: 2.38%) after disposing of the remaining carrying amount of 1,283 during the year. In 2024 it sold 117 thousand shares (2023: 0.67 million shares) for cash consideration of SAR 5.1 million (2023: 23.1 million), recognising a gain of SAR 3.8 million (2023: 23.1 million) in other income. No share of profit or dividends was recorded in 2024 (2023: 205 and 508 respectively).",
+      "keyFigures": [
+        {
+          "label": "Investment as at 1 January",
+          "v": [
+            "1,283",
+            "9,054"
+          ]
+        },
+        {
+          "label": "Share of net profit of associate",
+          "v": [
+            "-",
+            "205"
+          ]
+        },
+        {
+          "label": "Disposal of shares",
+          "v": [
+            "(1,283)",
+            "(7,468)"
+          ]
+        },
+        {
+          "label": "Dividends received",
+          "v": [
+            "-",
+            "(508)"
+          ]
+        },
+        {
+          "label": "Investment as at 31 December",
+          "v": [
+            "-",
+            "1,283"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": [
+        "associate",
+        "disposal",
+        "ngdc"
+      ],
+      "investorRelevance": "The Group fully exited its stake in Natural Gas Distribution Company in 2024 for SAR 5.1 million, so it no longer holds any equity-accounted investment.",
+      "flag": {
+        "level": "info",
+        "text": "Remaining 2.38% stake in Natural Gas Distribution Company sold during 2024 for SAR 5.1 million with a gain of SAR 3.8 million; the investment in associate is nil at 31 December 2024."
+      }
+    },
+    {
+      "n": "8",
+      "title": "Financial Assets at Fair Value Through OCI (FVOCI)",
+      "category": "balance-sheet",
+      "summary": "The Group's only FVOCI investment is a 1.23% holding in Gulf Real Estate Company, an unlisted company, carried at a fair value of 7,877 (2023: 7,816) estimated by reference to the market value of its net assets. The revaluation produced an unrealised gain of SAR 61,000 in 2024 (2023: SAR 395,000) recognised in other comprehensive income. No dividends were received in either year.",
+      "keyFigures": [
+        {
+          "label": "Gulf Real Estate Company – fair value",
+          "v": [
+            "7,877",
+            "7,816"
+          ]
+        },
+        {
+          "label": "Gulf Real Estate Company – ownership %",
+          "v": [
+            "1.23%",
+            "1.23%"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": [
+        "fvoci",
+        "investments",
+        "fair-value"
+      ],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "9",
+      "title": "Inventories, Net",
+      "category": "balance-sheet",
+      "summary": "Net inventories fell to 704,580 (2023: 900,259) as gross inventories declined to 829,134 (2023: 1,014,054), led by finished goods of 410,318 (2023: 612,431), while raw materials rose to 226,410 (2023: 179,899). The provision for inventories increased to 124,554 (2023: 85,831) after a charge of 43,548 (2023: 63,434) and write-offs of 4,825. The 27,964 impairment for fire-damaged inventories recorded in 2023 (Note 32) was written off in 2024 against that provision following board approval of SAR 27.96 million, and finished goods written off during the year amounted to SAR 4.8 million (2023: SAR 7 million).",
+      "keyFigures": [
+        {
+          "label": "Inventories, net",
+          "v": [
+            "704,580",
+            "900,259"
+          ]
+        },
+        {
+          "label": "Finished goods",
+          "v": [
+            "410,318",
+            "612,431"
+          ]
+        },
+        {
+          "label": "Raw materials and consumables",
+          "v": [
+            "226,410",
+            "179,899"
+          ]
+        },
+        {
+          "label": "Provision for inventories (C)",
+          "v": [
+            "(124,554)",
+            "(85,831)"
+          ]
+        },
+        {
+          "label": "Impairment loss for inventories due to fire (Note 32)",
+          "v": [
+            "-",
+            "(27,964)"
+          ]
+        },
+        {
+          "label": "Provision for the year (note 21)",
+          "v": [
+            "43,548",
+            "63,434"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "A",
+          "title": "Composition of inventories",
+          "summary": "Finished goods 410,318, raw materials and consumables 226,410, spare parts 97,311, semi-finished goods 63,532 and goods for resale 31,563, less provisions, giving a net 704,580."
+        },
+        {
+          "id": "B",
+          "title": "Inventories written off",
+          "summary": "Finished goods written off of SAR 4.8 million (2023: SAR 7 million); board approved writing off SAR 27.96 million of fire-damaged inventories against the 2023 provision."
+        },
+        {
+          "id": "C",
+          "title": "Movement in the provision for inventories",
+          "summary": "Opening 85,831, charge 43,548 (note 21), write-offs (4,825), closing 124,554."
+        }
+      ],
+      "refs": [
+        "32",
+        "21"
+      ],
+      "tags": [
+        "inventories",
+        "provision",
+        "fire",
+        "write-off"
+      ],
+      "investorRelevance": "Inventory provisions rose to SAR 124,554 thousand after a further 43,548 charge, and the SAR 27.96 million of fire-damaged stock from 2023 was written off in 2024.",
+      "flag": {
+        "level": "watch",
+        "text": "Provision for inventories rose to 124,554 (2023: 85,831) after a 43,548 charge for the year, and the SAR 27.96 million of inventory damaged in the 2023 fire was written off against the provision."
+      }
+    },
+    {
+      "n": "10",
+      "title": "Trade and Other Receivables",
+      "category": "balance-sheet",
+      "summary": "Trade and other receivables totalled 263,174 at 31 December 2024 (2023 restated: 286,865). Gross trade receivables of 308,668 (2023: 337,446) are shown net of a provision for expected credit losses of 21,483 (2023: 26,145) and a provision for customers' incentive of 65,207 (2023: 67,712), giving net trade receivables of 221,978 (2023: 243,589); the balance includes advances to suppliers of 20,130 and prepaid expenses of 17,463. The ECL provision was reversed by 4,421 in 2024 (2023: charge of 5,499) with 241 written off, while the customer incentive provision was charged 89,651 (2023: 101,980) and offset by 92,156 of incentives settled. The 31 December 2023 and 1 January 2023 comparatives are restated per Note 33, and credit risk exposure is detailed in Note 30.",
+      "keyFigures": [
+        {
+          "label": "Trade receivables (gross)",
+          "v": [
+            "308,668",
+            "337,446"
+          ]
+        },
+        {
+          "label": "Less: provision for expected credit losses (B)",
+          "v": [
+            "(21,483)",
+            "(26,145)"
+          ]
+        },
+        {
+          "label": "Less: provision for customers' incentive (C)",
+          "v": [
+            "(65,207)",
+            "(67,712)"
+          ]
+        },
+        {
+          "label": "Trade receivables, net",
+          "v": [
+            "221,978",
+            "243,589"
+          ]
+        },
+        {
+          "label": "Advance to suppliers",
+          "v": [
+            "20,130",
+            "24,497"
+          ]
+        },
+        {
+          "label": "Total trade and other receivables",
+          "v": [
+            "263,174",
+            "286,865"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "A",
+          "title": "Composition of trade and other receivables",
+          "summary": "Net trade receivables 221,978 plus advances to suppliers, prepaid expenses, employees' receivables, deposits and others, totalling 263,174 (2023 restated: 286,865)."
+        },
+        {
+          "id": "B",
+          "title": "Movement of the provision for expected credit losses",
+          "summary": "Opening 26,145, reversal (4,421), write-offs (241), closing 21,483."
+        },
+        {
+          "id": "C",
+          "title": "Movement of the provision for customers' incentive",
+          "summary": "Opening 67,712, charge 89,651, incentives offset (92,156), closing 65,207."
+        }
+      ],
+      "refs": [
+        "33",
+        "30"
+      ],
+      "tags": [
+        "receivables",
+        "ecl",
+        "customer-incentives",
+        "restatement"
+      ],
+      "investorRelevance": "Shows SAR 65,207 thousand of customer incentive provisions now netted against receivables after the 2023 restatement, alongside a 4,421 reversal of the expected credit loss provision.",
+      "flag": {
+        "level": "info",
+        "text": "Comparatives for 31 December 2023 and 1 January 2023 are restated (Note 33) so that the provision for customers' incentive of 67,712 is deducted from trade receivables rather than presented in payables; the ECL provision was reversed by 4,421 in 2024."
+      }
+    },
+    {
+      "n": "11",
+      "title": "Cash and Cash Equivalents",
+      "category": "balance-sheet",
+      "summary": "Cash and cash equivalents were 42,296 at 31 December 2024 (2023 restated: 63,754), comprising current accounts of 34,573 (2023: 62,538), time deposits of 7,000 (2023: nil) and cash on hand of 723. Current accounts are non-interest bearing; bank deposits earned an average 4.65% per annum in 2024 with original maturities of three months or less. The 2023 and 1 January 2023 comparatives are restated per Note 33.",
+      "keyFigures": [
+        {
+          "label": "Cash at Bank - Current accounts",
+          "v": [
+            "34,573",
+            "62,538"
+          ]
+        },
+        {
+          "label": "Cash at Bank – Time Deposits",
+          "v": [
+            "7,000",
+            "-"
+          ]
+        },
+        {
+          "label": "Cash on hand",
+          "v": [
+            "723",
+            "1,216"
+          ]
+        },
+        {
+          "label": "Total cash and cash equivalents",
+          "v": [
+            "42,296",
+            "63,754"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [
+        "33"
+      ],
+      "tags": [
+        "cash",
+        "liquidity"
+      ],
+      "investorRelevance": "Cash and cash equivalents fell to SAR 42,296 thousand from a restated 63,754, a liquidity reference point for the borrowings in Note 16.",
+      "flag": null
+    },
+    {
+      "n": "12",
+      "title": "Assets Held for Sale",
+      "category": "balance-sheet",
+      "summary": "On 19 December 2023 the Board approved the sale of Group-owned land in the Misfah area. During 2024 the Group sold a significant part of these assets, with a total cost of 8.9 (the text omits the unit, presumably SAR million), total proceeds of SAR 13.1 million and capital gains of SAR 4.3 million. The remaining property, with a book value of SAR 72 thousand, is not used in the Group's operations.",
+      "keyFigures": [],
+      "subnotes": [],
+      "refs": [],
+      "tags": [
+        "held-for-sale",
+        "land",
+        "disposal"
+      ],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "13",
+      "title": "Share Capital",
+      "category": "equity",
+      "summary": "Share capital at 31 December 2024 is SAR 1,000 million (2023: SAR 800 million), comprising 100,000 thousand fully paid shares of SAR 10 each (2023: 80,000 thousand); the narrative's reference to '1,000 million (2023: 800 million)' shares is inconsistent with the table's 100 million shares. The Extraordinary General Assembly of 26 June 2024 approved a bonus share issue capitalising SAR 200,000,000 from retained earnings, taking share capital to SAR 1,000 million against 100 million shares. Each share carries one vote and an entitlement to declared dividends.",
+      "keyFigures": [
+        {
+          "label": "Authorized ordinary shares of SR 10 each (Shares in \"000\")",
+          "v": [
+            "100,000",
+            "80,000"
+          ]
+        },
+        {
+          "label": "Fully paid ordinary shares of SR 10 each (Shares in \"000\")",
+          "v": [
+            "100,000",
+            "80,000"
+          ]
+        },
+        {
+          "label": "Value of issued ordinary shares (SAR \"000\")",
+          "v": [
+            "1,000,000",
+            "800,000"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": [
+        "share-capital",
+        "bonus-shares",
+        "equity"
+      ],
+      "investorRelevance": "Share capital rose from SAR 800 million to SAR 1,000 million through a bonus issue capitalising SAR 200 million of retained earnings, approved on 26 June 2024.",
+      "flag": {
+        "level": "info",
+        "text": "Bonus share issue approved 26 June 2024 capitalised SAR 200,000,000 of retained earnings, raising share capital to SAR 1,000 million (100 million shares); the narrative's '1,000 million shares' conflicts with the table's 100,000 thousand shares."
+      }
+    },
+    {
+      "n": "14",
+      "title": "Statutory Reserve",
+      "category": "equity",
+      "summary": "The statutory reserve shown at 31 December 2023 was required under the Company's previous by-laws. Following amendments to the by-laws during 2024 the requirement was removed, and the Extraordinary General Assembly of 26 June 2024 approved the transfer of the entire statutory reserve of SAR 241,714,802 to retained earnings.",
+      "keyFigures": [],
+      "subnotes": [],
+      "refs": [],
+      "tags": [
+        "statutory-reserve",
+        "equity",
+        "by-laws"
+      ],
+      "investorRelevance": "The entire statutory reserve of SAR 241,714,802 was released to retained earnings after the by-laws dropped the reserve requirement, changing the composition of equity.",
+      "flag": {
+        "level": "info",
+        "text": "Statutory reserve of SAR 241,714,802 transferred in full to retained earnings on 26 June 2024 after the by-law requirement to maintain it was removed."
+      }
+    },
+    {
+      "n": "15",
+      "title": "Treasury Shares",
+      "category": "equity",
+      "summary": "At 31 December 2023 the Group held 34,021 treasury shares costing SAR 449,000. The Extraordinary General Assembly of 26 June 2024 authorised the purchase of up to 320,000 shares for the employee share scheme, and during 2024 the Company bought 285,979 shares for SAR 8,662,639 at an average price of SAR 30.29. Treasury shares at 31 December 2024 total 320,000 with a value of SAR 9,111,610; no shares were transferred to employees during the year.",
+      "keyFigures": [
+        {
+          "label": "Treasury shares held (number of shares)",
+          "v": [
+            "320,000",
+            "34,021"
+          ]
+        },
+        {
+          "label": "Treasury shares value (SAR)",
+          "v": [
+            "9,111,610",
+            "449,000"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": [
+        "treasury-shares",
+        "employee-share-scheme",
+        "equity"
+      ],
+      "investorRelevance": "Buy-back of 285,979 shares for SAR 8,662,639 in 2024 to fund an employee share scheme, within an authorised ceiling of 320,000 shares.",
+      "flag": null
+    },
+    {
+      "n": "16",
+      "title": "Borrowings",
+      "category": "balance-sheet",
+      "summary": "Long-term borrowings fell to 329,990 at 31 December 2024 (2023 restated: 530,605) after receipts of 305,546 and repayments of 505,815, and comprise Islamic Murabaha/Tawarruq loans from local banks of 156,774 (EIBOR plus 0.9%, quarterly repayments to 22 July 2027), SIDF loans of 114,343 for the new porcelain tile factory (instalments from 7 October 2025 to 17 January 2033), a new Saudi Export-Import Bank Murabaha facility of 49,877 (SAR 50 million at 5.70%, repayable September 2025 to February 2026) and accrued finance cost of 8,996; the current portion is 110,950 and non-current 219,040. The SIDF borrowings are secured by a mortgage on land, buildings, plant and machinery with a book value of SAR 379 million (2023: SAR 908 million), and bank facilities by promissory notes. Short-term revolving Murabaha/Tawarruq borrowings for working capital rose to 405,855 (2023: 279,972) at SIBOR plus 1%. The Group complied with long-term loan covenants at 31 December 2024 (in 2023 Ceramic Pipes Company breached its loan terms and its non-current loan was reclassified to current), but breached the debt service cover ratio on a SAR 45 million short-term loan from a local financial institution.",
+      "keyFigures": [
+        {
+          "label": "Loans from local private banks (B)",
+          "v": [
+            "156,774",
+            "348,048"
+          ]
+        },
+        {
+          "label": "Saudi Industrial Development Fund – SIDF loan (C)",
+          "v": [
+            "114,343",
+            "173,215"
+          ]
+        },
+        {
+          "label": "Saudi export and import bank (D)",
+          "v": [
+            "49,877",
+            "-"
+          ]
+        },
+        {
+          "label": "Total long-term borrowings",
+          "v": [
+            "329,990",
+            "530,605"
+          ]
+        },
+        {
+          "label": "Current portion of long-term borrowings",
+          "v": [
+            "110,950",
+            "231,376"
+          ]
+        },
+        {
+          "label": "Short-term borrowings and facilities",
+          "v": [
+            "405,855",
+            "279,972"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "16.1",
+          "title": "Long-term borrowings",
+          "summary": "Local bank Murabaha/Tawarruq 156,774, SIDF 114,343, Saudi EXIM 49,877 and accrued finance cost 8,996, totalling 329,990; SIDF loans secured by a mortgage over PP&E of SAR 379 million; SAR 9.1 million of borrowing costs capitalised."
+        },
+        {
+          "id": "16.2",
+          "title": "Loan covenants – Long-term borrowings",
+          "summary": "Group in compliance at 31 December 2024; at 31 December 2023 Ceramic Pipes Company did not comply with some loan terms and its non-current loan was reclassified to current liabilities."
+        },
+        {
+          "id": "16.3",
+          "title": "Short-term borrowings",
+          "summary": "Revolving Murabaha/Tawarruq working-capital loans of SAR 405.8 million (2023: SAR 279.9 million) at SIBOR plus 1%, secured by promissory notes, including 566 from SIDF."
+        },
+        {
+          "id": "16.4",
+          "title": "Loan covenants - Short-term borrowings",
+          "summary": "Covenants met at 31 December 2024 except the debt service cover ratio on a SAR 45 million short-term loan from a local financial institution."
+        }
+      ],
+      "refs": [
+        "33"
+      ],
+      "tags": [
+        "borrowings",
+        "covenants",
+        "sidf",
+        "security",
+        "murabaha",
+        "debt"
+      ],
+      "investorRelevance": "Details SAR 329,990 thousand of long-term and SAR 405,855 thousand of short-term borrowings, the SIDF mortgage over SAR 379 million of PP&E, a new SAR 50 million export-finance facility and the debt service cover ratio breach on a SAR 45 million short-term loan.",
+      "flag": {
+        "level": "alert",
+        "text": "At 31 December 2024 the Group breached the debt service cover ratio covenant on a SAR 45 million short-term loan from a local financial institution (16.4); in 2023 subsidiary Ceramic Pipes Company breached long-term loan terms and its non-current loan was reclassified to current (16.2); SIDF loans are secured by a mortgage over PP&E with a book value of SAR 379 million."
+      }
+    },
+    {
+      "n": "17",
+      "title": "Employees' Post-Employment Benefits",
+      "category": "balance-sheet",
+      "summary": "The unfunded defined benefit obligation, valued by an independent actuary using the projected unit credit method, was 90,808 at 31 December 2024 (2023: 87,620) after current service cost of 9,686, interest cost of 3,590, an actuarial gain of 435 in other comprehensive income (2023: loss of 2,587) and benefits paid of 10,523. Key assumptions are a 5.40% discount rate (2023: 4.55%) and 4% salary increases (2023: 3.20%); a 1% higher discount rate would reduce the liability to 83,107 and a 1% lower rate would increase it to 93,437.",
+      "keyFigures": [
+        {
+          "label": "Present value of obligation at 31 December",
+          "v": [
+            "90,808",
+            "87,620"
+          ]
+        },
+        {
+          "label": "Current service cost",
+          "v": [
+            "9,686",
+            "9,554"
+          ]
+        },
+        {
+          "label": "Interest cost",
+          "v": [
+            "3,590",
+            "3,454"
+          ]
+        },
+        {
+          "label": "Actuarial gain / (loss) from re-measurement",
+          "v": [
+            "435",
+            "(2,587)"
+          ]
+        },
+        {
+          "label": "Paid during the year",
+          "v": [
+            "(10,523)",
+            "(13,669)"
+          ]
+        },
+        {
+          "label": "Discount rate",
+          "v": [
+            "5.40%",
+            "4.55%"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "A",
+          "title": "Actuarial assumptions",
+          "summary": "Discount rate 5.40% (2023: 4.55%), salary increases 4% (2023: 3.20%), moderate employee turnover."
+        },
+        {
+          "id": "B",
+          "title": "Movement of the defined benefit obligation",
+          "summary": "Opening 87,620, service cost 9,686, interest 3,590, actuarial gain 435, benefits paid (10,523), closing 90,808."
+        },
+        {
+          "id": "C",
+          "title": "Sensitivity analysis",
+          "summary": "A 1% change in the discount rate moves the liability to 83,107 / 93,437; a 1% change in salary growth to 93,465 / 82,996."
+        }
+      ],
+      "refs": [],
+      "tags": [
+        "employee-benefits",
+        "ias19",
+        "actuarial"
+      ],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "18",
+      "title": "Trade and Other Payables",
+      "category": "balance-sheet",
+      "summary": "Trade and other payables were 317,233 at 31 December 2024 (2023 restated: 341,097), comprising trade payables of 210,530 (2023: 223,308), a refund liability of 32,745, accrued expenses of 33,683 (2023: 47,897), employee provisions of 11,030, retention payable of 2,401 and others of 26,844. The 31 December 2023 and 1 January 2023 comparatives are restated per Note 33.",
+      "keyFigures": [
+        {
+          "label": "Trade payables",
+          "v": [
+            "210,530",
+            "223,308"
+          ]
+        },
+        {
+          "label": "Refund liability",
+          "v": [
+            "32,745",
+            "31,423"
+          ]
+        },
+        {
+          "label": "Accrued expenses",
+          "v": [
+            "33,683",
+            "47,897"
+          ]
+        },
+        {
+          "label": "Employees provisions",
+          "v": [
+            "11,030",
+            "11,801"
+          ]
+        },
+        {
+          "label": "Total trade and other payables",
+          "v": [
+            "317,233",
+            "341,097"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [
+        "33"
+      ],
+      "tags": [
+        "payables",
+        "restatement"
+      ],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "19",
+      "title": "Zakat Provision",
+      "category": "tax",
+      "summary": "The zakat provision fell to 10,795 at 31 December 2024 (2023: 33,974) after a charge of 8,058 (2023: 21,470), a reversal of 4,858 no longer required and payments of 26,379 (2023: 17,677). The parent has filed returns up to 2023 and completed assessments up to 2022; in 2024 ZATCA issued final assessments for 2021 and 2022 with zakat differences of SAR 3.9 million, which management accepted and paid in 2024, while no assessment has been received for 2023. Ceramic Pipes Company has finalised assessments to 2018 and filed returns for 2019 to 2023 without receiving assessments; Ceramics Investment Company and Arzan Company have filed returns and received no assessments as they have not started operations.",
+      "keyFigures": [
+        {
+          "label": "Balance at the beginning of the year",
+          "v": [
+            "33,974",
+            "30,181"
+          ]
+        },
+        {
+          "label": "Charge during the year",
+          "v": [
+            "8,058",
+            "21,470"
+          ]
+        },
+        {
+          "label": "Reverse of provision no longer required",
+          "v": [
+            "(4,858)",
+            "-"
+          ]
+        },
+        {
+          "label": "Paid during the year",
+          "v": [
+            "(26,379)",
+            "(17,677)"
+          ]
+        },
+        {
+          "label": "Balance at the end of the year",
+          "v": [
+            "10,795",
+            "33,974"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "A",
+          "title": "Movement on the zakat provision",
+          "summary": "Opening 33,974, charge 8,058, reversal (4,858), paid (26,379), closing 10,795."
+        },
+        {
+          "id": "B",
+          "title": "Zakat position of the Company and its subsidiaries",
+          "summary": "Parent assessed to 2022 with SAR 3.9 million of 2021-2022 differences paid in 2024; CPC assessed to 2018; Arzan and Ceramics Investment Company have no assessments."
+        }
+      ],
+      "refs": [],
+      "tags": [
+        "zakat",
+        "zatca",
+        "tax"
+      ],
+      "investorRelevance": "Zakat status for all four entities: SAR 3.9 million of assessment differences for 2021-2022 were accepted and paid in 2024, while 2023 for the parent and 2019-2023 for Ceramic Pipes Company remain open to assessment.",
+      "flag": {
+        "level": "watch",
+        "text": "ZATCA final assessments for 2021 and 2022 produced zakat differences of SAR 3.9 million, accepted and paid in 2024; 2023 (parent) and 2019 onwards (Ceramic Pipes Company) remain unassessed, and a 4,858 provision reversal was credited to income."
+      }
+    },
+    {
+      "n": "20",
+      "title": "Revenues, Net",
+      "category": "income",
+      "summary": "Revenue from contracts with customers, all recognised at a point in time, rose to 1,348,797 in 2024 (2023: 1,314,868). Ceramic tiles and sanitary ware contributed 887,470 (2023: 851,290), water heaters 429,828 (2023: 431,215), red brick 12,278 and ceramic pipes 19,221. Local sales grew to 1,243,403 (2023: 1,187,322) while exports fell to 105,394 (2023: 127,546), of which water heaters account for 82,743. Contract balances comprise receivables of 308,668, a provision for customers' incentives of 65,207 (Note 10) and a refund liability of 32,745 (Note 18).",
+      "keyFigures": [
+        {
+          "label": "Total revenue",
+          "v": [
+            "1,348,797",
+            "1,314,868"
+          ]
+        },
+        {
+          "label": "Local revenue",
+          "v": [
+            "1,243,403",
+            "1,187,322"
+          ]
+        },
+        {
+          "label": "Export revenue",
+          "v": [
+            "105,394",
+            "127,546"
+          ]
+        },
+        {
+          "label": "Ceramics tiles and sanitary ware",
+          "v": [
+            "887,470",
+            "851,290"
+          ]
+        },
+        {
+          "label": "Water heaters",
+          "v": [
+            "429,828",
+            "431,215"
+          ]
+        },
+        {
+          "label": "Ceramic pipes",
+          "v": [
+            "19,221",
+            "16,906"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "20.2",
+          "title": "Contract balances",
+          "summary": "Receivables 308,668 (Note 10), provision for customers' incentives 65,207 (Note 10) and refund liability 32,745 (Note 18)."
+        }
+      ],
+      "refs": [
+        "10",
+        "18"
+      ],
+      "tags": [
+        "revenue",
+        "segments",
+        "export",
+        "ifrs15"
+      ],
+      "investorRelevance": "Export revenue fell to SAR 105,394 thousand from 127,546 while local revenue grew to 1,243,403; water heaters generate most exports (82,743).",
+      "flag": null
+    },
+    {
+      "n": "21",
+      "title": "Cost of Revenues",
+      "category": "income",
+      "summary": "Cost of revenues was 1,095,053 in 2024 (2023: 1,077,545). Raw materials consumed rose to 635,214 (2023: 573,660), while salaries and employee costs were 174,790 (2023: 183,095), PP&E depreciation 100,767 (2023: 104,550), energy 80,350 (2023: 92,100), the net inventory provision 43,548 (2023: 63,434) and repairs and maintenance 32,384 (2023: 40,250). Rent rose to 5,141 from 414.",
+      "keyFigures": [
+        {
+          "label": "Raw materials consumed",
+          "v": [
+            "635,214",
+            "573,660"
+          ]
+        },
+        {
+          "label": "Salaries, wages and other employee costs",
+          "v": [
+            "174,790",
+            "183,095"
+          ]
+        },
+        {
+          "label": "Depreciation on property, plant and equipment (Note 5)",
+          "v": [
+            "100,767",
+            "104,550"
+          ]
+        },
+        {
+          "label": "Energy cost",
+          "v": [
+            "80,350",
+            "92,100"
+          ]
+        },
+        {
+          "label": "Provision for inventories, net (Note 9)",
+          "v": [
+            "43,548",
+            "63,434"
+          ]
+        },
+        {
+          "label": "Total cost of revenues",
+          "v": [
+            "1,095,053",
+            "1,077,545"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [
+        "5",
+        "9",
+        "6"
+      ],
+      "tags": [
+        "cost-of-revenue",
+        "expenses"
+      ],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "22",
+      "title": "Selling and Marketing Expenses",
+      "category": "income",
+      "summary": "Selling and marketing expenses rose to 227,967 in 2024 (2023: 197,865), driven by salaries and employee costs of 94,219 (2023: 85,974) and fuel, freight and transportation charges of 69,203 (2023: 50,843). Other items include right-of-use depreciation of 16,815, PP&E depreciation of 13,514, advertising and promotion of 9,513 and rent of 4,054 (2023: 766).",
+      "keyFigures": [
+        {
+          "label": "Salaries, wages and other employee costs",
+          "v": [
+            "94,219",
+            "85,974"
+          ]
+        },
+        {
+          "label": "Fuel, Freight and transportation charges",
+          "v": [
+            "69,203",
+            "50,843"
+          ]
+        },
+        {
+          "label": "Depreciation on right-of-use assets (Note 6)",
+          "v": [
+            "16,815",
+            "13,255"
+          ]
+        },
+        {
+          "label": "Depreciation on property, plant and equipment (Note 5)",
+          "v": [
+            "13,514",
+            "15,671"
+          ]
+        },
+        {
+          "label": "Advertising and promotion",
+          "v": [
+            "9,513",
+            "8,009"
+          ]
+        },
+        {
+          "label": "Total selling and marketing expenses",
+          "v": [
+            "227,967",
+            "197,865"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [
+        "6",
+        "5"
+      ],
+      "tags": [
+        "selling-expenses",
+        "expenses"
+      ],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "23",
+      "title": "General and Administrative Expenses",
+      "category": "income",
+      "summary": "General and administrative expenses were 64,669 in 2024 (2023: 61,435), mainly salaries and employee costs of 46,892 (2023: 46,945), communication, licence and professional fees of 4,701, a provision for directors' remuneration of 3,440 (2023: 3,086) and PP&E depreciation of 2,861. Professional fees for the audit of the annual and review of the interim financial statements amounted to SAR 625,000.",
+      "keyFigures": [
+        {
+          "label": "Salaries, wages and other employee costs",
+          "v": [
+            "46,892",
+            "46,945"
+          ]
+        },
+        {
+          "label": "Communication, License & Professional Fee",
+          "v": [
+            "4,701",
+            "3,512"
+          ]
+        },
+        {
+          "label": "Provision for directors' remuneration",
+          "v": [
+            "3,440",
+            "3,086"
+          ]
+        },
+        {
+          "label": "Depreciation of property, plant and equipment (Note 5)",
+          "v": [
+            "2,861",
+            "2,733"
+          ]
+        },
+        {
+          "label": "Total general and administrative expenses",
+          "v": [
+            "64,669",
+            "61,435"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [
+        "5",
+        "6"
+      ],
+      "tags": [
+        "general-admin",
+        "expenses",
+        "audit-fees"
+      ],
+      "investorRelevance": null,
+      "flag": null
+    },
+    {
+      "n": "24",
+      "title": "Finance Cost",
+      "category": "income",
+      "summary": "Finance cost increased to 46,163 in 2024 (2023: 42,967), comprising interest on financial liabilities at amortised cost of 39,996 (2023: 39,302) and interest on lease liabilities of 6,167 (2023: 3,665). Total short- and long-term borrowings at 31 December were 735,845 (2023: 810,577), of which Murabaha and Tawarruq facilities were 562,063 (interest 34,303) and loans from banks and government authorities 173,782 (interest 5,693).",
+      "keyFigures": [
+        {
+          "label": "Interest expense on financial liabilities measured at amortized cost",
+          "v": [
+            "39,996",
+            "39,302"
+          ]
+        },
+        {
+          "label": "Interest expense on lease liabilities (6-c)",
+          "v": [
+            "6,167",
+            "3,665"
+          ]
+        },
+        {
+          "label": "Total Finance Cost",
+          "v": [
+            "46,163",
+            "42,967"
+          ]
+        },
+        {
+          "label": "Murabaha & Tawarruq borrowings at 31 December",
+          "v": [
+            "562,063",
+            "623,068"
+          ]
+        },
+        {
+          "label": "Banks and government authorities borrowings at 31 December",
+          "v": [
+            "173,782",
+            "187,509"
+          ]
+        },
+        {
+          "label": "Total borrowings at 31 December",
+          "v": [
+            "735,845",
+            "810,577"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [
+        "6"
+      ],
+      "tags": [
+        "finance-cost",
+        "borrowings",
+        "interest"
+      ],
+      "investorRelevance": "Finance cost of SAR 46,163 thousand on total borrowings of SAR 735,845 thousand, with Murabaha and Tawarruq facilities making up 562,063.",
+      "flag": null
+    },
+    {
+      "n": "25",
+      "title": "Other Income",
+      "category": "income",
+      "summary": "Other income fell to 57,616 in 2024 (2023: 97,257). It includes training support program income of 15,280 (2023: 10,098), scrap sales of 11,612, a gain on sale of property, plant and equipment of 8,034 (2023: 36,801), a reversal of zakat provision of 4,858, a gain on sale of assets held for sale of 4,292, a gain on disposal of the associate of 3,807 (2023: 23,137), rental income of 1,895 from temporarily let building and warehouse space, and others of 7,838.",
+      "keyFigures": [
+        {
+          "label": "Training support program",
+          "v": [
+            "15,280",
+            "10,098"
+          ]
+        },
+        {
+          "label": "Scrap sales",
+          "v": [
+            "11,612",
+            "11,941"
+          ]
+        },
+        {
+          "label": "Gain from sale of property, plant and equipment",
+          "v": [
+            "8,034",
+            "36,801"
+          ]
+        },
+        {
+          "label": "Reversal of zakat provision",
+          "v": [
+            "4,858",
+            "-"
+          ]
+        },
+        {
+          "label": "Gains on disposal of investment in associates",
+          "v": [
+            "3,807",
+            "23,137"
+          ]
+        },
+        {
+          "label": "Total other income",
+          "v": [
+            "57,616",
+            "97,257"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [],
+      "tags": [
+        "other-income",
+        "disposals",
+        "government-support"
+      ],
+      "investorRelevance": "Other income fell to SAR 57,616 thousand from 97,257 as prior-year gains on PP&E and associate disposals were not repeated; it includes SAR 15,280 thousand of training support program income.",
+      "flag": null
+    },
+    {
+      "n": "26",
+      "title": "Operating Segments",
+      "category": "disclosure",
+      "summary": "The Group reports three segments reviewed monthly by the CEO: ceramic tiles and sanitary ware, water heaters and ceramic pipes; red bricks, plastic, packaging, head office and desert mines are below the reportable thresholds. Segment revenue was 1,348,797 in 2024 (2023: 1,314,868) and the segment loss before zakat narrowed to (71,194) (2023: (216,049)), with water heaters the only profitable segment at 45,849 against losses of (83,872) in tiles and sanitary ware and (33,171) in Ceramic Pipes Company; impairment losses of (51,070) were charged to tiles (45,357) and ceramic pipes (5,713). Segment assets were 2,676,609 and liabilities 1,251,909. Revenue by geography was Saudi Arabia 1,243,403, other GCC countries 81,742 and other countries 23,652, all property, plant and equipment is located in Saudi Arabia, and the five largest customers accounted for approximately 39% of revenue (2023: 37%).",
+      "keyFigures": [
+        {
+          "label": "Total segment revenue",
+          "v": [
+            "1,348,797",
+            "1,314,868"
+          ]
+        },
+        {
+          "label": "Segment profit/(loss) before zakat – total",
+          "v": [
+            "(71,194)",
+            "(216,049)"
+          ]
+        },
+        {
+          "label": "Segment profit/(loss) before zakat – Ceramic tiles and sanitary ware",
+          "v": [
+            "(83,872)",
+            "(167,148)"
+          ]
+        },
+        {
+          "label": "Segment profit/(loss) before zakat – Water heaters",
+          "v": [
+            "45,849",
+            "53,962"
+          ]
+        },
+        {
+          "label": "Segment profit/(loss) before zakat – Ceramic Pipes Company",
+          "v": [
+            "(33,171)",
+            "(102,863)"
+          ]
+        },
+        {
+          "label": "Impairment loss – total",
+          "v": [
+            "(51,070)",
+            "(215,104)"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "26-1",
+          "title": "Information about reportable segments",
+          "summary": "Revenue, impairment, profit or loss before zakat, assets and liabilities by segment for 2024 and 2023; five largest customers approximately 39% of revenue (2023: 37%)."
+        },
+        {
+          "id": "26-2",
+          "title": "Revenue by geographical region",
+          "summary": "Saudi Arabia 1,243,403, other GCC countries 81,742, other countries 23,652 (2023: 1,187,322 / 84,279 / 43,267)."
+        },
+        {
+          "id": "26-3",
+          "title": "Geographical distribution of property, plant and equipment",
+          "summary": "All PP&E of 1,546,358 (2023: 1,513,398) is located in Saudi Arabia."
+        }
+      ],
+      "refs": [],
+      "tags": [
+        "segments",
+        "geography",
+        "concentration",
+        "export"
+      ],
+      "investorRelevance": "Shows that only the water heaters segment is profitable, that tiles/sanitary ware and ceramic pipes absorbed 51,070 of impairments, that export sales are 105,394 (GCC 81,742) with all PP&E in Saudi Arabia, and that five customers supply about 39% of revenue.",
+      "flag": {
+        "level": "watch",
+        "text": "Five largest customers account for approximately 39% of revenue (2023: 37%); segment loss before zakat of (71,194) with only the water heaters segment profitable (45,849), and 51,070 of impairments charged to the tiles (45,357) and ceramic pipes (5,713) segments."
+      }
+    },
+    {
+      "n": "27",
+      "title": "Related Party Transactions and Balances",
+      "category": "disclosure",
+      "summary": "Related parties are major shareholders, directors, key management and entities they manage or significantly influence; transactions with subsidiaries are eliminated on consolidation. Board and key management remuneration charged in 2024 was 11,102 (2023: 15,143), comprising board remuneration and allowances of 3,568 (2023: 3,254) and executive management salaries and remuneration of 7,534 (2023: 11,889). Purchases of goods and services from affiliates totalled 45,631 (2023: 40,535), almost entirely from Natural Gas Distribution Company (45,487; 2023: 39,457) with 144 from CHUBB Arabia Cooperative Insurance; related party balances of 3,988 (2023: 6,128) are included in trade and other payables, and no dividends were received from NGDC in 2024 (2023: 508).",
+      "keyFigures": [
+        {
+          "label": "Board members – remuneration and allowances",
+          "v": [
+            "3,568",
+            "3,254"
+          ]
+        },
+        {
+          "label": "Executive management – total remuneration",
+          "v": [
+            "7,534",
+            "11,889"
+          ]
+        },
+        {
+          "label": "Total board and key management remuneration",
+          "v": [
+            "11,102",
+            "15,143"
+          ]
+        },
+        {
+          "label": "Purchases from Natural Gas Distribution Company (Affiliate)",
+          "v": [
+            "45,487",
+            "39,457"
+          ]
+        },
+        {
+          "label": "Purchases from CHUBB Arabia Cooperative Insurance (Affiliate)",
+          "v": [
+            "144",
+            "1,078"
+          ]
+        },
+        {
+          "label": "Related party balances at 31 December (in trade and other payables)",
+          "v": [
+            "3,988",
+            "6,128"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "27-1",
+          "title": "Board of Directors and Key Personnel Management",
+          "summary": "Remuneration of 11,102 (2023: 15,143): board 3,568, executive management 7,534 under employment contracts and the General Assembly-approved remuneration policy."
+        },
+        {
+          "id": "27-2",
+          "title": "Other related party transactions",
+          "summary": "Purchases from affiliates Natural Gas Distribution Company (45,487) and CHUBB Arabia (144); year-end payable balances 3,988 (2023: 6,128)."
+        }
+      ],
+      "refs": [],
+      "tags": [
+        "related-parties",
+        "remuneration",
+        "affiliates"
+      ],
+      "investorRelevance": "Related-party dealings are limited to gas purchases from affiliate Natural Gas Distribution Company (SAR 45,487 thousand) and insurance from CHUBB Arabia, plus SAR 11,102 thousand of board and executive remuneration.",
+      "flag": null
+    },
+    {
+      "n": "28",
+      "title": "Loss Per Share",
+      "category": "income",
+      "summary": "The loss for the year attributable to shareholders was SAR (71,859) thousand (2023: (210,351)), giving a basic and diluted loss per share of SAR (0.80) (2023: (2.33)) on a weighted average of 90,120 thousand shares, restated for both years to reflect treasury shares and the bonus shares issued during 2024. There were no potentially dilutive shares outstanding in either year.",
+      "keyFigures": [
+        {
+          "label": "Loss for the year attributable to the shareholders (SAR \"000\")",
+          "v": [
+            "(71,859)",
+            "(210,351)"
+          ]
+        },
+        {
+          "label": "Weighted average number of shares (Shares in \"000\") – restated",
+          "v": [
+            "90,120",
+            "90,120"
+          ]
+        },
+        {
+          "label": "Basic and diluted earnings per share (SR)",
+          "v": [
+            "(0.80)",
+            "(2.33)"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "28-1",
+          "title": "Basic earnings per share",
+          "summary": "Loss attributable to shareholders (71,859) divided by a restated weighted average of 90,120 thousand shares gives (0.80) (2023: (2.33))."
+        },
+        {
+          "id": "28-2",
+          "title": "Diluted earnings per share",
+          "summary": "No potentially dilutive shares were outstanding during 2024 or 2023, so diluted equals basic."
+        }
+      ],
+      "refs": [
+        "15"
+      ],
+      "tags": [
+        "eps",
+        "net-loss"
+      ],
+      "investorRelevance": "Confirms a second consecutive net loss: SAR (71,859) thousand attributable to shareholders in 2024 after SAR (210,351) thousand in 2023.",
+      "flag": {
+        "level": "info",
+        "text": "Net loss attributable to shareholders of SAR (71,859) thousand (2023: (210,351)); loss per share (0.80) (2023: (2.33)) on a weighted average of 90,120 thousand shares restated for the 2024 bonus issue."
+      }
+    },
+    {
+      "n": "29",
+      "title": "Contingent Liabilities and Outstanding Issues",
+      "category": "disclosure",
+      "summary": "The Group has letters of guarantee and letters of credit from local banks of SAR 111 million at 31 December 2024 (2023: SAR 95 million), including SAR 7 million (2023: SAR 58 million) of letters of credit for capital commitments to supply machinery and equipment for plant expansion projects. In 2023 the parent had guaranteed its proportionate share of Ceramic Pipes Company's SIDF loan (SAR 17.3 million; 2022: SAR 29 million) and Saudi Investment Bank loan (SAR 3.7 million; 2022: SAR 9.3 million); CPC settled these loans in 2024 and obtained clearance from both lenders.",
+      "keyFigures": [
+        {
+          "label": "Letters of guarantee and letters of credit (SAR million)",
+          "v": [
+            "111",
+            "95"
+          ]
+        },
+        {
+          "label": "Of which letters of credit for capital commitments (SAR million)",
+          "v": [
+            "7",
+            "58"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "A",
+          "title": "Bank facilities and capital commitments",
+          "summary": "Letters of guarantee and credit of SAR 111 million (2023: SAR 95 million), including SAR 7 million (2023: SAR 58 million) for plant expansion machinery."
+        },
+        {
+          "id": "B",
+          "title": "Guarantees of subsidiary loans",
+          "summary": "Parent guarantees of CPC's SIDF (SAR 17.3 million) and Saudi Investment Bank (SAR 3.7 million) loans at 2023 were released when CPC settled the loans in 2024."
+        }
+      ],
+      "refs": [],
+      "tags": [
+        "contingencies",
+        "guarantees",
+        "commitments"
+      ],
+      "investorRelevance": "Off-balance-sheet exposure of SAR 111 million in bank guarantees and letters of credit, with capital commitments down to SAR 7 million and parent guarantees of Ceramic Pipes Company loans released in 2024.",
+      "flag": {
+        "level": "info",
+        "text": "Letters of guarantee and letters of credit of SAR 111 million (2023: SAR 95 million) outstanding; parent guarantees of Ceramic Pipes Company's SIDF and Saudi Investment Bank loans were extinguished in 2024 after the subsidiary settled those loans."
+      }
+    },
+    {
+      "n": "30",
+      "title": "Financial Instruments, Risk Management and Fair Value",
+      "category": "risk",
+      "summary": "Financial assets of 312,624 (2023: 357,219) comprise the FVOCI investment of 7,877 (Level 3) and 304,747 at amortised cost; financial liabilities of 946,375 (2023: 1,033,886) are all at amortised cost (short-term loans 405,855, long-term loans 329,990, trade payables 210,530). Credit risk centres on gross trade receivables of 308,668, 86.2% in Saudi Arabia and 13.6% in other GCC countries, with the five largest customers representing approximately 47% of receivables (2023: 40%); 33,055 of receivables are more than 270 days past due with a 62.45% expected loss rate, driving most of the 21,483 ECL allowance, and SAR 241,000 was written off. Contractual undiscounted financial liabilities total 1,053,078, of which 834,038 fall due within one year, against cash of SAR 42.3 million held with banks rated BBB+ or above. Variable-rate borrowings of SAR 559 million (2023: SAR 627 million) expose income to (5,590) per 100 basis point rise; foreign exchange risk is considered insignificant given the SAR/USD peg, and capital is monitored through a net debt to equity gearing ratio.",
+      "keyFigures": [
+        {
+          "label": "Financial assets – total carrying amount",
+          "v": [
+            "312,624",
+            "357,219"
+          ]
+        },
+        {
+          "label": "Financial liabilities – total carrying amount",
+          "v": [
+            "946,375",
+            "1,033,886"
+          ]
+        },
+        {
+          "label": "Trade receivables – gross credit exposure",
+          "v": [
+            "308,668",
+            "337,446"
+          ]
+        },
+        {
+          "label": "Trade receivables 270+ days past due",
+          "v": [
+            "33,055",
+            "41,120"
+          ]
+        },
+        {
+          "label": "Financial liabilities due on demand or within 1 year (undiscounted)",
+          "v": [
+            "834,038",
+            "852,445"
+          ]
+        },
+        {
+          "label": "Effect on income of +100 bp in commission rates",
+          "v": [
+            "(5,590)",
+            "(6,270)"
+          ]
+        }
+      ],
+      "subnotes": [
+        {
+          "id": "30-1",
+          "title": "Accounting classification and fair values measurement",
+          "summary": "Carrying amounts and fair value hierarchy of financial assets (312,624) and liabilities (946,375); only the FVOCI investment of 7,877 is at fair value (Level 3), up 61 in the year."
+        },
+        {
+          "id": "30-2",
+          "title": "Risk Management",
+          "summary": "Board-overseen framework covering credit risk (receivables ageing, ECL matrix, 47% top-five customer concentration), liquidity risk (834,038 due within one year), capital management (gearing) and market risk (SAR 559 million variable-rate debt; FX insignificant)."
+        }
+      ],
+      "refs": [],
+      "tags": [
+        "financial-instruments",
+        "credit-risk",
+        "liquidity",
+        "concentration",
+        "interest-rate",
+        "fair-value"
+      ],
+      "investorRelevance": "Reveals customer concentration (five customers hold 47% of receivables), 834,038 of financial liabilities falling due within one year against SAR 42.3 million of cash, and SAR 559 million of variable-rate borrowings.",
+      "flag": {
+        "level": "watch",
+        "text": "Five largest customers account for approximately 47% of trade receivables (2023: 40%); 33,055 of receivables are over 270 days past due with a 62.45% expected loss rate; 834,038 of financial liabilities fall due within one year and SAR 559 million of borrowings carry variable commission rates."
+      }
+    },
+    {
+      "n": "31",
+      "title": "Non-Controlling Interest",
+      "category": "group",
+      "summary": "Non-controlling interests relate to Ceramic Pipes Company (CPC), in which the NCI share fell to 22.11% (2023: 26.11%) after the Group's holding rose to 77.89% on 4 July 2024 (Note 1). Before intra-group eliminations CPC had net assets of (3,986) (2023: 29,368), with non-current liabilities of 98,346 (2023: 2,337) and current liabilities of 15,597 (2023: 113,400), so the NCI share of net assets is (881) (2023: 7,668); adding the NCI share in CPC land fair value of 1,988 gives a total NCI of 1,107 (2023: 9,656). CPC generated revenue of 19,221 and a loss of (33,436) (2023: (103,515)), of which (7,393) (2023: (27,168)) was allocated to NCI.",
+      "keyFigures": [
+        {
+          "label": "NCI percentage",
+          "v": [
+            "22.11%",
+            "26.11%"
+          ]
+        },
+        {
+          "label": "Net assets of CPC",
+          "v": [
+            "(3,986)",
+            "29,368"
+          ]
+        },
+        {
+          "label": "Net assets attributable to NCI",
+          "v": [
+            "(881)",
+            "7,668"
+          ]
+        },
+        {
+          "label": "Total NCI share in CPC",
+          "v": [
+            "1,107",
+            "9,656"
+          ]
+        },
+        {
+          "label": "Loss of CPC",
+          "v": [
+            "(33,436)",
+            "(103,515)"
+          ]
+        },
+        {
+          "label": "Share of loss of CPC allocated to NCI",
+          "v": [
+            "(7,393)",
+            "(27,168)"
+          ]
+        }
+      ],
+      "subnotes": [],
+      "refs": [
+        "1"
+      ],
+      "tags": [
+        "nci",
+        "subsidiary",
+        "ceramic-pipes-company"
+      ],
+      "investorRelevance": "Ceramic Pipes Company's net assets turned negative at (3,986) after a further (33,436) loss and its non-current liabilities jumped to 98,346, while the NCI stake fell to 22.11%.",
+      "flag": {
+        "level": "watch",
+        "text": "Ceramic Pipes Company has negative net assets of (3,986) (2023: 29,368) after a loss of (33,436); the NCI share of net assets is (881), with total NCI of 1,107 kept positive only by the 1,988 share in CPC land fair value."
+      }
+    },
+    {
+      "n": "32",
+      "title": "Significant Events",
+      "category": "disclosure",
+      "summary": "On 15 July 2023 a fire in the sanitary ware department of the Group's second factory damaged machinery and equipment with a book value of SAR 136.8 million (Note 5) and inventories costing SAR 27.9 million (Note 9), both charged to costs. The factory is insured for such losses and for business interruption; the Group has submitted its claim and all required documents, but the insurer's evaluation of the claim was still in progress at the date of these financial statements. Management believes the insurance coverage is sufficient to cover the losses.",
+      "keyFigures": [],
+      "subnotes": [],
+      "refs": [
+        "5",
+        "9"
+      ],
+      "tags": [
+        "fire",
+        "insurance",
+        "significant-events"
+      ],
+      "investorRelevance": "The July 2023 factory fire destroyed PP&E of SAR 136.8 million and inventory of SAR 27.9 million, and the insurance claim, including business interruption, was still unresolved when the 2024 statements were issued.",
+      "flag": {
+        "level": "alert",
+        "text": "The 15 July 2023 fire in the sanitary ware department damaged PP&E with a book value of SAR 136.8 million and inventories costing SAR 27.9 million; the insurance claim (property and business interruption) was still under evaluation by the insurer at the date of these financial statements."
+      }
+    },
+    {
+      "n": "33",
+      "title": "Restatement and Reclassification of Comparative Information",
+      "category": "disclosure",
+      "summary": "The Company restated and reclassified prior-period balances at 31 December 2023 and 1 January 2023. Trade and other receivables were reduced by 62,802 (to 286,865) and 35,843 (to 275,341) as the provision for customers' incentive, foreign exchange gains and losses and customer advances were moved out of trade and other payables; cash and cash equivalents fell by 923 (to 63,754) and 1,103 (to 69,590); accrued finance costs were reclassified from payables into short-term borrowings (1,257 and 674) and the current portion of long-term borrowings (9,342 and 8,436); and trade and other payables fell by (74,325) (to 341,096) and (46,056) (to 369,989). The 2023 cash flow statement was also restated (provision for customers' incentive 32,153, trade and other receivables (5,194), finance cost paid 2,737, trade and other payables (29,515)). The changes have no impact on profit or loss, other comprehensive income, equity or basic and diluted loss per share for 2023 or 2022.",
+      "keyFigures": [],
+      "subnotes": [
+        {
+          "id": "33-A",
+          "title": "Impact on the statement of financial position",
+          "summary": "Adjustments at 31 December 2023 / 1 January 2023: receivables 62,802 / 35,843, cash 923 / 1,103, short-term borrowings 1,257 / 674, current long-term borrowings 9,342 / 8,436, payables (74,325) / (46,056)."
+        },
+        {
+          "id": "33-B",
+          "title": "Impact on the statement of cash flows for the year ended 31 December 2023",
+          "summary": "Provision for customers' incentive 32,153, trade and other receivables (5,194), finance cost payment 2,737, cash and cash equivalents (923), trade and other payables (29,515)."
+        },
+        {
+          "id": "A",
+          "title": "Trade and other receivables",
+          "summary": "Provision for customers' incentive, foreign exchange gain/loss and advances from customers moved from trade and other payables to receivables."
+        },
+        {
+          "id": "B",
+          "title": "Cash and cash equivalents",
+          "summary": "Foreign exchange gain/loss restated from trade and other payables to cash and cash equivalents."
+        },
+        {
+          "id": "C",
+          "title": "Short term borrowings",
+          "summary": "Accrued finance costs reclassified from trade and other payables to short-term borrowings."
+        },
+        {
+          "id": "D",
+          "title": "Long-term borrowings, current portion",
+          "summary": "Accrued finance costs reclassified from trade and other payables to long-term borrowings."
+        },
+        {
+          "id": "E",
+          "title": "Trade and other payables",
+          "summary": "Carries the combined restatement and reclassification impacts of A to D."
+        }
+      ],
+      "refs": [],
+      "tags": [
+        "restatement",
+        "reclassification",
+        "prior-period",
+        "comparatives"
+      ],
+      "investorRelevance": "Prior-year balance sheet and cash-flow comparatives were restated, reducing 2023 trade and other receivables by 62,802 and payables by 74,325 and moving accrued finance costs into borrowings, without changing the reported loss or equity.",
+      "flag": {
+        "level": "alert",
+        "text": "Comparative figures at 31 December 2023 and 1 January 2023 were restated: trade and other receivables reduced by 62,802 and 35,843, trade and other payables by (74,325) and (46,056), cash by 923 and 1,103, with accrued finance costs of 9,342 and 1,257 reclassified into borrowings; no impact on profit or loss, equity or loss per share."
+      }
+    },
+    {
+      "n": "34",
+      "title": "Subsequent Events",
+      "category": "disclosure",
+      "summary": "Management reports no significant events after the year end that would require additional disclosure or adjustment to these consolidated financial statements.",
+      "keyFigures": [],
+      "subnotes": [],
+      "refs": [],
+      "tags": [
+        "subsequent-events"
+      ],
+      "investorRelevance": "Confirms that no adjusting or disclosable events occurred between 31 December 2024 and the approval date, including nothing further on the insurance claim or covenant breach.",
+      "flag": null
+    },
+    {
+      "n": "35",
+      "title": "Approval of Consolidated Financial Statements",
+      "category": "disclosure",
+      "summary": "The consolidated financial statements were approved by the Board of Directors on 25 Shaban 1446 AH, corresponding to 24 February 2025.",
+      "keyFigures": [],
+      "subnotes": [],
+      "refs": [],
+      "tags": [
+        "approval"
+      ],
+      "investorRelevance": null,
+      "flag": null
+    }
+  ]
+}

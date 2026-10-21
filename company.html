@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statement Explorer — MISA Investor Financial Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+.st-grid{display:grid;grid-template-columns:250px 1fr;gap:14px;align-items:start}
+.st-left{position:sticky;top:70px}
+.fs-wrap.only-notes tr.row:not(.has-note){display:none}
+.tog{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-md);padding:10px 14px;border-top:1px solid var(--line);cursor:pointer;user-select:none}
+.tog input{accent-color:var(--gold)}
+.ind-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ind{background:linear-gradient(145deg,rgba(255,255,255,0.9),rgba(250,245,230,0.6));border:1px solid rgba(200,164,74,0.16);border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(100,70,0,0.06)}
+.ind-l{font-size:9px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between;gap:6px}
+.ind-v{font-size:16px;font-weight:800;background:var(--gold-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-top:4px}
+.ind-d{font-size:9.5px;margin-top:3px;font-weight:600}
+.ind-d.up{color:var(--green)}.ind-d.dn{color:var(--red)}.ind-d.nu{color:var(--text-faint)}
+.ind-s{font-size:9px;color:var(--text-faint);margin-top:2px}
+.mapfilters{display:flex;gap:6px;flex-wrap:wrap}
+.mapfilters .btn.on{background:var(--nav-grad);color:#E8C86A;border-color:transparent}
+.navbtns{display:flex;gap:6px}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div id="nav"></div>
+
+<div class="pw">
+  <div class="co-hdr" id="co-hdr"></div>
+  <div class="subtabs" id="subtabs"></div>
+
+  <!-- ═══ OVERVIEW ═══ -->
+  <div class="view" id="v-overview">
+    <div class="kpis" id="kpis"></div>
+    <div class="g2-split">
+      <div class="ai-card">
+        <div class="ai-label"><div class="ai-icon">✦</div><div class="ai-tag">Analyst<br>brief</div></div>
+        <div class="ai-body"><h3 id="brief-h">Analyst brief</h3><div class="ai-text" id="brief"></div></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ch-left"><svg class="ic" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><h3>Independent auditor's report</h3></div><span class="ch-badge" id="aud-badge"></span></div>
+        <div class="cb" id="aud-body"></div>
+      </div>
+    </div>
+    <div class="g3-eq">
+      <div class="card"><div class="ch"><div class="ch-left"><h3>Revenue &amp; net income</h3></div><span class="ch-badge gold" id="c1-unit"></span></div><div class="cb"><div class="chart-wrap" id="c-rev"></div><div class="chart-note" id="c-rev-note"></div></div></div>
+      <div class="card"><div class="ch"><div class="ch-left"><h3>Balance sheet structure</h3></div></div><div class="cb"><div class="chart-wrap" id="c-bal"></div><div class="chart-note">Assets versus equity and liabilities at each year-end. Hover a block for the amount.</div></div></div>
+      <div class="card"><div class="ch"><div class="ch-left"><h3>Cash flow bridge</h3></div></div><div class="cb"><div class="chart-wrap" id="c-cash"></div><div class="chart-note" id="c-cash-note"></div></div></div>
+    </div>
+    <div class="g3-eq">
+      <div class="card"><div class="ch"><div class="ch-left"><h3 id="c-seg-h">Segments</h3></div><span id="c-seg-chip"></span></div><div class="cb"><div class="chart-wrap" id="c-seg"></div><div class="chart-note" id="c-seg-note"></div></div></div>
+      <div class="card"><div class="ch"><div class="ch-left"><h3>Financial indicators</h3></div></div><div class="cb"><div class="ind-grid" id="ind"></div></div></div>
+      <div class="card"><div class="ch"><div class="ch-left"><h3>Flagged disclosures</h3></div><span class="ch-badge red" id="flag-badge"></span></div><div class="cb tight" id="flags" style="max-height:420px;overflow:auto"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ STATEMENTS ═══ -->
+  <div class="view" id="v-statements">
+    <div class="st-grid">
+      <div class="st-left stack">
+        <div class="card">
+          <div class="ch"><div class="ch-left"><h3>Primary statements</h3></div></div>
+          <div class="sp-list" id="sp-list"></div>
+          <label class="tog"><input type="checkbox" id="only-notes"> Show only lines that cite a note</label>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ch-left"><h3>How to read</h3></div></div>
+          <div class="cb" style="font-size:11px;color:var(--text-dim);line-height:1.6;gap:8px">
+            <div><span class="nchip" style="pointer-events:none">Note 24</span> Click any note chip to open that note beside the statement — summary, key figures, sub-sections, back-links and the source text.</div>
+            <div>A gold dot after a line item means the line is cross-referenced. Chips with a red or amber dot carry a flag.</div>
+            <div>Inside a note, references to other notes are links too, so you can follow a chain (e.g. Note 7 → Note 33 → Note 35).</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ch-left"><h3 id="st-title">Statement</h3></div><span class="ch-badge gold" id="st-unit"></span></div>
+        <div class="fs-wrap" id="st-table"></div>
+        <div class="fs-foot" id="st-foot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ NOTES ═══ -->
+  <div class="view" id="v-notes">
+    <div class="notes-grid">
+      <div class="card">
+        <div class="ch"><div class="ch-left"><h3>Notes to the financial statements</h3></div><span class="ch-badge gold" id="notes-count"></span></div>
+        <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)">
+          <input class="fi search" id="n-search" placeholder="Search notes, figures, text…">
+          <div style="display:flex;gap:8px">
+            <select class="fs" id="n-cat" style="flex:1"><option value="">All categories</option></select>
+            <select class="fs" id="n-flag" style="flex:1"><option value="">All notes</option><option value="flagged">Flagged only</option><option value="referenced">Cited on statements</option><option value="disclosure">Disclosure-only</option></select>
+          </div>
+        </div>
+        <div class="notes-list" id="n-list"></div>
+      </div>
+      <div class="card"><div class="nd-full" id="n-detail"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ CROSS-REFERENCE MAP ═══ -->
+  <div class="view" id="v-map">
+    <div class="xstats" id="xstats"></div>
+    <div class="card">
+      <div class="ch"><div class="ch-left"><h3>Statement lines ⟷ notes</h3></div><div class="mapfilters" id="map-filters"></div></div>
+      <div class="cb" style="padding:10px 16px 4px;font-size:11px;color:var(--text-dim)">Hover or click a line on the left to light up the notes it cites; click a note on the right to open it. Notes with no incoming link are policy or disclosure notes that are not cited on the face of the statements.</div>
+      <div class="xmap-wrap" id="xmap"></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="ch"><div class="ch-left"><h3>Disclosure-only notes (not cited on the face of the statements)</h3></div></div>
+      <div class="cb" id="disc-only"></div>
+    </div>
+  </div>
+
+  <!-- ═══ INVESTOR LENS ═══ -->
+  <div class="view" id="v-lens">
+    <div class="lens-sum" id="lens-sum"></div>
+    <div class="g2-split" style="grid-template-columns:3fr 1fr">
+      <div class="lens-grid" id="lens-grid" style="grid-template-columns:1fr 1fr"></div>
+      <div class="stack">
+        <div class="card">
+          <div class="ch"><div class="ch-left"><h3>Reviewer actions</h3></div></div>
+          <div class="cb">
+            <textarea class="rv-ta" id="rv-ta" placeholder="Assessment notes, clarifications to request from the company, escalation rationale…"></textarea>
+            <div class="ra">
+              <div class="ar"><button class="ba ba-inv" data-toast="Clarification request drafted with the cited notes attached.">Request clarification</button></div>
+              <div class="ar"><button class="ba ba-apr" data-toast="Filing review marked complete and logged.">Mark reviewed</button><button class="ba ba-rej" data-toast="Filing escalated to the sector review committee.">Escalate</button></div>
+              <div class="ar"><button class="ba ba-mod" data-toast="Watch-list entry created; next check at the H1 interim filing.">Add to watch-list</button></div>
+            </div>
+            <div class="audit-log" id="audit-log"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="data/aramco.js"></script>
+<script src="data/ceramic.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  const f = FSX.fmt;
+  const ALL = window.FILINGS || {};
+  const ids = Object.keys(ALL);
+  let cid = FSX.qs('c'); if (!ALL[cid]) cid = ids[0];
+  const F = ALL[cid]; FSX.currentFiling = F;
+  const sar = v => FSX.chart.short(v * F.scale);
+  const byN = {}; F.notes.forEach(n => byN[n.n] = n);
+
+  document.getElementById('nav').innerHTML = FSX.nav('explorer');
+  document.title = `${F.shortName} ${F.fy} — Statement Explorer`;
+  FSX.bg();
+
+  /* ── header ── */
+  const opCls = F.auditor.opinion === 'Unmodified' ? 'green' : 'red';
+  document.getElementById('co-hdr').innerHTML = `
+    <div><div class="co-nm">${f.esc(F.name)}</div>
+      <div class="co-meta"><span class="mono">${f.esc(F.ticker)} · ${f.esc(F.exchange)}</span><span class="sep">|</span><span>${f.esc(F.sector)}</span><span class="sep">|</span><span>${f.esc(F.fy)} · year ended ${f.esc(F.periodEnd)}</span><span class="sep">|</span><span>Amounts in ${f.esc(F.unit)}</span></div></div>
+    <div class="co-right">
+      <span class="rb ${opCls}">Audit opinion: ${f.esc(F.auditor.opinion)}</span>
+      ${F.auditor.otherMatter ? '<span class="rb amber">Other-matter paragraph</span>' : ''}
+      <select class="fs" id="switch">${ids.map(i => `<option value="${i}"${i === cid ? ' selected' : ''}>${f.esc(ALL[i].shortName)} · ${f.esc(ALL[i].ticker)} · ${f.esc(ALL[i].fy)}</option>`).join('')}</select>
+      <a class="btn btn-glass btn-sm" href="${F.pdf}" target="_blank" rel="noopener">Open filing PDF</a>
+    </div>`;
+  document.getElementById('switch').addEventListener('change', e => { location.href = `company.html?c=${e.target.value}${location.hash}`; });
+
+  /* ── sub-tabs & routing ── */
+  const TABS = [['overview', 'Overview', ''], ['statements', 'Statements', F.statements.length], ['notes', 'Notes', F.stats.notes], ['map', 'Cross-reference map', F.stats.links], ['lens', 'Investor lens', F.lens.length]];
+  document.getElementById('subtabs').innerHTML = TABS.map(t => `<button class="subtab" data-v="${t[0]}">${t[1]}${t[2] !== '' ? `<span class="cnt">${t[2]}</span>` : ''}</button>`).join('');
+  document.querySelectorAll('.subtab').forEach(b => b.addEventListener('click', () => { location.hash = '#' + b.dataset.v; }));
+  const done = {};
+  function route() {
+    const h = (location.hash || '#overview').slice(1);
+    const [view, arg] = h.split('/');
+    const v = TABS.some(t => t[0] === view) ? view : 'overview';
+    document.querySelectorAll('.subtab').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+    document.querySelectorAll('.view').forEach(x => x.classList.toggle('on', x.id === 'v-' + v));
+    if (v === 'overview' && !done.overview) { renderOverview(); done.overview = true; }
+    if (v === 'statements') renderStatements(arg);
+    if (v === 'notes') renderNotes(arg);
+    if (v === 'map' && !done.map) { renderMap('all'); done.map = true; }
+    if (v === 'lens' && !done.lens) { renderLens(); done.lens = true; }
+    window.scrollTo({ top: 0 });
+  }
+  window.addEventListener('hashchange', route);
+
+  /* drawer back-link → statements tab */
+  FSX.onRefBy = (stmt, row) => {
+    FSX.drawer.close();
+    location.hash = '#statements/' + stmt;
+    setTimeout(() => {
+      const el = document.getElementById(`r-${stmt}-${row}`);
+      if (el) { el.classList.remove('hl'); void el.offsetWidth; el.classList.add('hl'); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    }, 120);
+  };
+
+  /* ════════ OVERVIEW ════════ */
+  function renderOverview() {
+    document.getElementById('kpis').innerHTML = F.kpis.map(k => {
+      const d = FSX.fmt.delta(k.v, k.p, k);
+      const val = k.kind === 'pct' ? (k.v < 0 ? `(${Math.abs(k.v).toFixed(1)}%)` : `${k.v.toFixed(1)}%`) : f.sar(k.v, F.scale);
+      const cls = k.kind === 'money' && k.v < 0 ? 'red' : k.label === 'Revenue' ? 'gold' : '';
+      return `<div class="kpi"><div class="kpi-lbl"><span>${f.esc(k.label)}</span>${k.note ? FSX.chip(F, k.note) : ''}</div><div class="kpi-val ${cls}">${val}</div><div class="kpi-tr ${d.cls}">${d.text}</div></div>`;
+    }).join('');
+    document.getElementById('brief-h').textContent = `${F.shortName} · ${F.fy} analyst brief`;
+    document.getElementById('brief').innerHTML = FSX.linkify(F, F.brief);
+
+    const a = F.auditor;
+    document.getElementById('aud-badge').className = 'ch-badge ' + opCls;
+    document.getElementById('aud-badge').textContent = a.opinion + ' opinion';
+    document.getElementById('aud-body').innerHTML = `
+      <div class="aud-row"><span>Auditor</span><b>${f.esc(a.firm)}</b></div>
+      <div class="aud-row"><span>Engagement partner</span><b>${f.esc(a.partner)} · Licence ${f.esc(a.license)}</b></div>
+      <div class="aud-row"><span>Report date</span><b>${f.esc(a.reportDate)}</b></div>
+      <div class="aud-row"><span>Statements approved</span><b>${f.esc(F.approvedOn)}</b></div>
+      <div class="aud-row"><span>Materiality</span><b style="max-width:60%">${f.esc(a.materiality)}</b></div>
+      <div style="margin-top:10px;font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-lo)">Key audit matters (${a.kams.length})</div>
+      ${a.kams.map(k => `<div class="kam"><div class="kam-t">${f.esc(k.title)}</div><div class="kam-d">${f.esc(k.summary)}</div><div>${k.notes.map(n => FSX.chip(F, n)).join('')}</div></div>`).join('')}
+      ${a.otherMatter ? `<div class="om"><b>Other matter — </b>${f.esc(a.otherMatter)}</div>` : ''}`;
+
+    const rev = F.kpis[0], ni = F.kpis[1];
+    document.getElementById('c1-unit').textContent = F.unit;
+    FSX.chart.bars(document.getElementById('c-rev'), { labels: ['2023', '2024'], series: [{ name: 'Revenue', values: [rev.p, rev.v], color: FSX.colors.gold }, { name: ni.label, values: [ni.p, ni.v], color: v => v < 0 ? FSX.colors.red : FSX.colors.dark }], fmt: sar });
+    const m24 = ni.v / rev.v * 100, m23 = ni.p / rev.p * 100;
+    document.getElementById('c-rev-note').textContent = `Net margin ${m24.toFixed(1)}% (2023: ${m23.toFixed(1)}%). Revenue ${rev.v >= rev.p ? 'grew' : 'fell'} ${Math.abs((rev.v - rev.p) / rev.p * 100).toFixed(1)}% year on year.`;
+
+    const b = F.charts.balance;
+    FSX.chart.bars(document.getElementById('c-bal'), { stacked: true, labels: ['Assets 23', 'Eq+Liab 23', 'Assets 24', 'Eq+Liab 24'], series: [
+      { name: 'Non-current assets', values: [b.nonCurrentAssets[0], null, b.nonCurrentAssets[1], null], color: FSX.colors.gold },
+      { name: 'Current assets', values: [b.currentAssets[0], null, b.currentAssets[1], null], color: FSX.colors.goldHi },
+      { name: 'Equity', values: [null, b.equity[0], null, b.equity[1]], color: FSX.colors.dark },
+      { name: 'Non-current liabilities', values: [null, b.nonCurrentLiab[0], null, b.nonCurrentLiab[1]], color: FSX.colors.blue },
+      { name: 'Current liabilities', values: [null, b.currentLiab[0], null, b.currentLiab[1]], color: FSX.colors.amber }], fmt: sar });
+
+    const c = F.charts.cashBridge;
+    FSX.chart.waterfall(document.getElementById('c-cash'), { steps: [{ label: 'Opening cash', value: c.open, total: true }, { label: 'Operating', value: c.operating }, { label: 'Investing', value: c.investing }, { label: 'Financing', value: c.financing }, { label: 'Closing cash', value: c.close, total: true }], fmt: sar });
+    document.getElementById('c-cash-note').textContent = `Net ${c.net >= 0 ? 'increase' : 'decrease'} in cash of ${f.sar(c.net, F.scale)}. Operating cash flow ${f.sar(c.operating, F.scale)}; investing ${f.sar(c.investing, F.scale)}; financing ${f.sar(c.financing, F.scale)}.`;
+
+    const s = F.charts.segments;
+    document.getElementById('c-seg-h').textContent = 'Segment revenue & result';
+    document.getElementById('c-seg-chip').innerHTML = FSX.chip(F, s.note);
+    FSX.chart.bars(document.getElementById('c-seg'), { labels: s.labels.map(l => l.length > 18 ? l.slice(0, 17) + '…' : l), series: [{ name: 'External revenue', values: s.revenue, color: FSX.colors.gold }, { name: 'Result before interest & tax', values: s.ebit, color: v => v < 0 ? FSX.colors.red : FSX.colors.green }], fmt: sar });
+    const g = F.charts.geography;
+    const tot = g.revenue.reduce((x, y) => x + y, 0);
+    document.getElementById('c-seg-note').innerHTML = `Geography: ${g.labels.map((l, i) => `${f.esc(l)} ${(g.revenue[i] / tot * 100).toFixed(0)}%`).join(' · ')} of external revenue ${FSX.chip(F, g.note)}`;
+
+    document.getElementById('ind').innerHTML = F.ratios.map(r => {
+      const d = FSX.fmt.delta(r.v, r.p, { unit: r.unit === 'money' || r.unit === 'SAR' ? undefined : r.unit, lowerIsBetter: /borrow|impair|net debt|gearing|tax/i.test(r.label) });
+      const val = r.unit === 'money' ? f.sar(r.v, F.scale) : r.unit === '%' ? (r.v < 0 ? `(${Math.abs(r.v).toFixed(1)}%)` : r.v.toFixed(1) + '%') : r.unit === 'x' ? r.v.toFixed(2) + 'x' : (r.v < 0 ? `(${Math.abs(r.v).toFixed(2)})` : r.v.toFixed(2)) + ' SAR';
+      return `<div class="ind"><div class="ind-l"><span>${f.esc(r.label)}</span>${r.note ? FSX.chip(F, r.note) : ''}</div><div class="ind-v">${val}</div><div class="ind-d ${d.cls}">${d.text}</div><div class="ind-s">${f.esc(r.desc)}</div></div>`;
+    }).join('');
+
+    const flagged = FSX.flaggedNotes(F);
+    document.getElementById('flag-badge').textContent = `${F.stats.flags.alert} alert · ${F.stats.flags.watch} watch`;
+    document.getElementById('flags').innerHTML = flagged.map(n => `<div class="flag-item" data-n="${n.n}"><div class="flag-dot ${n.flag.level}"></div><div><div class="flag-title">Note ${n.n} · ${f.esc(n.title)}</div><div class="flag-desc">${f.esc(n.flag.text)}</div><div class="flag-src">${f.esc(n.flag.level)} · PDF p. ${n.pdfPage}</div></div></div>`).join('') || '<div class="empty">No flagged notes.</div>';
+    document.getElementById('flags').addEventListener('click', e => { const it = e.target.closest('.flag-item'); if (it) FSX.drawer.open(F, it.dataset.n); });
+  }
+
+  /* ════════ STATEMENTS ════════ */
+  let curStmt = null;
+  function renderStatements(id) {
+    const st = F.statements.find(s => s.id === id) || F.statements[0];
+    if (!done.stList) {
+      document.getElementById('sp-list').innerHTML = F.statements.map(s => { const n = s.rows.filter(r => r.n).length + ((s.colNotes || []).filter(Boolean).length); return `<button class="sp-item" data-id="${s.id}"><span>${f.esc(s.short)}</span><small>${n} refs</small></button>`; }).join('');
+      document.getElementById('sp-list').addEventListener('click', e => { const b = e.target.closest('.sp-item'); if (b) location.hash = '#statements/' + b.dataset.id; });
+      document.getElementById('only-notes').addEventListener('change', e => document.getElementById('st-table').classList.toggle('only-notes', e.target.checked));
+      done.stList = true;
+    }
+    document.querySelectorAll('.sp-item').forEach(b => b.classList.toggle('on', b.dataset.id === st.id));
+    if (curStmt === st.id) return;
+    curStmt = st.id;
+    document.getElementById('st-title').textContent = st.title;
+    document.getElementById('st-unit').textContent = `${st.basis} · ${F.unit}`;
+    const cols = st.cols, span = cols.length + 2;
+    let h = `<table class="fst${st.wide ? ' wide' : ''}"><thead><tr><th>Line item</th><th class="nc">Note</th>${cols.map((c, i) => `<th>${f.esc(c)}${st.colNotes && st.colNotes[i] ? '<br>' + FSX.chip(F, st.colNotes[i]) : ''}</th>`).join('')}</tr></thead><tbody>`;
+    let links = 0; const noteSet = new Set();
+    st.rows.forEach((r, idx) => {
+      if (r.s) { h += `<tr class="sec"><td colspan="${span}">${f.esc(r.l)}</td></tr>`; return; }
+      if (r.h) { h += `<tr class="hdr"><td colspan="${span}">${f.esc(r.l)}${r.n ? FSX.chip(F, r.n) : ''}</td></tr>`; if (r.n) { links++; FSX.parseRef(r.n).forEach(p => noteSet.add(p.n)); } return; }
+      if (r.n) { links++; FSX.parseRef(r.n).forEach(p => noteSet.add(p.n)); }
+      const cls = ['row', r.i ? 'i' + r.i : '', r.b ? 'b' : '', r.t ? 't' : '', r.g ? 'g' : '', r.n ? 'has-note' : ''].filter(Boolean).join(' ');
+      h += `<tr class="${cls}" id="r-${st.id}-${idx}"><td class="lbl">${f.esc(r.l)}</td><td class="nc">${r.n ? FSX.chip(F, r.n) : ''}</td>${(r.v || []).map(v => `<td class="v${typeof v === 'number' && v < 0 ? ' neg' : ''}">${f.num(v, r.dec)}</td>`).join('')}</tr>`;
+    });
+    h += '</tbody></table>';
+    document.getElementById('st-table').innerHTML = h;
+    (st.colNotes || []).forEach(cn => { if (cn) { links++; noteSet.add(cn); } });
+    document.getElementById('st-foot').innerHTML = `<span>${links} reference${links === 1 ? '' : 's'} to ${noteSet.size} distinct note${noteSet.size === 1 ? '' : 's'} on this statement</span><span>Transcribed from ${f.esc(F.pdf.split('/').pop())} · negative amounts in parentheses · “–” = nil</span><a class="btn btn-glass btn-sm" href="${F.pdf}#page=${F.statementsStartPage}" target="_blank" rel="noopener">View statements in PDF</a>`;
+  }
+
+  /* ════════ NOTES ════════ */
+  let curNote = null;
+  function noteMatches(n) {
+    const q = (document.getElementById('n-search').value || '').trim().toLowerCase();
+    const cat = document.getElementById('n-cat').value, fl = document.getElementById('n-flag').value;
+    if (cat && n.category !== cat) return false;
+    if (fl === 'flagged' && !n.flag) return false;
+    if (fl === 'referenced' && !(n.referencedBy || []).length) return false;
+    if (fl === 'disclosure' && (n.referencedBy || []).length) return false;
+    if (q) { const hay = `${n.n} ${n.title} ${n.summary} ${(n.tags || []).join(' ')} ${n.text}`.toLowerCase(); if (!hay.includes(q)) return false; }
+    return true;
+  }
+  function renderList() {
+    const list = F.notes.filter(noteMatches);
+    document.getElementById('notes-count').textContent = `${list.length} / ${F.notes.length}`;
+    document.getElementById('n-list').innerHTML = list.map(n => `<div class="ni${n.n === curNote ? ' on' : ''}" data-n="${n.n}"><span class="ni-n">${n.n}</span><div><div class="ni-t">${f.esc(n.title)}</div><div class="ni-m"><span>${f.esc(n.category)}</span><span>p. ${n.pdfPage}</span><span>${(n.referencedBy || []).length ? (n.referencedBy.length + ' line' + (n.referencedBy.length > 1 ? 's' : '')) : 'disclosure-only'}</span></div></div>${n.flag ? `<span class="ni-flag ${n.flag.level}" title="${f.esc(n.flag.level)}"></span>` : ''}</div>`).join('') || '<div class="empty">No notes match.</div>';
+  }
+  function renderNotes(n) {
+    if (!done.notes) {
+      const cats = [...new Set(F.notes.map(x => x.category))].sort();
+      document.getElementById('n-cat').innerHTML += cats.map(c => `<option value="${c}">${c}</option>`).join('');
+      ['n-search', 'n-cat', 'n-flag'].forEach(id => document.getElementById(id).addEventListener('input', renderList));
+      document.getElementById('n-list').addEventListener('click', e => { const it = e.target.closest('.ni'); if (it) location.hash = '#notes/' + it.dataset.n; });
+      done.notes = true;
+    }
+    const nt = byN[n] || F.notes[0];
+    curNote = nt.n;
+    renderList();
+    const i = F.notes.indexOf(nt);
+    const prev = F.notes[i - 1], next = F.notes[i + 1];
+    document.getElementById('n-detail').innerHTML = `
+      <div class="nd-full-head"><div><div class="dr-num">${f.esc(F.shortName)} · ${f.esc(F.fy)} · Note ${nt.n} of ${F.notes.length}</div><div class="dr-title">${f.esc(nt.title)}</div>
+        <div class="dr-meta"><span>PDF p. ${nt.pdfPage}</span><span>Printed p. ${nt.printedPage}</span><span>${f.esc(nt.category)}</span><span>${(nt.text || '').length.toLocaleString()} chars</span></div></div>
+        <div class="navbtns"><a class="btn btn-glass btn-sm" href="${F.pdf}#page=${nt.pdfPage}" target="_blank" rel="noopener">PDF p. ${nt.pdfPage}</a>${prev ? `<a class="btn btn-glass btn-sm" href="#notes/${prev.n}">‹ ${prev.n}</a>` : ''}${next ? `<a class="btn btn-glass btn-sm" href="#notes/${next.n}">${next.n} ›</a>` : ''}</div></div>
+      ${FSX.renderNote(F, nt.n, { full: true })}`;
+    const on = document.querySelector('.ni.on'); if (on) on.scrollIntoView({ block: 'nearest' });
+  }
+
+  /* ════════ CROSS-REFERENCE MAP ════════ */
+  function renderMap(filter) {
+    const st = F.stats;
+    document.getElementById('xstats').innerHTML = [
+      [st.linesWithNotes, 'statement lines cite a note'], [st.links, 'cross-reference links'], [st.notesReferenced + ' / ' + st.notes, 'notes cited on the statements'],
+      [st.notesDisclosureOnly.length, 'disclosure-only notes'], [st.flags.alert + st.flags.watch, 'flagged notes (alert + watch)'], [(st.textChars / 1000).toFixed(0) + 'k', 'characters of note text indexed']
+    ].map(x => `<div class="xstat"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('');
+    const filt = document.getElementById('map-filters');
+    filt.innerHTML = [['all', 'All statements'], ...F.statements.map(s => [s.id, s.short])].map(x => `<button class="btn btn-glass btn-sm${x[0] === filter ? ' on' : ''}" data-f="${x[0]}">${f.esc(x[1])}</button>`).join('');
+    filt.onclick = e => { const b = e.target.closest('[data-f]'); if (b) renderMap(b.dataset.f); };
+
+    // left nodes: unique (stmt,row) with refs
+    const left = []; const seen = {};
+    F.xrefs.forEach(x => { if (filter !== 'all' && x.stmt !== filter) return; const key = x.stmt + ':' + x.row; if (!seen[key]) { seen[key] = { stmt: x.stmt, short: x.short, row: x.row, label: x.label, refs: [] }; left.push(seen[key]); } seen[key].refs.push(x); });
+    const noteIds = F.notes.map(n => n.n);
+    const W = 1120, LX = 16, LW = 420, RX = 700, RW = 404, RH = 21, LH = 20, GH = 34, TOP = 30;
+    let y = TOP; let lastStmt = null; const lpos = {};
+    left.forEach(l => { if (l.stmt !== lastStmt) { y += GH; lastStmt = l.stmt; l.group = true; l.gy = y - 7; } l.y = y; y += LH; lpos[l.stmt + ':' + l.row] = l; });
+    const leftH = y;
+    const rpos = {}; noteIds.forEach((n, i) => rpos[n] = TOP + 18 + i * RH);
+    const H = Math.max(leftH, TOP + 18 + noteIds.length * RH) + 20;
+    const trunc = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+    let svg = `<svg class="xmap" viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMinYMin meet">`;
+    svg += `<text class="colhead" x="${LX}" y="18">Statement line items</text><text class="colhead" x="${RX}" y="18">Notes to the consolidated financial statements</text>`;
+    // links
+    left.forEach(l => l.refs.forEach(r => { const y1 = l.y + LH / 2 - 1, y2 = rpos[r.n] + RH / 2 - 1; const mx = (LX + LW + RX) / 2; svg += `<path class="lk" data-l="${l.stmt}:${l.row}" data-n="${r.n}" d="M${LX + LW} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${RX} ${y2}"/>`; }));
+    // left nodes
+    left.forEach(l => { if (l.group) svg += `<text class="grp" x="${LX}" y="${l.gy}">${f.esc(l.short)}</text>`; svg += `<g class="ln" data-l="${l.stmt}:${l.row}" data-ns="${l.refs.map(r => r.n).join(',')}"><rect x="${LX}" y="${l.y}" width="${LW}" height="${LH - 3}"/><text x="${LX + 8}" y="${l.y + 12.5}">${f.esc(trunc(l.label, 52))}</text><text x="${LX + LW - 8}" y="${l.y + 12.5}" text-anchor="end" class="st">${f.esc(l.refs.map(r => r.ref).join(', '))}</text></g>`; });
+    // right nodes
+    F.notes.forEach(n => { const yy = rpos[n.n]; const inc = left.reduce((a, l) => a + l.refs.filter(r => r.n === n.n).length, 0); svg += `<g class="nn" data-n="${n.n}"><rect x="${RX}" y="${yy}" width="${RW}" height="${RH - 3}"/><text class="num" x="${RX + 8}" y="${yy + 13}">${n.n}</text><text x="${RX + 34}" y="${yy + 13}">${f.esc(trunc(n.title, 44))}</text>${n.flag ? `<circle class="fl" cx="${RX + RW - 30}" cy="${yy + 9}" r="3.5" fill="${n.flag.level === 'alert' ? '#C0392B' : n.flag.level === 'watch' ? '#B8620A' : '#1A5A9A'}"/>` : ''}<text x="${RX + RW - 8}" y="${yy + 13}" text-anchor="end" class="num" style="font-size:9px;opacity:.7">${inc || ''}</text></g>`; });
+    svg += '</svg>';
+    const wrap = document.getElementById('xmap'); wrap.innerHTML = svg;
+    const S = wrap.querySelector('svg');
+    let pinned = null;
+    function clear() { S.querySelectorAll('.on,.off').forEach(e => e.classList.remove('on', 'off')); }
+    function lightLine(key) { clear(); const ns = new Set(); S.querySelectorAll('.lk').forEach(p => { const on = p.dataset.l === key; p.classList.add(on ? 'on' : 'off'); if (on) ns.add(p.dataset.n); }); S.querySelectorAll('.ln').forEach(g => g.classList.add(g.dataset.l === key ? 'on' : 'off')); S.querySelectorAll('.nn').forEach(g => g.classList.add(ns.has(g.dataset.n) ? 'on' : 'off')); }
+    function lightNote(n) { clear(); const ls = new Set(); S.querySelectorAll('.lk').forEach(p => { const on = p.dataset.n === n; p.classList.add(on ? 'on' : 'off'); if (on) ls.add(p.dataset.l); }); S.querySelectorAll('.nn').forEach(g => g.classList.add(g.dataset.n === n ? 'on' : 'off')); S.querySelectorAll('.ln').forEach(g => g.classList.add(ls.has(g.dataset.l) ? 'on' : 'off')); }
+    S.addEventListener('mouseover', e => { if (pinned) return; const l = e.target.closest('.ln'), n = e.target.closest('.nn'); if (l) lightLine(l.dataset.l); else if (n) lightNote(n.dataset.n); });
+    S.addEventListener('mouseleave', () => { if (!pinned) clear(); });
+    S.addEventListener('click', e => { const l = e.target.closest('.ln'), n = e.target.closest('.nn'); if (l) { pinned = pinned === l.dataset.l ? null : l.dataset.l; pinned ? lightLine(pinned) : clear(); } else if (n) { pinned = 'n:' + n.dataset.n; lightNote(n.dataset.n); FSX.drawer.open(F, n.dataset.n); } else { pinned = null; clear(); } });
+    document.getElementById('disc-only').innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:6px">${F.stats.notesDisclosureOnly.map(n => FSX.chip(F, n, { full: true })).join('') || '<span class="muted">Every note is cited on the face of the statements.</span>'}</div>`;
+  }
+
+  /* ════════ INVESTOR LENS ════════ */
+  function renderLens() {
+    const s = F.stats.lens;
+    document.getElementById('lens-sum').innerHTML = `<span class="lens-pill"><span class="dot green"></span><b>${s.green}</b> satisfactory</span><span class="lens-pill"><span class="dot amber"></span><b>${s.amber}</b> watch</span><span class="lens-pill"><span class="dot red"></span><b>${s.red}</b> attention required</span><span class="lens-pill">Review areas organised the way an investment-authority analyst reads a filing · every finding cites its notes</span>`;
+    document.getElementById('lens-grid').innerHTML = F.lens.map(l => `<div class="lens ${l.status}"><div class="lens-top"><span class="lens-area">${f.esc(l.area)}</span><span class="rb ${l.status}">${l.status === 'green' ? 'Satisfactory' : l.status === 'amber' ? 'Watch' : 'Attention'}</span></div><div class="lens-h">${f.esc(l.headline)}</div><div class="lens-d">${f.esc(l.detail)}</div><div class="lens-notes">${l.notes.map(n => FSX.chip(F, n)).join('')}</div></div>`).join('');
+    document.querySelectorAll('[data-toast]').forEach(b => b.addEventListener('click', () => FSX.toast(b.dataset.toast)));
+    const now = new Date();
+    const t = m => { const d = new Date(now.getTime() - m * 60000); return d.toTimeString().slice(0, 5); };
+    document.getElementById('audit-log').innerHTML = `
+      <div class="log-entry"><span class="log-time">${t(9)}</span><span><span class="log-action">Pipeline:</span> ${f.esc(F.pdf.split('/').pop())} parsed — ${F.stats.notes} notes, ${F.stats.links} cross-references indexed.</span></div>
+      <div class="log-entry"><span class="log-time">${t(7)}</span><span><span class="log-action">Pipeline:</span> ${F.stats.flags.alert} alert and ${F.stats.flags.watch} watch flags raised from the notes.</span></div>
+      <div class="log-entry"><span class="log-time">${t(2)}</span><span><span class="log-action">Analyst:</span> opened the investor lens for ${f.esc(F.shortName)} ${f.esc(F.fy)}.</span></div>`;
+  }
+
+  route();
+})();
+</script>
+</body>
+</html>
