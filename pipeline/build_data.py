@@ -53,6 +53,24 @@ def main():
         index.append(registry_entry(bundle))
     (DATA / "registry.js").write_text("window.FILING_INDEX=" + json.dumps(index, ensure_ascii=False) + ";\n", encoding="utf-8")
     print(f"registry: {len(index)} filings", file=sys.stderr)
+    fingerprints()
+
+
+def fingerprints():
+    """backend/seed/fingerprints.json: identity of each bundled analysis's PDF, so an upload of the
+    same document is restored from the bundled analysis instead of being processed again."""
+    sys.path.insert(0, str(ROOT / "backend"))
+    from pipeline.extract import pdf_pages
+    from pipeline.fingerprint import sha256_file, text_fingerprint
+    idx = {}
+    for f in sorted(SEED.glob("*.bundle.json")):
+        b = load(f)
+        pdf = ROOT / (b.get("pdf") or "")
+        if not b or not pdf.exists():
+            continue
+        idx[b["id"]] = {"file": f.name, "pdf": b["pdf"], "sha256": sha256_file(pdf), "textFingerprint": text_fingerprint(pdf_pages(pdf))}
+    (SEED / "fingerprints.json").write_text(json.dumps(idx, indent=1), encoding="utf-8")
+    print(f"fingerprints: {list(idx)}", file=sys.stderr)
 
 
 if __name__ == "__main__":

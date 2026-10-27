@@ -192,6 +192,28 @@ def restore_samples(seed_dir: Path) -> list[str]:
     return seed_from(seed_dir)
 
 
+def find_cached(sha256: str | None = None, fingerprint: str | None = None, exclude: str | None = None):
+    """An earlier analysis of the same document: (bundle, source id) or None.
+    Storage is searched first (most recent first), then the analyses bundled with the app."""
+    for fid in reversed(list_ids()):
+        if fid == exclude:
+            continue
+        b = bundle(fid)
+        if not b or (status(fid) or {}).get("state", "ready") != "ready":
+            continue
+        if (sha256 and b.get("sha256") == sha256) or (fingerprint and b.get("textFingerprint") == fingerprint):
+            return b, fid
+    idx = _read(config.SEED_DIR / "fingerprints.json", {}) or {}
+    for sid, e in idx.items():
+        if (sha256 and e.get("sha256") == sha256) or (fingerprint and e.get("textFingerprint") == fingerprint):
+            b = _read(config.SEED_DIR / e.get("file", f"{sid}.bundle.json"))
+            if b:
+                b.setdefault("sha256", e.get("sha256"))
+                b.setdefault("textFingerprint", e.get("textFingerprint"))
+                return b, sid
+    return None
+
+
 def seed_from(seed_dir: Path) -> list[str]:
     """Copy the bundled sample filings into storage (idempotent; skips samples the user removed)."""
     made = []

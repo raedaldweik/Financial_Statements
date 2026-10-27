@@ -1,0 +1,14 @@
+{
+ "aramco": {
+  "file": "aramco.bundle.json",
+  "pdf": "filings/aramco-2222-fy2024.pdf",
+  "sha256": "b8a29772c1570738a9b4e481efc5af795a523fe79090107a9556589db28685c0",
+  "textFingerprint": "c6bdbce9f6ddc98ab73d522e6f3362bf1408eaba84cdb9a3d8be98098e137714"
+ },
+ "ceramic": {
+  "file": "ceramic.bundle.json",
+  "pdf": "filings/saudi-ceramic-2040-fy2024.pdf",
+  "sha256": "ac3569ccafc64c09203d7303e7ed8826da5ab529e6a7e26064a45ac46e8a152c",
+  "textFingerprint": "94ed0721fd3d1452e73266c974096127b7890be3e67d0bf706c9d0395528aea6"
+ }
+}

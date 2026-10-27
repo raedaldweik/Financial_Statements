@@ -424,7 +424,7 @@
     const renderLog = () => {
       const r = load(), mine = (r.log || []).slice().reverse();
       document.getElementById('audit-log').innerHTML = mine.map(e => `<div class="log-entry"><span class="log-time">${t(e.t)}</span><span><span class="log-action">${f.esc(e.action)}</span>${e.note ? ' — ' + f.esc(e.note) : ''}</span></div>`).join('') +
-        `<div class="log-entry"><span class="log-time">${t(F.createdAt)}</span><span><span class="log-action">Processed:</span> ${F.stats.notes} notes and ${F.stats.links} cross-references indexed; ${F.stats.flags.alert} alert and ${F.stats.flags.watch} watch flags raised from the notes.</span></div>`;
+        `<div class="log-entry"><span class="log-time">${t(F.createdAt)}</span><span><span class="log-action">Processed:</span> ${F.stats.notes} notes and ${F.stats.links} cross-references indexed; ${F.stats.flags.alert} alert and ${F.stats.flags.watch} watch flags raised from the notes.${F.restoredFrom ? ' The document had been processed before' + (F.restoredFrom.processedAt ? ' (' + t(F.restoredFrom.processedAt) + ')' : '') + '; that analysis was restored.' : ''}</span></div>`;
     };
     if (!F._reviewWired) {
       F._reviewWired = true;

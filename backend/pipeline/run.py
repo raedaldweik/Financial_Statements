@@ -10,11 +10,13 @@ from __future__ import annotations
 import base64
 import logging
 import re
+import json
 import time
 import traceback
 from pathlib import Path
 
 import config
+from pipeline.fingerprint import sha256_file, text_fingerprint
 import store
 from llm import LLM
 from pipeline import extract as ex
@@ -107,10 +109,38 @@ def _stage(fid, sid):
     return _S()
 
 
+def _restore(fid: str, meta: dict, cached: dict, src: str, sha: str, fp: str, docmap) -> None:
+    """The document was processed before: reuse that analysis for this upload."""
+    b = json.loads(json.dumps(cached))
+    b.update({"id": fid, "pdf": f"filings/{fid}.pdf", "createdAt": meta.get("createdAt", time.time()), "sha256": sha, "textFingerprint": fp,
+              "mode": "full" if cached.get("mode") in (None, "full", "curated") else cached["mode"],
+              "restoredFrom": {"id": src, "processedAt": cached.get("createdAt")}})
+    if meta.get("name"):
+        b["shortName"] = meta["name"]
+    if meta.get("ticker"):
+        b["ticker"] = meta["ticker"]
+    if meta.get("sector"):
+        b["sector"] = meta["sector"]
+    b["warnings"] = [w for w in cached.get("warnings", []) if "API" not in w]
+    store.update_status(fid, mode=b["mode"])
+    with _stage(fid, "segment") as s:
+        s.info(f"document recognised: the same filing was processed on {time.strftime('%d %b %Y', time.localtime(cached.get('createdAt') or time.time()))}; that analysis is restored")
+    for sid, msg in (("statements", f"{len(b.get('statements', []))} statements restored"), ("company", f"{b.get('shortName') or b.get('name')} · {b.get('fy', '')} · {((b.get('auditor') or {}).get('firm') or 'auditor n/a')}"),
+                     ("notes", f"{len(b.get('notes', []))} notes restored with their summaries and flags"), ("analysis", f"{len(b.get('lens', []))} investor-lens findings restored")):
+        with _stage(fid, sid) as s:
+            s.info(msg)
+    with _stage(fid, "build") as s:
+        store.save_bundle(fid, b)
+        st = b.get("stats") or {}
+        s.info(f"{st.get('links', 0)} cross-references from {st.get('linesWithNotes', 0)} statement lines to {st.get('notesReferenced', 0)} notes")
+    store.update_status(fid, state="ready", finishedAt=time.time(), warnings=b["warnings"])
+
+
 def run(fid: str) -> None:
     d = store.filing_dir(fid)
     pdf = d / "source.pdf"
     meta = store.meta(fid) or {}
+    pdf_sha = sha256_file(pdf)
     llm = LLM()
     mode = "full" if llm.enabled else "extraction"
     store.update_status(fid, state="running", startedAt=time.time(), error=None, mode=mode)
@@ -123,9 +153,14 @@ def run(fid: str) -> None:
         with _stage(fid, "extract") as s:
             pages, docmap, raw_notes = ex.extract(pdf, config.PDFTOTEXT)
             page_text = {p.no: p.text for p in pages}
+            text_fp = text_fingerprint([p.raw for p in pages])
             s.info(f"{docmap.pages} pages, {docmap.text_pages} with a text layer")
             if docmap.text_pages < docmap.pages * 0.5:
                 warnings.append("Most pages have no text layer (scanned PDF); only the pages the model reads visually are covered.")
+        hit = store.find_cached(pdf_sha, text_fp, exclude=fid)
+        if hit:
+            _restore(fid, meta, hit[0], hit[1], pdf_sha, text_fp, docmap)
+            return
         with _stage(fid, "segment") as s:
             stmt_pages = {k: v for k, v in docmap.statements.items() if v}
             s.info(f"statements on pages {stmt_pages}; auditor's report pages {docmap.auditor or 'not found'}; {len(raw_notes)} notes from page {docmap.notes_start}")
@@ -241,6 +276,7 @@ def run(fid: str) -> None:
                 "unitShort": (company["unit"] or "").replace("million", "m").replace("thousand", "k"),
                 "kpis": derived["kpis"], "ratios": derived["ratios"], "charts": charts, "brief": brief, "lens": lens,
                 "statements": statements, "years": years, "keyRows": kr, "mode": mode, "createdAt": meta.get("createdAt", time.time()),
+                "sha256": pdf_sha, "textFingerprint": text_fp,
                 "llm": {"calls": llm.calls, "inputTokens": llm.input_tokens, "outputTokens": llm.output_tokens, "model": config.MODEL if llm.enabled else None},
             })
             bundle = assemble(bundle, raw_notes, curated, warnings)
