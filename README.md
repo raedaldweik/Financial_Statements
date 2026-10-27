@@ -9,9 +9,10 @@ Upload any company's audited annual financial statements (PDF). The server rebui
 primary statements with **every note reference as a live link**, splits and indexes the
 notes, curates each note (summary, key figures, sub-sections, flags), computes KPIs and
 charts, and writes an analyst brief and a twelve-area **investor lens** — each finding
-citing the notes that support it. Two FY2024 Tadawul filings (Saudi Aramco, Saudi
-Ceramic) ship as **sample filings** so a fresh deployment shows what the output looks
-like; remove them from the UI or start without them with `SEED_SAMPLES=0`.
+citing the notes that support it. Saudi Ceramic FY2024 ships as a **sample filing** so a
+fresh deployment shows what the output looks like (Aramco FY2024 is bundled too, for
+`SAMPLES=ceramic,aramco`, and its PDF sits in `filings/` for a live upload); remove the
+sample from the UI or start without it with `SEED_SAMPLES=0`.
 
 ## Pages
 
@@ -60,7 +61,8 @@ Requires `pdftotext`, `pdfseparate` and `pdfunite` (poppler-utils) on the PATH a
    | `MODEL_NOTES` | no | default = `MODEL`; `claude-sonnet-5-5` makes note curation faster and cheaper |
    | `LLM_EFFORT` | no | `low` · `medium` (default) · `high` · `xhigh` · `max` |
    | `STORAGE_DIR` | no | default `/app/storage` |
-   | `SEED_SAMPLES` | no | default `1`; `0` starts without the two sample filings |
+   | `SAMPLES` | no | sample filings loaded at start: `ceramic` (default), `aramco`, `ceramic,aramco` or `all` |
+   | `SEED_SAMPLES` | no | default `1`; `0` starts without any sample filing |
 
 4. Settings → Networking → **Generate Domain**.
 5. Optional but recommended: Settings → **Volumes** → mount a volume at `/app/storage` so
@@ -121,8 +123,8 @@ FSX.LOGO_IMG = 'assets/misa-logo.svg';
 
 ## Sample filings
 
-Aramco FY2024 and Saudi Ceramic FY2024 are examples, not fixtures: the app works on any
-filing you upload. They are copied into storage at start (`SEED_SAMPLES=1`), can be removed
+Saudi Ceramic FY2024 (and Aramco FY2024 with `SAMPLES=ceramic,aramco`) are examples, not
+fixtures: the app works on any filing you upload. They are copied into storage at start (`SEED_SAMPLES=1`), can be removed
 with **Remove samples** on the upload or filings page (`DELETE /api/samples`; a removed
 sample stays removed across restarts) and put back with **Restore samples**
 (`POST /api/samples/restore`). `pipeline/curated/` holds their hand-reviewed statements and

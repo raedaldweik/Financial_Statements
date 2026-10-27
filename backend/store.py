@@ -158,22 +158,27 @@ def removed_samples() -> set[str]:
     return set(_read(_removed_samples_path(), []) or [])
 
 
-def delete(fid: str) -> bool:
+def delete(fid: str, remember: bool = True) -> bool:
+    """Remove a filing. A sample the user removes is remembered so it is not re-seeded."""
     d = filing_dir(fid)
     if not d.exists():
         return False
     with _lock:
-        if is_sample(fid):
+        if remember and is_sample(fid):
             _write(_removed_samples_path(), sorted(removed_samples() | {fid}))
         shutil.rmtree(d)
     return True
+
+
+def _wanted_sample(fid: str) -> bool:
+    return "all" in config.SAMPLES or fid in config.SAMPLES
 
 
 def sample_ids(seed_dir: Path) -> list[str]:
     out = []
     for f in sorted(seed_dir.glob("*.bundle.json")):
         b = _read(f)
-        if b and b.get("id"):
+        if b and b.get("id") and _wanted_sample(b["id"]):
             out.append(b["id"])
     return out
 
@@ -198,7 +203,7 @@ def seed_from(seed_dir: Path) -> list[str]:
             continue
         fid = b["id"]
         d = filing_dir(fid)
-        if fid in skip or (d / "bundle.json").exists():
+        if fid in skip or not _wanted_sample(fid) or (d / "bundle.json").exists():
             continue
         d.mkdir(parents=True, exist_ok=True)
         b.setdefault("mode", "curated")

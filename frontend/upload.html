@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Upload a statement — MISA Investor Financial Intelligence</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/theme.css">
 <style>
 .up-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px}
@@ -42,7 +42,7 @@
         </div>
         <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap">
           <span class="muted" id="file-label" style="font-size:11px">No file selected</span>
-          <button class="btn btn-primary" id="go" disabled>Ingest filing ›</button>
+          <button class="btn btn-primary" id="go" disabled>Ingest filing</button>
         </div>
         <div id="upload-prog"></div>
       </div>
@@ -89,7 +89,6 @@
   const f = FSX.fmt;
   document.getElementById('nav').innerHTML = FSX.nav('upload');
   document.getElementById('foot').innerHTML = FSX.footer();
-  FSX.bg();
 
   const STAGES = [
     ['extract', 'Extract text', 'pdftotext per page; repeated headers, footers and page numbers removed'],
@@ -102,7 +101,7 @@
   ];
   document.getElementById('steps').innerHTML = STAGES.map((s, i) => `<div class="step"><div class="n">STEP ${i + 1} · ${s[0].toUpperCase()}</div><b>${s[1]}</b><span>${s[2]}</span></div>`).join('');
 
-  const health = await FSX.api.health();
+  const health = await FSX.api.health(); FSX.setMode(health);
   const pill = document.getElementById('mode-pill'), banner = document.getElementById('mode-banner'), badge = document.getElementById('ingest-badge');
   if (health.maxUploadMb) document.getElementById('cap').textContent = health.maxUploadMb;
   if (!health.ok) { pill.textContent = 'Static mode'; pill.className = 'rb blue'; badge.textContent = 'Server required'; badge.className = 'ch-badge amber'; banner.innerHTML = `<div class="mode-banner static">This page was opened without the server, so nothing can be uploaded. Run <code>uvicorn main:app</code> in <code>backend/</code> (or deploy the Dockerfile) and open the app through its URL.</div>`; }
@@ -115,7 +114,7 @@
     watching = id;
     const card = document.getElementById('live-card'); card.style.display = 'block';
     document.getElementById('live-name').innerHTML = `<b>${f.esc(name)}</b> · <span class="mono">${f.esc(id)}</span>`;
-    document.getElementById('live-link').innerHTML = `<a class="opn" href="company.html?c=${encodeURIComponent(id)}">Open the explorer ›</a>`;
+    document.getElementById('live-link').innerHTML = `<a class="opn" href="company.html?c=${encodeURIComponent(id)}">Open the explorer</a>`;
     const tick = async () => {
       try {
         const s = await FSX.api.status(id);
@@ -124,7 +123,7 @@
         if (s.status === 'ready') {
           clearInterval(timer); timer = null;
           document.getElementById('live-pct').textContent = 'Ready'; document.getElementById('live-pct').className = 'ch-badge green';
-          document.getElementById('live-link').innerHTML = `<span class="up-line ok" style="margin-right:10px">Ready · opening the explorer…</span><a class="opn" href="company.html?c=${encodeURIComponent(id)}">Open now ›</a>`;
+          document.getElementById('live-link').innerHTML = `<span class="up-line ok" style="margin-right:10px">Ready · opening the explorer…</span><a class="opn" href="company.html?c=${encodeURIComponent(id)}">Open now</a>`;
           setTimeout(() => { location.href = `company.html?c=${encodeURIComponent(id)}#overview`; }, 1800);
         } else if (s.status === 'failed') {
           clearInterval(timer); timer = null;
@@ -157,16 +156,17 @@
       const [ml, mc] = FSX.modeLabel(x);
       const st = x.status === 'ready' ? '<span class="rb green">ready</span>' : x.status === 'failed' ? `<span class="rb red">failed</span> <small class="muted">${f.esc(x.error || '')}</small>` : `<span class="rb blue">${f.esc(x.status)}</span><div class="prog" style="width:140px"><i style="width:${Math.round((x.progress || 0) * 100)}%"></i></div>`;
       return `<tr><td><span class="en-strong">${f.esc(x.shortName || x.name)}</span><span class="en-sub mono">${f.esc(x.ticker || '')}${x.ticker ? ' · ' : ''}${f.esc(x.fy || '')} ${f.esc(x.id)}</span></td><td style="white-space:nowrap">${when(x.createdAt)}</td><td>${st}</td><td><span class="rb ${mc}">${ml}</span></td><td class="num">${(x.stats || {}).notes ?? '—'}</td><td class="num">${(x.stats || {}).links ?? '—'}</td>
-        <td style="white-space:nowrap"><a class="opn" href="company.html?c=${encodeURIComponent(x.id)}">${x.status === 'ready' ? 'Open' : 'Watch'} ›</a> ${health.ok && x.status !== 'running' && x.status !== 'queued' ? `<button class="opn" data-rerun="${f.esc(x.id)}">Re-run</button> <button class="opn danger" data-del="${f.esc(x.id)}">Remove</button>` : ''}</td></tr>`;
+        <td style="white-space:nowrap"><a class="opn" href="company.html?c=${encodeURIComponent(x.id)}">${x.status === 'ready' ? 'Open' : 'Watch'}</a> ${health.ok && x.status !== 'running' && x.status !== 'queued' ? `<button class="opn" data-rerun="${f.esc(x.id)}">Re-run</button> <button class="opn danger" data-del="${f.esc(x.id)}">Remove</button>` : ''}</td></tr>`;
     }).join('') || `<tr><td colspan="7" class="empty">Nothing uploaded yet. Drop a PDF above to start${samples.length ? ', or look at the sample filings below to see what the result looks like' : ''}.</td></tr>`;
 
     const sm = document.getElementById('samples');
+    const one = samples.length === 1;
     if (!health.ok) sm.innerHTML = '';
-    else if (samples.length) sm.innerHTML = `<div class="sample-strip"><div><b>Sample filings included:</b> ${samples.map(s => `<a href="company.html?c=${encodeURIComponent(s.id)}">${f.esc(s.shortName)} ${f.esc(s.fy || '')}</a>`).join(', ')}. They are reviewed examples shipped with the app to show what the output looks like; they are not needed for your own uploads.</div><div class="acts"><button class="opn danger" id="rm-samples">Remove samples</button></div></div>`;
-    else if (health.samplesAvailable) sm.innerHTML = `<div class="sample-strip"><div>The sample filings (Aramco FY2024, Saudi Ceramic FY2024) are removed.</div><div class="acts"><button class="opn" id="restore-samples">Restore samples</button></div></div>`;
+    else if (samples.length) sm.innerHTML = `<div class="sample-strip"><div><b>${one ? 'Sample filing:' : 'Sample filings:'}</b> ${samples.map(s => `<a href="company.html?c=${encodeURIComponent(s.id)}">${f.esc(s.shortName)} ${f.esc(s.fy || '')}</a>`).join(' and ')} ${one ? 'is a reviewed example' : 'are reviewed examples'} shipped with the app to show what the output looks like; ${one ? 'it is' : 'they are'} not needed for your own uploads.</div><div class="acts"><button class="opn danger" id="rm-samples">Remove ${one ? 'sample' : 'samples'}</button></div></div>`;
+    else if (health.samplesAvailable) sm.innerHTML = `<div class="sample-strip"><div>The sample filing${health.samplesAvailable === 1 ? ' is' : 's are'} removed.</div><div class="acts"><button class="opn" id="restore-samples">Restore</button></div></div>`;
     else sm.innerHTML = '';
-    const rm = document.getElementById('rm-samples'); if (rm) rm.addEventListener('click', async () => { if (!confirm('Remove the sample filings? You can restore them later.')) return; await fetch('api/samples', { method: 'DELETE' }); FSX.toast('Samples removed.'); refresh(); });
-    const rs = document.getElementById('restore-samples'); if (rs) rs.addEventListener('click', async () => { await fetch('api/samples/restore', { method: 'POST' }); FSX.toast('Samples restored.'); refresh(); });
+    const rm = document.getElementById('rm-samples'); if (rm) rm.addEventListener('click', async () => { if (!confirm('Remove the sample filing? It can be restored later.')) return; await fetch('api/samples', { method: 'DELETE' }); FSX.toast('Sample removed.'); refresh(); });
+    const rs = document.getElementById('restore-samples'); if (rs) rs.addEventListener('click', async () => { await fetch('api/samples/restore', { method: 'POST' }); FSX.toast('Sample restored.'); refresh(); });
   }
   document.getElementById('tbody').addEventListener('click', async e => {
     const del = e.target.closest('[data-del]'), rr = e.target.closest('[data-rerun]');

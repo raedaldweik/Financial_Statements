@@ -38,6 +38,13 @@ _sem = threading.Semaphore(int(__import__("os").getenv("MAX_PARALLEL_JOBS", "2")
 @app.on_event("startup")
 def _startup():
     config.STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+    # samples are app-owned: drop any stored sample that is no longer in the configured set
+    wanted = set(store.sample_ids(config.SEED_DIR)) if config.SEED_SAMPLES else set()
+    stale = [i for i in store.list_ids() if store.is_sample(i) and i not in wanted]
+    for i in stale:
+        store.delete(i, remember=False)
+    if stale:
+        log.info("removed sample filings no longer configured: %s", stale)
     if config.SEED_SAMPLES:
         made = store.seed_from(config.SEED_DIR)
         if made:

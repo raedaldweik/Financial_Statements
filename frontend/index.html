@@ -4,212 +4,152 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Investor Financial Intelligence — Ministry of Investment</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@200;300;400;500;600;700&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root { --gold:#C8A44A; --gold-hi:#E2BC68; --green:#3FA07C; --green-pale:#8CCBB0; }
-html, body { width:100%; height:100%; overflow:hidden; background:#04120E; font-family:'Barlow',system-ui,sans-serif; }
-#bg { position:fixed; inset:0; width:100%; height:100%; display:block; }
-.page { position:fixed; inset:0; display:flex; flex-direction:column; }
-nav { position:relative; z-index:10; display:flex; align-items:center; justify-content:space-between; padding:20px 60px 0; }
-.brand{display:flex;align-items:center;gap:14px;text-decoration:none}
-.brand svg{width:46px;height:46px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
-.brand-txt{display:flex;flex-direction:column;gap:4px;line-height:1}
-.brand-ar{font-family:'Tajawal','Noto Naskh Arabic','Segoe UI',sans-serif;font-size:19px;font-weight:700;color:#F3E2B0;direction:rtl;text-align:left}
-.brand-en{font-size:10px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:#E2BC68}
-.nav-tabs { display:flex; gap:40px; position:absolute; left:50%; transform:translateX(-50%); }
-.tab { text-decoration:none; color:rgba(255,255,255,0.45); font-size:12.5px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; padding:8px 0; position:relative; transition:color .3s ease; }
-.tab:hover { color:rgba(255,255,255,0.95); }
-.tab.active { color:var(--gold-hi); }
-.tab.active::after { content:''; position:absolute; bottom:-4px; left:0; width:100%; height:2px; background:var(--gold); box-shadow:0 0 10px rgba(200,164,74,0.6); border-radius:2px; }
-.nav-pill{font-size:9px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:8px 15px;border-radius:20px;border:1px solid rgba(140,203,176,0.35);color:#8CCBB0;background:rgba(63,160,124,0.08);white-space:nowrap}
-.main { flex:1; display:flex; align-items:center; padding:0 60px; position:relative; z-index:5; }
-.content { max-width:660px; }
-.eyebrow { display:flex; align-items:center; gap:14px; font-size:9px; font-weight:600; letter-spacing:0.35em; text-transform:uppercase; color:var(--green-pale); margin-bottom:22px; opacity:0; animation:fadeUp .7s .1s ease forwards; }
-.eyebrow::before { content:''; display:block; width:28px; height:1px; background:var(--green); }
-h1 { font-size:clamp(32px,3.8vw,58px); font-weight:200; line-height:1.08; color:rgba(255,255,255,0.92); letter-spacing:-0.02em; margin-bottom:4px; opacity:0; animation:fadeUp .7s .25s ease forwards; }
-h1 strong { font-weight:700; color:#fff; display:block; }
-.gold-bar { width:54px; height:2px; background:linear-gradient(90deg,var(--gold-hi),var(--green),transparent); margin:24px 0; opacity:0; animation:fadeUp .7s .4s ease forwards; }
-p.desc { font-size:13px; font-weight:300; line-height:1.85; color:rgba(255,255,255,0.48); max-width:470px; opacity:0; animation:fadeUp .7s .52s ease forwards; }
-.stats{display:flex;gap:30px;margin-top:30px;opacity:0;animation:fadeUp .7s .8s ease forwards}
-.stat b{display:block;font-size:24px;font-weight:600;color:#fff;letter-spacing:-.02em;line-height:1}
-.stat span{display:block;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(140,203,176,0.75);margin-top:7px}
-.btns { display:flex; gap:14px; margin-top:22px; flex-wrap:wrap; opacity:0; animation:fadeUp .7s .7s ease forwards; }
-.btn { display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:14px 26px; border:none; border-radius:4px; font-family:'Barlow',sans-serif; font-weight:600; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; text-decoration:none; white-space:nowrap; min-width:230px; transition:all .22s ease; position:relative; overflow:hidden; }
-.btn::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,0); transition:background .2s; }
-.btn:hover::after { background:rgba(255,255,255,0.06); }
-.btn-primary { background:linear-gradient(135deg,#96720A 0%,#C8A44A 50%,#A8841A 100%); color:#0a0700; box-shadow:0 0 0 1px rgba(200,164,74,0.3),0 8px 32px rgba(160,120,20,0.25); }
-.btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 0 1px rgba(200,164,74,0.5),0 12px 40px rgba(180,140,30,0.35); }
-.btn-ghost{background:rgba(63,160,124,0.06);color:#8CCBB0;border:1px solid rgba(140,203,176,0.4)}
-.btn-ghost:hover{border-color:rgba(140,203,176,0.8);color:#fff;transform:translateY(-2px)}
-.btn-arrow { opacity:.6; transition:transform .2s; font-size:15px; }
-.btn:hover .btn-arrow { transform:translateX(4px); }
-.caps{display:flex;gap:22px;margin-top:30px;opacity:0;animation:fadeUp .7s .9s ease forwards;flex-wrap:wrap}
-.cap{display:flex;gap:9px;align-items:flex-start;flex:1 1 130px;max-width:150px}
-.cap svg{width:18px;height:18px;flex-shrink:0;color:var(--gold-hi);margin-top:1px}
-.cap b{display:block;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.85);margin-bottom:3px}
-.cap span{font-size:10.5px;line-height:1.5;color:rgba(255,255,255,0.38);font-weight:300}
-@keyframes fadeUp { from { opacity:0; transform:translateY(16px);} to { opacity:1; transform:translateY(0);} }
-.hud-labels { position:fixed; inset:0; pointer-events:none; z-index:4; }
-.hud { position:absolute; font-size:7.5px; letter-spacing:0.14em; font-family:'Barlow',sans-serif; font-weight:500; color:rgba(140,203,176,0.4); opacity:0; animation:fadeUp .4s ease forwards; white-space:nowrap; text-transform:uppercase; }
-.hud.gold { color:rgba(226,188,104,0.4); }
-.hud.dim { color:rgba(255,255,255,0.12); }
-.tab-cta{color:#F3E2B0;background:rgba(226,188,104,0.12);border:1px solid rgba(226,188,104,0.45);padding:7px 14px;border-radius:20px}
-.tab-cta:hover{background:rgba(226,188,104,0.22);color:#fff}
-.hero-drop{margin-top:24px;border:1.5px dashed rgba(226,188,104,0.5);border-radius:12px;padding:18px 22px;display:flex;align-items:center;gap:16px;cursor:pointer;background:rgba(255,255,255,0.03);transition:border-color .2s,background .2s;opacity:0;animation:fadeUp .7s .58s ease forwards;max-width:540px}
-.hero-drop:hover,.hero-drop.over{border-color:var(--gold-hi);background:rgba(226,188,104,0.09)}
-.hero-drop.busy{filter:brightness(.7);pointer-events:none}
+body{background:#0B2E25}
+.hero{background:#0B2E25;background-image:radial-gradient(ellipse at 78% 20%,rgba(31,133,98,0.38),transparent 55%),radial-gradient(ellipse at 10% 100%,rgba(200,164,74,0.10),transparent 50%);color:#fff;padding:52px 48px 64px;display:grid;grid-template-columns:minmax(380px,540px) 1fr;gap:64px;align-items:center;min-height:calc(100vh - 58px)}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8CCBB0;margin-bottom:20px;font-weight:600;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:'';width:26px;height:1px;background:#8CCBB0}
+h1{font-family:var(--serif);font-size:clamp(34px,3.5vw,50px);font-weight:500;line-height:1.1;letter-spacing:-.015em;color:#fff;margin-bottom:18px}
+h1 em{font-style:italic;color:#E2BC68;font-weight:500}
+.desc{font-size:15px;line-height:1.7;color:rgba(255,255,255,0.72);max-width:480px}
+.hero-drop{margin-top:26px;border:1px dashed rgba(226,188,104,0.55);border-radius:4px;padding:18px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;background:rgba(255,255,255,0.03);transition:border-color .2s,background .2s;max-width:540px}
+.hero-drop:hover,.hero-drop.over{border-color:#E2BC68;background:rgba(226,188,104,0.08)}
+.hero-drop.busy{opacity:.6;pointer-events:none}
 .hero-drop.disabled{cursor:not-allowed;border-style:dotted}
-.hero-drop svg{width:30px;height:30px;color:var(--gold-hi);flex-shrink:0}
-.hero-drop b{display:block;font-size:14.5px;font-weight:600;color:#fff;margin-bottom:3px}
-.hero-drop span{font-size:11px;color:rgba(255,255,255,0.48);line-height:1.5}
+.hero-drop svg{width:28px;height:28px;color:#E2BC68;flex-shrink:0}
+.hero-drop b{display:block;font-family:var(--serif);font-size:17px;font-weight:600;color:#fff;margin-bottom:2px}
+.hero-drop span{font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5}
 .hero-prog{max-width:540px;margin-top:10px}
-.up-line{font-size:11.5px;color:#8CCBB0}
-.up-line.ok{color:#F3E2B0}
-.up-line a{color:var(--gold-hi)}
-.prog{height:4px;border-radius:3px;background:rgba(255,255,255,0.1);overflow:hidden;margin-top:6px;max-width:540px}
-.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-hi),var(--green));transition:width .4s}
-.nd-flag{display:flex;gap:10px;padding:10px 12px;border-radius:8px;font-size:12px;color:#fff;background:rgba(200,60,60,0.18);border:1px solid rgba(200,60,60,0.45)}
-.nd-flag .lv{font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-top:2px;color:#F2A0A0}
-.toast{position:fixed;bottom:26px;right:26px;z-index:9999;background:#07211A;border:1px solid rgba(226,188,104,0.4);border-radius:10px;padding:12px 20px;font-size:12.5px;color:#F3E2B0;box-shadow:0 10px 36px rgba(0,0,0,0.3);opacity:0;transform:translateY(10px);transition:all .24s;max-width:440px;pointer-events:none}
-.toast.show{opacity:1;transform:translateY(0)}
-.foot{position:fixed;left:60px;right:60px;bottom:18px;z-index:6;display:flex;justify-content:space-between;font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,0.22)}
-@media(max-width:900px){nav{padding:18px 20px 0}.nav-tabs{display:none}.main{padding:0 20px}.foot{left:20px;right:20px}.brand-txt{display:none}}
+.hero-prog .up-line{color:#8CCBB0}.hero-prog .up-line.ok{color:#F3E2B0}.hero-prog .up-line a{color:#E2BC68}
+.hero-prog .prog{background:rgba(255,255,255,0.1)}.hero-prog .prog i{background:linear-gradient(90deg,#E2BC68,#3FA07C)}
+.hero-prog .nd-flag{background:rgba(192,57,43,0.18);border-color:rgba(192,57,43,0.45);color:#fff}
+.btns{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.3)}
+.btn-ghost:hover{border-color:#fff}
+.btn-gold{background:#E2BC68;color:#14110A}
+.btn-gold:hover{background:#F0CC7A}
+.stats{display:flex;gap:30px;margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.12);flex-wrap:wrap}
+.stat b{font-family:var(--serif);font-size:24px;font-weight:500;color:#fff;display:block;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{font-size:11px;color:rgba(255,255,255,0.5);display:block;margin-top:4px}
+/* product excerpt: real lines from the sample filing, the way the explorer shows them */
+.mock{position:relative;display:block;text-decoration:none;color:var(--text);max-width:700px;margin-left:auto;margin-bottom:40px}
+.mock-doc{background:#fff;border-radius:4px;box-shadow:0 30px 70px rgba(0,0,0,0.45);padding:22px 24px 12px;transition:transform .25s}
+.mock:hover .mock-doc{transform:translateY(-2px)}
+.mock-doc-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;font-size:11px;color:var(--text-dim);border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:4px;flex-wrap:wrap}
+.mock-doc-h b{display:block;font-family:var(--serif);font-size:16px;color:var(--text);font-weight:600;margin-bottom:2px}
+.mock-t{width:100%;border-collapse:collapse;font-size:12px}
+.mock-t th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);text-align:right;padding:7px 8px;font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+.mock-t th:first-child{text-align:left}
+.mock-t td{padding:6.5px 8px;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--text-md)}
+.mock-t td.v{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:11.5px;color:var(--text)}
+.mock-t td.nc{text-align:center}
+.mock-t tr.b td{font-weight:600;color:var(--text)}
+.mock-t tr.hl td{background:#FBF3DC}
+.mock-t tr:last-child td{border-bottom:none}
+.mchip{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:600;padding:1px 7px;border-radius:3px;border:1px solid #B9D3C7;background:#EEF5F1;color:var(--g700);font-style:normal}
+.mchip.on{background:var(--g600);color:#fff;border-color:var(--g600)}
+.mock-note{position:absolute;right:-16px;bottom:-36px;width:330px;background:#fff;border-radius:4px;box-shadow:0 24px 50px rgba(0,0,0,0.45);border-left:3px solid var(--gold);padding:16px 18px 14px}
+.mock-note-n{font-family:var(--mono);font-size:10px;color:var(--g600);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.mock-note-t{font-family:var(--serif);font-size:16px;font-weight:600;margin:4px 0 8px;color:var(--text)}
+.mock-note-s{font-size:11.5px;line-height:1.55;color:var(--text-md)}
+.mock-kf{display:grid;grid-template-columns:1fr auto;gap:4px 14px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:11px;color:var(--text-dim)}
+.mock-kf b{font-family:var(--mono);font-weight:500;color:var(--text);text-align:right;font-size:11px}
+.mock-flag{margin-top:10px;font-size:10.5px;color:var(--red);font-weight:600;display:flex;align-items:center;gap:6px}
+.mock-flag::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--red)}
+.mock-cap{position:absolute;left:0;bottom:-34px;font-size:11px;color:rgba(255,255,255,0.5);max-width:300px;line-height:1.5}
+.caps{background:#fff;border-top:1px solid var(--line);padding:28px 48px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+.cap b{display:block;font-family:var(--serif);font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.cap span{font-size:12.5px;line-height:1.55;color:var(--text-dim)}
+@media(max-width:1100px){.hero{grid-template-columns:1fr;gap:40px;padding:36px 24px 70px}.mock{margin:20px 0 60px}.mock-note{right:0}.caps{grid-template-columns:1fr 1fr;padding:24px}}
+@media(max-width:700px){.caps{grid-template-columns:1fr}.mock-note{position:static;width:auto;margin-top:12px}.mock-cap{display:none}}
 </style>
 </head>
 <body>
-<canvas id="bg"></canvas>
-<div class="page">
-  <nav>
-    <a class="brand" href="index.html" id="brand"></a>
-    <div class="nav-tabs">
-      <a href="index.html" class="tab active">Home</a>
-      <a href="upload.html" class="tab tab-cta">Upload a statement</a>
-      <a href="portfolio.html" class="tab">Filings</a>
-      <a href="company.html" class="tab">Statement explorer</a>
-    </div>
-    <span class="nav-pill">Investor Financial Intelligence</span>
-  </nav>
+<div id="nav"></div>
 
-  <div class="main">
-    <div class="content">
-      <div class="eyebrow">Ministry of Investment · investor due diligence</div>
-      <h1>Financial Statement<strong>Intelligence Explorer</strong></h1>
-      <div class="gold-bar"></div>
-      <p class="desc">Upload any company's audited annual financial statements. The primary statements are rebuilt with every note reference as a live link, the notes are indexed and cross-referenced, and the filing is read the way an investment authority needs to: auditor's opinion and key audit matters, flagged disclosures, ownership and Government exposure, debt and covenants, commitments and contingencies, each finding traced to the note that supports it.</p>
-      <input type="file" id="hero-file" accept="application/pdf" style="display:none">
-      <div class="hero-drop" id="hero-drop">
-        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M4 17v1a2 2 0 002 2h12a2 2 0 002-2v-1"/></svg>
-        <div><b>Drop an annual report PDF here to start</b><span id="hero-drop-sub">or click to choose a file · the explorer is built while you watch</span></div>
-      </div>
-      <div class="hero-prog" id="hero-prog"></div>
-      <div class="btns">
-        <a href="upload.html" class="btn btn-primary">Upload a statement <span class="btn-arrow">›</span></a>
-        <a href="portfolio.html" class="btn btn-ghost" id="btn-browse">Browse filings <span class="btn-arrow">›</span></a>
-      </div>
-      <div class="stats" id="stats">
-        <div class="stat"><b>—</b><span>Filings ready</span></div>
-        <div class="stat"><b>—</b><span>Notes indexed</span></div>
-        <div class="stat"><b>—</b><span>Cross-references</span></div>
-        <div class="stat"><b>12</b><span>Review areas</span></div>
-      </div>
-      <div class="caps">
-        <div class="cap"><svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><div><b>Linked statements</b><span>Every “Note x” on the face of the statements opens the note.</span></div></div>
-        <div class="cap"><svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><div><b>Note explorer</b><span>Summary, key figures, sub-sections and the extracted source text.</span></div></div>
-        <div class="cap"><svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg><div><b>Cross-reference map</b><span>Which lines cite which notes, and which notes are never cited.</span></div></div>
-        <div class="cap"><svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><div><b>Investor lens</b><span>Twelve review areas with findings that cite their notes.</span></div></div>
-      </div>
+<section class="hero">
+  <div>
+    <div class="eyebrow">Ministry of Investment · Investor due diligence</div>
+    <h1>Read any financial statement <em>the way an investor needs to.</em></h1>
+    <p class="desc">Upload a company's audited annual financial statements. Every “Note x” on the face of the statements becomes a link to the note, the notes are indexed and cross-referenced, and the filing is reviewed area by area: audit opinion, flagged disclosures, Government exposure, debt and covenants, commitments and contingencies, each finding traced to the note that supports it.</p>
+    <input type="file" id="hero-file" accept="application/pdf" style="display:none">
+    <div class="hero-drop" id="hero-drop">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M4 17v1a2 2 0 002 2h12a2 2 0 002-2v-1"/></svg>
+      <div><b>Drop an annual report PDF here to start</b><span id="hero-drop-sub">or click to choose a file · the explorer is built while you watch</span></div>
+    </div>
+    <div class="hero-prog" id="hero-prog"></div>
+    <div class="btns">
+      <a href="upload.html" class="btn btn-gold">Upload a statement</a>
+      <a href="portfolio.html" class="btn btn-ghost" id="btn-browse">Open the filings</a>
+    </div>
+    <div class="stats" id="stats">
+      <div class="stat"><b>—</b><span>Filings ready</span></div>
+      <div class="stat"><b>—</b><span>Notes indexed</span></div>
+      <div class="stat"><b>—</b><span>Statement lines linked to notes</span></div>
     </div>
   </div>
-</div>
 
-<div class="hud-labels">
-  <span class="hud gold" style="right:42%; top:28%; animation-delay:1.1s">Note 24 · Revenue</span>
-  <span class="hud"      style="right:36%; top:22%; animation-delay:1.4s">Any audited filing · PDF</span>
-  <span class="hud dim"  style="right:29%; top:18%; animation-delay:1.7s">— —</span>
-  <span class="hud gold" style="right:46%; top:33%; animation-delay:1.9s">Note 5 · PP&amp;E</span>
-  <span class="hud"      style="right:22%; top:21%; animation-delay:1.3s">IFRS · SOCPA endorsed</span>
-  <span class="hud gold" style="right:38%; top:42%; animation-delay:1.6s">Note 20 · Borrowings</span>
-  <span class="hud gold" style="right:18%; top:30%; animation-delay:1.8s">Note 33 · Contingencies</span>
-  <span class="hud"      style="right:12%; top:44%; animation-delay:2.1s">Statements ⟷ notes</span>
-  <span class="hud gold" style="right:44%; top:62%; animation-delay:2.3s">Note 16.4 · Covenants</span>
-  <span class="hud gold" style="right:28%; top:72%; animation-delay:2.5s">Note 29 · Related parties</span>
-  <span class="hud gold" style="right:14%; top:78%; animation-delay:2.6s">Note 36 · Dividends</span>
-  <span class="hud dim"  style="right:8%;  top:35%; animation-delay:2.0s">KAM ×3</span>
-</div>
-<div class="foot"><span>Ministry of Investment · Upload any audited annual financial statements</span><span>Statements · Notes · Cross-reference map · Investor lens</span></div>
+  <a class="mock" id="mock" href="company.html?c=ceramic#statements/income" title="Open this statement in the explorer">
+    <div class="mock-doc">
+      <div class="mock-doc-h"><div><b>Saudi Ceramic Company</b>Consolidated statement of profit or loss · year ended 31 December 2024</div><div>SAR thousand</div></div>
+      <table class="mock-t">
+        <thead><tr><th></th><th style="text-align:center">Note</th><th>2024</th><th>2023</th></tr></thead>
+        <tbody>
+          <tr><td>Revenues, net</td><td class="nc"><i class="mchip">20</i></td><td class="v">1,348,797</td><td class="v">1,314,868</td></tr>
+          <tr><td>Cost of sales</td><td class="nc"><i class="mchip">21</i></td><td class="v">(1,095,053)</td><td class="v">(1,077,545)</td></tr>
+          <tr class="b"><td>Gross profit</td><td></td><td class="v">253,744</td><td class="v">237,323</td></tr>
+          <tr><td>Selling and marketing expenses</td><td class="nc"><i class="mchip">22</i></td><td class="v">(227,967)</td><td class="v">(197,865)</td></tr>
+          <tr><td>General and administrative expenses</td><td class="nc"><i class="mchip">23</i></td><td class="v">(64,669)</td><td class="v">(61,435)</td></tr>
+          <tr class="hl"><td>Impairment loss on subsidiary and business unit</td><td class="nc"><i class="mchip on">5-E, 5-F</i></td><td class="v">(51,070)</td><td class="v">(78,224)</td></tr>
+          <tr class="b"><td>Operating loss</td><td></td><td class="v">(82,647)</td><td class="v">(270,544)</td></tr>
+          <tr><td>Finance costs</td><td class="nc"><i class="mchip">24</i></td><td class="v">(46,163)</td><td class="v">(42,967)</td></tr>
+          <tr class="b"><td>Net loss before zakat</td><td></td><td class="v">(71,194)</td><td class="v">(216,049)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mock-note">
+      <div class="mock-note-n">Note 5 · opened from the impairment line</div>
+      <div class="mock-note-t">Property, plant and equipment</div>
+      <div class="mock-note-s">Impairment of SAR 51,070 thousand in 2024: SAR 45 million on the Red Bricks factory and SAR 5.7 million on Ceramic Pipes Company. PP&amp;E of SAR 379 million is mortgaged to SIDF.</div>
+      <div class="mock-kf"><span>Net book value, 31 Dec 2024</span><b>1,546,358</b><span>Additions in the year</span><b>203,034</b><span>Depreciation charge</span><b>117,142</b></div>
+      <div class="mock-flag">Alert · impairment and pledged assets</div>
+    </div>
+    <div class="mock-cap">Lines from the sample filing, as the explorer shows them. Click a note reference and the note opens beside the statement.</div>
+  </a>
+</section>
+
+<section class="caps">
+  <div class="cap"><b>Linked statements</b><span>Every “Note x” on the face of the statements opens the note it refers to.</span></div>
+  <div class="cap"><b>Note explorer</b><span>Summary, key figures, sub-sections, back-links and the extracted source text of each note.</span></div>
+  <div class="cap"><b>Cross-reference map</b><span>Which lines cite which notes, and which notes are never cited on the face of the statements.</span></div>
+  <div class="cap"><b>Investor lens</b><span>Twelve review areas, each finding citing the notes that support it.</span></div>
+</section>
+<div id="foot"></div>
 
 <script src="assets/app.js"></script>
 <script>
-(async function(){
-  document.getElementById('brand').innerHTML = FSX.LOGO_IMG ? `<img src="${FSX.LOGO_IMG}" alt="Ministry of Investment" style="height:48px">` : FSX.emblem('#E2BC68', '#07211A', 'emblem') + '<span class="brand-txt"><span class="brand-ar">وزارة الاستثمار</span><span class="brand-en">Ministry of Investment</span></span>';
-  const health = await FSX.api.health();
+(async function () {
+  document.getElementById('nav').innerHTML = FSX.nav('landing');
+  document.getElementById('foot').innerHTML = FSX.footer();
+  const health = await FSX.api.health(); FSX.setMode(health);
   const drop = document.getElementById('hero-drop'), sub = document.getElementById('hero-drop-sub');
   if (!health.ok) sub.textContent = 'uploads need the server: open the app through its URL, not as a file';
   else if (!health.llm) sub.textContent = 'or click to choose a file · extraction-only mode (no ANTHROPIC_API_KEY on the server)';
   FSX.uploader({ drop, input: document.getElementById('hero-file'), prog: document.getElementById('hero-prog'), health,
     onDone: res => { setTimeout(() => { location.href = `company.html?c=${encodeURIComponent(res.id)}`; }, 600); } });
-  try { const reg = await FSX.api.registry(); const I = (reg.items||[]).filter(x => x.status === 'ready'); const S = I.filter(FSX.isSample);
+  try {
+    const reg = await FSX.api.registry(); const I = (reg.items || []).filter(x => x.status === 'ready'); const S = I.filter(FSX.isSample);
     const b = document.querySelectorAll('#stats .stat b'), l = document.querySelectorAll('#stats .stat span');
-    b[0].textContent = I.length; b[1].textContent = I.reduce((a,x)=>a+((x.stats||{}).notes||0),0); b[2].textContent = I.reduce((a,x)=>a+((x.stats||{}).links||0),0);
-    l[0].textContent = S.length ? (I.length === S.length ? `Sample filing${S.length > 1 ? 's' : ''}` : `Filings · ${S.length} sample${S.length > 1 ? 's' : ''}`) : 'Filings ready';
-    if (!I.length) { b[0].textContent = '0'; document.getElementById('btn-browse').style.display = 'none'; }
-  } catch (e) {}
+    b[0].textContent = I.length; b[1].textContent = I.reduce((a, x) => a + ((x.stats || {}).notes || 0), 0); b[2].textContent = I.reduce((a, x) => a + ((x.stats || {}).linesWithNotes || 0), 0);
+    l[0].textContent = I.length && I.length === S.length ? (S.length === 1 ? 'Sample filing loaded' : 'Sample filings loaded') : S.length ? `Filings ready · ${S.length} sample` : 'Filings ready';
+    const sample = I.find(x => x.id === 'ceramic') || I[0];
+    const mock = document.getElementById('mock');
+    if (sample) mock.href = `company.html?c=${encodeURIComponent(sample.id)}#statements/income`; else { mock.removeAttribute('href'); mock.removeAttribute('title'); }
+    if (!I.length) document.getElementById('btn-browse').style.display = 'none';
+  } catch (e) { }
 })();
-const C   = document.getElementById('bg');
-const ctx = C.getContext('2d');
-let W, H;
-function resize() {
-  W = C.width  = window.innerWidth  * devicePixelRatio;
-  H = C.height = window.innerHeight * devicePixelRatio;
-  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
-  W = window.innerWidth; H = window.innerHeight;
-}
-resize();
-const WAVES = [
-  { yF:.50, aF:.16, spd:.44, rgb:[255,255,255], al:.75, lw:1.8, h:[{f:1,a:1,p:0},{f:2.1,a:.36,p:.9},{f:3.4,a:.13,p:1.8},{f:5.2,a:.05,p:2.5}], pulse:{spd:.85,w:.16,str:2.8,col:[255,242,210]} },
-  { yF:.535,aF:.13, spd:.32, rgb:[222,174,56],  al:.72, lw:1.5, h:[{f:1,a:1,p:1.2},{f:2,a:.30,p:2.1},{f:3.2,a:.12,p:.6}], pulse:{spd:.60,w:.19,str:2.2,col:[255,212,88]} },
-  { yF:.465,aF:.08, spd:.54, rgb:[140,203,176], al:.48, lw:.9, h:[{f:1,a:1,p:2.5},{f:2.7,a:.38,p:1.1},{f:4.9,a:.16,p:3.1}], pulse:{spd:1.05,w:.11,str:1.8,col:[190,240,215]} },
-  { yF:.435,aF:.05, spd:.22, rgb:[210,210,210], al:.16, lw:.7, h:[{f:1,a:1,p:3.6},{f:2,a:.43,p:.4}], pulse:{spd:.38,w:.24,str:1.4,col:[230,230,230]} },
-  { yF:.615,aF:.07, spd:.18, rgb:[63,160,124],  al:.34, lw:1.2, h:[{f:1,a:1,p:4.3},{f:3,a:.20,p:1.9}], pulse:{spd:.48,w:.21,str:1.6,col:[120,210,170]} },
-  { yF:.49, aF:.04, spd:.70, rgb:[240,220,150], al:.22, lw:.5, h:[{f:1,a:1,p:.7},{f:3,a:.55,p:2.0},{f:6,a:.28,p:.3}], pulse:{spd:1.4,w:.08,str:1.5,col:[255,245,200]} },
-];
-const pPh = WAVES.map((_,i) => i * 1.19);
-const PARTS = Array.from({length:700}, (_,i) => ({ xF:.38+Math.random()*.62, byF:.30+Math.random()*.52, r:i<580?.3+Math.random()*.8:1.0+Math.random()*1.6, spd:.10+Math.random()*.48, ph:Math.random()*Math.PI*2, al:i<580?.03+Math.random()*.13:.12+Math.random()*.28, col:i<300?[192,148,34]:i<450?[63,160,124]:[255,255,255], spark:i>=580 }));
-const T = 2.5;
-function waveY(wv, xFrac) { let y = 0; for (const h of wv.h) y += h.a * Math.sin(wv.spd * h.f * xFrac * Math.PI * 7 + T * wv.spd * h.f * 1.1 + h.p); return y; }
-function drawGrid() {
-  const x0 = W * 0.36;
-  for (let gx = x0; gx < W; gx += W * .055) { const fade = Math.min(1,(gx-x0)/(W*.08)); ctx.strokeStyle = `rgba(140,203,176,${.028*fade})`; ctx.lineWidth = .5; ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
-  for (let gy = 0; gy < H; gy += H * .09) { ctx.strokeStyle = `rgba(140,203,176,0.02)`; ctx.lineWidth = .5; ctx.beginPath(); ctx.moveTo(x0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
-}
-function textAlpha(xFrac) { if (xFrac > 0.38) return 1.0; return 0.12 + (xFrac / 0.38) * 0.88; }
-function drawWave(wv, idx) {
-  const x0 = W * 0.28, xSpan = W - x0, yC = wv.yF * H, amp = wv.aF * H, STEP = 1.4;
-  const pts = [];
-  for (let sx = 0; sx <= xSpan; sx += STEP) { const xFrac = sx / xSpan; const y = yC + waveY(wv, xFrac) * amp; const edgeFd = Math.min(1, sx / (xSpan * .04)); pts.push({x: x0 + sx, y, xFrac, edgeFd}); }
-  ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-  ctx.beginPath(); pts.forEach(({x,y},i) => i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y));
-  ctx.shadowColor = `rgba(${wv.rgb},.5)`; ctx.shadowBlur = 28; ctx.strokeStyle = `rgba(${wv.rgb},${wv.al*.08})`; ctx.lineWidth = wv.lw + 12; ctx.stroke(); ctx.shadowBlur = 0;
-  ctx.beginPath(); pts.forEach(({x,y},i) => i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y)); ctx.strokeStyle = `rgba(${wv.rgb},${wv.al*.22})`; ctx.lineWidth = wv.lw + 4; ctx.stroke();
-  for (let i = 0; i < pts.length-1; i++) { const {x:x0p, y:y0, xFrac, edgeFd} = pts[i]; const {x:x1p, y:y1} = pts[i+1]; const dev = Math.abs(y0 - yC) / (amp||1); const lw = wv.lw * (.4 + dev * 1.3); const alpha = wv.al * edgeFd * textAlpha(xFrac); ctx.beginPath(); ctx.moveTo(x0p,y0); ctx.lineTo(x1p,y1); ctx.strokeStyle = `rgba(${wv.rgb},${alpha.toFixed(3)})`; ctx.lineWidth = lw; ctx.stroke(); }
-  const p = wv.pulse, pPos = ((T * p.spd * .15 + pPh[idx]) % 1.0);
-  for (let i = 0; i < pts.length-1; i++) { const {x:px0,y:py0,xFrac} = pts[i]; const {x:px1,y:py1} = pts[i+1]; const dist = Math.abs(xFrac - pPos); if (dist > p.w) continue; const str = Math.pow(Math.cos((dist/p.w)*Math.PI*.5), 2); const tA = textAlpha(xFrac); ctx.beginPath(); ctx.moveTo(px0,py0); ctx.lineTo(px1,py1); ctx.shadowColor = `rgba(${p.col},.7)`; ctx.shadowBlur = 10 * str; ctx.strokeStyle = `rgba(${p.col},${(wv.al * str * .85 * tA).toFixed(3)})`; ctx.lineWidth = wv.lw * (.8 + str * p.str); ctx.stroke(); }
-  ctx.shadowBlur = 0; ctx.restore();
-}
-function draw() {
-  ctx.clearRect(0,0,W,H);
-  const bg = ctx.createRadialGradient(W*.72, H*.5, 0, W*.72, H*.5, W*.72); bg.addColorStop(0,'#0D3328'); bg.addColorStop(.45,'#07211A'); bg.addColorStop(1,'#04120E'); ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
-  const leftDim = ctx.createLinearGradient(0,0,W*.55,0); leftDim.addColorStop(0,'rgba(2,8,6,.6)'); leftDim.addColorStop(.7,'rgba(0,0,0,0)'); ctx.fillStyle = leftDim; ctx.fillRect(0,0,W,H);
-  const glow = ctx.createRadialGradient(W*.72,H*.5,0, W*.72,H*.5,W*.42); glow.addColorStop(0,'rgba(63,160,124,.12)'); glow.addColorStop(.65,'rgba(23,106,82,.05)'); glow.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle = glow; ctx.fillRect(0,0,W,H);
-  drawGrid();
-  for (const p of PARTS) { const py = (p.byF + .05*Math.sin(T*p.spd+p.ph+p.xF*5))*H; const px = p.xF * W; const xF = Math.min(1,(p.xF-.38)/.07); const al = p.al * Math.max(0,xF); if (al < .01) continue; if (p.spark) { ctx.shadowColor=`rgba(${p.col},.6)`; ctx.shadowBlur=5; } ctx.beginPath(); ctx.arc(px,py,p.r,0,Math.PI*2); ctx.fillStyle = `rgba(${p.col},${al.toFixed(3)})`; ctx.fill(); if (p.spark) ctx.shadowBlur=0; }
-  for (let i = WAVES.length-1; i >= 0; i--) drawWave(WAVES[i], i);
-  const bleed = ctx.createLinearGradient(W*.22, 0, W*.58, 0); bleed.addColorStop(0,'rgba(4,18,14,1)'); bleed.addColorStop(.30,'rgba(4,18,14,.82)'); bleed.addColorStop(.62,'rgba(4,18,14,.22)'); bleed.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle = bleed; ctx.fillRect(0,0,W*.58,H);
-}
-draw();
-let resizeTimer;
-window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { resize(); draw(); }, 150); });
 </script>
 </body>
 </html>

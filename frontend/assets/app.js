@@ -258,12 +258,17 @@
     return `<a class="brand" href="index.html">${FSX.emblem('#E2BC68', '#0B3A2E')}<span class="brand-txt"><span class="brand-ar">وزارة الاستثمار</span><span class="brand-en">Ministry of Investment</span></span></a>`;
   };
   FSX.nav = function (active) {
-    const tabs = [['index.html', 'landing', 'Home'], ['upload.html', 'upload', 'Upload a statement'], ['portfolio.html', 'portfolio', 'Filings'], ['company.html', 'explorer', 'Statement explorer']];
+    const tabs = [['index.html', 'landing', 'Home'], ['upload.html', 'upload', '<span class="tab-plus">+</span>Upload filing'], ['portfolio.html', 'portfolio', 'Filings'], ['company.html', 'explorer', 'Statement explorer']];
     return `<nav class="nav">
-      <div class="nav-left">${FSX.logo()}<span class="nav-divider"></span><span class="nav-app">Investor Financial<br>Intelligence<small>Statement &amp; note explorer</small></span></div>
-      <div class="nav-tabs">${tabs.map(t => `<a class="tab${t[1] === active ? ' active' : ''}${t[1] === 'upload' ? ' tab-cta' : ''}" href="${t[0]}">${t[2]}</a>`).join('')}</div>
-      <div class="nav-right"><span class="nav-pill" id="nav-mode">Investor Financial Intelligence</span></div>
+      <div class="nav-left">${FSX.logo()}<span class="nav-divider"></span><span class="nav-app">Investor Financial Intelligence<small>Statement &amp; note explorer</small></span></div>
+      <div class="nav-tabs">${tabs.map(t => `<a class="tab${t[1] === active ? ' active' : ''}" href="${t[0]}">${t[2]}</a>`).join('')}</div>
+      <div class="nav-right"><span class="nav-mode" id="nav-mode"></span></div>
     </nav>`;
+  };
+  /* server mode indicator in the nav (call after FSX.api.health()) */
+  FSX.setMode = function (h) {
+    const el = document.getElementById('nav-mode'); if (!el) return;
+    el.innerHTML = !h || !h.ok ? '<i class="md grey"></i>Static copy · uploads off' : h.llm ? `<i class="md green"></i>Full ingestion · ${FSX.fmt.esc(h.model || '')}` : '<i class="md amber"></i>Extraction-only · no API key';
   };
   FSX.footer = () => `<div class="foot"><span><b>Ministry of Investment</b> · Investor Financial Intelligence</span><span>Works on any audited annual financial statements PDF · IFRS as endorsed in KSA</span><span>Pipeline: pdftotext → statements → notes → cross-reference map</span></div>`;
   /* how a filing was produced: sample (reviewed bundle shipped with the app), model (ingested with
@@ -357,57 +362,7 @@
   };
 
   /* ───────────── background aurora (from the executive dashboard) ───────────── */
-  FSX.bg = function () {
-    const cv = document.getElementById('bg-canvas'); if (!cv) return;
-    const cx = cv.getContext('2d'); let W, H;
-    const resize = () => { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; };
-    resize(); window.addEventListener('resize', resize);
-    const SOURCES = [
-      { ox: -.18, oy: -.22, spd: .00018, phase: 0, rays: 60, spread: 1.05, r1: '23,106,82', r2: '63,160,124' },
-      { ox: 1.22, oy: -.15, spd: .00013, phase: 2.09, rays: 50, spread: .90, r1: '180,138,48', r2: '220,175,75' },
-      { ox: .55, oy: 1.28, spd: .00021, phase: 4.19, rays: 45, spread: .80, r1: '23,106,82', r2: '140,203,176' },
-    ];
-    const BLOBS = [
-      { xF: .15, yF: .25, rx: .55, ry: .40, rot: -.3, spd: { x: .00006, y: .00005, r: .00008 }, phase: { x: 0, y: 1.2, r: 2.1 }, al: .06, col: '63,160,124' },
-      { xF: .82, yF: .18, rx: .50, ry: .35, rot: .5, spd: { x: .00005, y: .00007, r: .00006 }, phase: { x: 3.1, y: 0.8, r: 1.4 }, al: .05, col: '200,164,74' },
-      { xF: .65, yF: .75, rx: .60, ry: .38, rot: .2, spd: { x: .00007, y: .00004, r: .00009 }, phase: { x: 1.5, y: 3.7, r: 0.6 }, al: .05, col: '23,106,82' },
-    ];
-    const MOTES = Array.from({ length: 50 }, () => ({ x: Math.random(), y: Math.random(), vx: (Math.random() - .5) * .00012, vy: -(Math.random() * .00015 + .00004), r: .7 + Math.random() * 2.0, al: .015 + Math.random() * .04, ph: Math.random() * Math.PI * 2, col: Math.random() > .5 ? '200,164,74' : '63,160,124' }));
-    let t = 0;
-    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    function draw() {
-      cx.clearRect(0, 0, W, H);
-      for (const b of BLOBS) {
-        const x = (b.xF + Math.sin(t * b.spd.x + b.phase.x) * .12) * W, y = (b.yF + Math.sin(t * b.spd.y + b.phase.y) * .10) * H;
-        const rx = b.rx * W * (1 + Math.sin(t * b.spd.r + b.phase.r) * .08), ry = b.ry * H * (1 + Math.cos(t * b.spd.r + b.phase.r) * .08);
-        cx.save(); cx.translate(x, y); cx.rotate(b.rot + Math.sin(t * b.spd.r * .7) * .15);
-        const g = cx.createRadialGradient(0, 0, 0, 0, 0, Math.max(rx, ry));
-        g.addColorStop(0, `rgba(${b.col},${b.al})`); g.addColorStop(.45, `rgba(${b.col},${b.al * .5})`); g.addColorStop(1, `rgba(${b.col},0)`);
-        cx.scale(1, ry / rx); cx.beginPath(); cx.arc(0, 0, rx, 0, Math.PI * 2); cx.fillStyle = g; cx.fill(); cx.restore();
-      }
-      for (const src of SOURCES) {
-        const ang = t * src.spd + src.phase, sx = (src.ox + Math.cos(ang) * .06) * W, sy = (src.oy + Math.sin(ang) * .06) * H;
-        const fanCenter = Math.atan2(H * .5 - sy, W * .5 - sx), half = src.spread * .5;
-        for (let i = 0; i < src.rays; i++) {
-          const frac = i / (src.rays - 1), rayAng = fanCenter - half + frac * src.spread + Math.sin(t * .00025 * src.spd * 800 + frac * 7.3 + src.phase) * .012;
-          const len = Math.hypot(W, H) * 1.4, ex = sx + Math.cos(rayAng) * len, ey = sy + Math.sin(rayAng) * len;
-          const edgeFade = Math.pow(Math.sin(frac * Math.PI), 1.4), pulse = .7 + .3 * Math.sin(t * .00031 * src.spd * 800 + frac * 3.1);
-          const alpha = (0.022 + frac * .008) * edgeFade * pulse, bright = i % 4 === 0;
-          cx.beginPath(); cx.moveTo(sx, sy); cx.lineTo(ex, ey);
-          cx.strokeStyle = `rgba(${bright ? src.r2 : src.r1},${alpha * (bright ? 1.6 : 1)})`; cx.lineWidth = bright ? 1.1 : .45; cx.stroke();
-        }
-      }
-      for (const m of MOTES) {
-        m.x += m.vx; m.y += m.vy; if (m.y < -.01) m.y = 1.01; if (m.x < 0) m.x = 1; if (m.x > 1) m.x = 0;
-        cx.beginPath(); cx.arc(m.x * W, m.y * H, m.r, 0, Math.PI * 2); cx.fillStyle = `rgba(${m.col},${m.al * (.5 + .5 * Math.sin(t * .0015 + m.ph))})`; cx.fill();
-      }
-      t++;
-      if (!reduce) requestAnimationFrame(draw);
-    }
-    draw();
-  };
-
-  /* ───────────── helpers ───────────── */
+  FSX.bg = function () { const cv = document.getElementById('bg-canvas'); if (cv) cv.remove(); };
   FSX.qs = key => new URLSearchParams(location.search).get(key);
   FSX.flagRank = { alert: 0, watch: 1, info: 2 };
   FSX.flaggedNotes = filing => (filing.notes || []).filter(n => n.flag).sort((a, b) => (FSX.flagRank[a.flag.level] - FSX.flagRank[b.flag.level]) || (+a.n - +b.n));
@@ -475,7 +430,7 @@
       Object.entries(o.fields || {}).forEach(([k, el]) => { if (el && el.value) meta[k] = el.value; });
       try {
         const res = await FSX.api.upload(chosen, meta, p => { const b = o.prog && o.prog.querySelector('.prog i'); if (b) b.style.width = Math.round(p * 100) + '%'; });
-        say(`<div class="up-line ok">Uploaded · pipeline started in ${f.esc(res.mode)} mode · <a href="company.html?c=${encodeURIComponent(res.id)}">watch it build ›</a></div>`);
+        say(`<div class="up-line ok">Uploaded · pipeline started in ${f.esc(res.mode)} mode · <a href="company.html?c=${encodeURIComponent(res.id)}">watch it build</a></div>`);
         const file = chosen; setFile(null); if (o.input) o.input.value = '';
         if (o.onDone) o.onDone(res, file);
       } catch (err) {

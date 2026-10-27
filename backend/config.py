@@ -28,10 +28,13 @@ NOTE_TEXT_CAP = int(os.getenv("NOTE_TEXT_CAP", "14000"))   # characters of note 
 PARALLEL_NOTE_CALLS = int(os.getenv("PARALLEL_NOTE_CALLS", "3"))
 MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "40"))
 PDFTOTEXT = os.getenv("PDFTOTEXT", "pdftotext")
-# The two sample filings (Aramco, Saudi Ceramic) are copied into storage at start so a fresh
-# deployment shows what the output looks like. Set SEED_SAMPLES=0 to start empty; samples can
-# also be removed (and restored) from the UI.
+# Sample filings are copied into storage at start so a fresh deployment shows what the output
+# looks like. Set SEED_SAMPLES=0 to start empty; samples can also be removed (and restored) from
+# the UI.
 SEED_SAMPLES = os.getenv("SEED_SAMPLES", "1").strip().lower() not in ("0", "false", "no", "off")
+# Which sample bundles from backend/seed to load: comma-separated ids ("ceramic", "aramco") or "all".
+# The default keeps one filing loaded and leaves Aramco for a live upload.
+SAMPLES = [x.strip() for x in os.getenv("SAMPLES", "ceramic").split(",") if x.strip()]
 
 
 def llm_configured() -> bool:
