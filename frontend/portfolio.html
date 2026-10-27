@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="assets/theme.css">
 <style>
 .dt tbody tr.co{cursor:pointer}
-.dt tbody tr.sample td:first-child{box-shadow:inset 3px 0 0 var(--gold)}
 .dt td:first-child{min-width:200px}
 .dt td{padding:12px 11px}.dt thead th{padding:10px 11px}
 .dt td .en-strong .rb{font-size:10px;padding:1px 6px}
@@ -37,7 +36,6 @@
     <div class="ph-actions"><a class="btn btn-primary" href="upload.html">Upload a statement</a></div>
   </div>
   <div id="mode-banner"></div>
-  <div id="samples-strip"></div>
 
   <input type="file" id="file" accept="application/pdf" style="display:none">
   <div class="drop-strip" id="drop">
@@ -52,7 +50,7 @@
     <div class="ch"><div class="ch-left"><h3>Register</h3></div><span class="ch-badge gold" id="n-filings"></span></div>
     <div class="reg-sum" id="reg-sum"></div>
     <div style="overflow:auto"><table class="dt"><thead><tr><th>Company</th><th>Period</th><th>Auditor · opinion</th><th class="r">Revenue</th><th class="r">Net result</th><th class="r">Total assets</th><th class="r">Equity</th><th class="r">Notes · links</th><th>Flags</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
-    <div class="fs-foot"><span>Amounts in SAR, converted from each filing's presentation unit, with the change on the prior year. Mode: sample = reviewed example shipped with the app · model = ingested with Claude · extraction = deterministic parse only.</span></div>
+    <div class="fs-foot"><span>Amounts in SAR, converted from each filing's presentation unit, with the change on the prior year. A filing tagged “Statements only” was processed without the analysis layer.</span></div>
   </div>
 
   <div class="g2-eq">
@@ -103,14 +101,14 @@
     ].join('') : `<span>No filings yet. <a href="upload.html">Upload an annual report PDF</a> to start.</span>`;
 
     document.getElementById('tbody').innerHTML = items.map(x => {
-      const [ml, mc] = FSX.modeLabel(x);
       if (x.status !== 'ready') {
         const stage = (x.stages || []).find(s => s.state === 'running') || {};
-        return `<tr data-id="${f.esc(x.id)}"><td><span class="en-strong">${f.esc(x.shortName || x.name)}</span><span class="en-sub mono">${f.esc(x.ticker || '')}${x.ticker ? ' · ' : ''}${f.esc(x.id)}</span></td><td colspan="7"><div style="font-size:12px;color:var(--text-md)">${x.status === 'failed' ? `<span class="rb red">Failed</span> <span style="margin-left:8px">${f.esc(x.error || '')}</span>` : `<span class="rb ${x.status === 'running' ? 'blue' : 'grey'}">${f.esc(x.status)}</span> <span style="margin-left:8px">${f.esc(stage.label || '')} ${stage.info ? '· ' + f.esc(stage.info) : ''}</span><div class="prog" style="max-width:320px"><i style="width:${Math.round((x.progress || 0) * 100)}%"></i></div>`}</div></td><td><span class="rb ${mc}">${ml}</span></td><td style="white-space:nowrap"><a class="opn" href="company.html?c=${encodeURIComponent(x.id)}">Watch</a> ${x.status === 'failed' ? `<button class="opn danger" data-del="${f.esc(x.id)}">Remove</button>` : ''}</td></tr>`;
+        return `<tr data-id="${f.esc(x.id)}"><td><span class="en-strong">${f.esc(x.shortName || x.name)}</span><span class="en-sub mono">${f.esc(x.ticker || '')}${x.ticker ? ' · ' : ''}${f.esc(x.id)}</span></td><td colspan="8"><div style="font-size:12px;color:var(--text-md)">${x.status === 'failed' ? `<span class="rb red">Failed</span> <span style="margin-left:8px">${f.esc(x.error || '')}</span>` : `<span class="rb ${x.status === 'running' ? 'blue' : 'grey'}">${f.esc(x.status)}</span> <span style="margin-left:8px">${f.esc(stage.label || '')} ${stage.info ? '· ' + f.esc(stage.info) : ''}</span><div class="prog" style="max-width:320px"><i style="width:${Math.round((x.progress || 0) * 100)}%"></i></div>`}</div></td><td style="white-space:nowrap"><a class="opn" href="company.html?c=${encodeURIComponent(x.id)}">Watch</a> ${x.status === 'failed' ? `<button class="opn danger" data-del="${f.esc(x.id)}">Remove</button>` : ''}</td></tr>`;
       }
       const a = x.auditor || {}, st = x.stats || {}, fg = st.flags || {};
-      return `<tr class="co${FSX.isSample(x) ? ' sample' : ''}" data-id="${f.esc(x.id)}">
-        <td><span class="en-strong">${f.esc(x.shortName)} <span class="rb ${mc}" style="vertical-align:3px;margin-left:4px">${ml}</span></span><span class="en-sub">${f.esc(x.name !== x.shortName ? x.name : '')}${x.ticker ? (x.name !== x.shortName ? ' · ' : '') + 'Tadawul ' + f.esc(x.ticker) : ''}${x.sector ? ' · ' + f.esc(x.sector) : ''}</span></td>
+      const tag = FSX.modeTag(x);
+      return `<tr class="co" data-id="${f.esc(x.id)}">
+        <td><span class="en-strong">${f.esc(x.shortName)}${tag ? ' <span style="vertical-align:3px;margin-left:4px">' + tag + '</span>' : ''}</span><span class="en-sub">${f.esc(x.name !== x.shortName ? x.name : '')}${x.ticker ? (x.name !== x.shortName ? ' · ' : '') + 'Tadawul ' + f.esc(x.ticker) : ''}${x.sector && x.sector !== '—' ? ' · ' + f.esc(x.sector) : ''}</span></td>
         <td style="white-space:nowrap">${f.esc(x.fy || '—')}<br><small class="muted">${f.esc(x.periodEnd ? 'to ' + x.periodEnd : '')}${x.unit ? (x.periodEnd ? ' · ' : '') + f.esc(x.unit) : ''}</small></td>
         <td style="min-width:150px">${f.esc((a.firm || '—').split(' (')[0].replace(/ (Chartered Accountants|Public Accountants|Professional Services|& Co\.?)$/i, ''))}${a.kams ? ` <small class="muted">· ${a.kams} KAM</small>` : ''}<br><span class="rb ${a.opinion === 'Unmodified' ? 'green' : a.opinion === 'Unknown' || !a.opinion ? 'grey' : 'red'}">${f.esc(a.opinion || 'n/a')}</span>${a.otherMatter ? ' <span class="rb amber">Other matter</span>' : ''}</td>
         <td class="num">${fmtMoney(x, '^revenue')}</td>
@@ -119,18 +117,8 @@
         <td class="num">${fmtMoney(x, 'total equity')}</td>
         <td class="num">${st.notes || 0}<br><small class="muted" style="font-weight:400">${st.links || 0} links</small></td>
         <td style="white-space:nowrap">${fg.alert ? `<span class="rb red">${fg.alert} alert</span> ` : ''}${fg.watch ? `<span class="rb amber">${fg.watch} watch</span>` : ''}${!fg.alert && !fg.watch ? '<span class="muted">—</span>' : ''}</td>
-        <td style="white-space:nowrap"><a class="opn" href="company.html?c=${encodeURIComponent(x.id)}">Open</a> ${canUpload ? `<button class="opn danger" data-del="${f.esc(x.id)}" data-sample="${FSX.isSample(x) ? 1 : ''}">Remove</button>` : ''}</td></tr>`;
+        <td style="white-space:nowrap"><a class="opn" href="company.html?c=${encodeURIComponent(x.id)}">Open</a> ${canUpload ? `<button class="opn danger" data-del="${f.esc(x.id)}">Remove</button>` : ''}</td></tr>`;
     }).join('') || '<tr><td colspan="10" class="empty">No filings yet. <a href="upload.html">Upload an annual report PDF</a> to start.</td></tr>';
-
-    // samples strip
-    const samples = ready.filter(FSX.isSample), strip = document.getElementById('samples-strip');
-    const sampleWord = n => n === 1 ? 'sample filing' : 'sample filings';
-    if (!canUpload) strip.innerHTML = '';
-    else if (samples.length) strip.innerHTML = `<div class="sample-strip"><div><b>${samples.length === 1 ? 'Sample filing:' : 'Sample filings:'}</b> ${samples.map(s => `<a href="company.html?c=${encodeURIComponent(s.id)}">${f.esc(s.shortName)} ${f.esc(s.fy || '')}</a>`).join(' and ')} ${samples.length === 1 ? 'is a reviewed example' : 'are reviewed examples'} shipped with the app so the output can be seen before uploading. Remove ${samples.length === 1 ? 'it' : 'them'} whenever you like.</div><div class="acts"><button class="opn danger" id="rm-samples">Remove ${sampleWord(samples.length)}</button></div></div>`;
-    else if (health.samplesAvailable) strip.innerHTML = `<div class="sample-strip"><div>The ${sampleWord(health.samplesAvailable)} ${health.samplesAvailable === 1 ? 'is' : 'are'} removed.</div><div class="acts"><button class="opn" id="restore-samples">Restore</button></div></div>`;
-    else strip.innerHTML = '';
-    const rm = document.getElementById('rm-samples'); if (rm) rm.addEventListener('click', async () => { if (!confirm('Remove the sample filing? It can be restored later.')) return; await fetch('api/samples', { method: 'DELETE' }); FSX.toast('Sample removed.'); refresh(); });
-    const rs = document.getElementById('restore-samples'); if (rs) rs.addEventListener('click', async () => { await fetch('api/samples/restore', { method: 'POST' }); FSX.toast('Sample restored.'); refresh(); });
 
     // open items
     const open = [];
@@ -138,13 +126,13 @@
     open.sort((a, b) => (FSX.flagRank[a.level] - FSX.flagRank[b.level]) || a.co.localeCompare(b.co) || (+a.n - +b.n));
     const openItems = open.filter(i => i.level !== 'info');
     document.getElementById('n-open').textContent = `${openItems.length} open`;
-    document.getElementById('open-items').innerHTML = openItems.map(i => `<div class="flag-item" data-id="${f.esc(i.id)}" data-n="${f.esc(i.n)}"><div class="flag-dot ${i.level}"></div><div><div class="flag-title">${f.esc(i.co)} · Note ${f.esc(i.n)} · ${f.esc(i.title)}</div><div class="flag-desc">${f.esc(i.text)}</div><div class="flag-src">${f.esc(i.level)} · click to open the note</div></div></div>`).join('') || '<div class="empty">No open items. Flags are raised from the notes when a filing is ingested in full mode.</div>';
+    document.getElementById('open-items').innerHTML = openItems.map(i => `<div class="flag-item" data-id="${f.esc(i.id)}" data-n="${f.esc(i.n)}"><div class="flag-dot ${i.level}"></div><div><div class="flag-title">${f.esc(i.co)} · Note ${f.esc(i.n)} · ${f.esc(i.title)}</div><div class="flag-desc">${f.esc(i.text)}</div><div class="flag-src">${f.esc(i.level)} · click to open the note</div></div></div>`).join('') || '<div class="empty">No open items. Reviewer flags are raised from the notes of each analysed filing.</div>';
 
     // lens by filing
     const areas = [...new Set(ready.flatMap(x => (x.lens || []).map(l => l.area)))];
     const withLens = ready.filter(x => (x.lens || []).length);
     const cell = s => s ? `<span class="dot ${s.status}"></span><span style="font-size:11px">${s.status === 'green' ? 'Satisfactory' : s.status === 'amber' ? 'Watch' : 'Attention'}</span>` : '<span class="muted">—</span>';
-    document.getElementById('heat').innerHTML = areas.length ? `<thead><tr><th>Review area</th>${withLens.map(x => `<th>${f.esc(x.shortName)}</th>`).join('')}</tr></thead><tbody>${areas.map(a => `<tr><td style="font-weight:500;color:var(--text)">${f.esc(a)}</td>${withLens.map(x => `<td>${cell((x.lens || []).find(l => l.area === a))}</td>`).join('')}</tr>`).join('')}</tbody>` : '<tbody><tr><td class="empty">The investor lens is written in full ingestion mode.</td></tr></tbody>';
+    document.getElementById('heat').innerHTML = areas.length ? `<thead><tr><th>Review area</th>${withLens.map(x => `<th>${f.esc(x.shortName)}</th>`).join('')}</tr></thead><tbody>${areas.map(a => `<tr><td style="font-weight:500;color:var(--text)">${f.esc(a)}</td>${withLens.map(x => `<td>${cell((x.lens || []).find(l => l.area === a))}</td>`).join('')}</tr>`).join('')}</tbody>` : '<tbody><tr><td class="empty">No investor-lens findings yet.</td></tr></tbody>';
 
     // live pipeline for anything in progress
     const live = busy.find(x => x.status === 'running' || x.status === 'queued') || busy[0];
@@ -153,7 +141,7 @@
 
   document.getElementById('tbody').addEventListener('click', async e => {
     const del = e.target.closest('[data-del]');
-    if (del) { e.stopPropagation(); if (!confirm(del.dataset.sample ? 'Remove this sample filing? It can be restored from the samples bar.' : 'Remove this filing and its data?')) return; try { await FSX.api.del(del.dataset.del); FSX.toast('Filing removed.'); await refresh(); } catch (err) { FSX.toast('Could not remove: ' + err.message); } return; }
+    if (del) { e.stopPropagation(); if (!confirm('Remove this filing and its data?')) return; try { await FSX.api.del(del.dataset.del); FSX.toast('Filing removed.'); await refresh(); } catch (err) { FSX.toast('Could not remove: ' + err.message); } return; }
     if (e.target.closest('a,.nchip,button')) return;
     const tr = e.target.closest('tr[data-id]'); if (tr) location.href = `company.html?c=${encodeURIComponent(tr.dataset.id)}`;
   });

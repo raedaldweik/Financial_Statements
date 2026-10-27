@@ -117,8 +117,8 @@ def run(fid: str) -> None:
     warnings: list[str] = []
     if config.llm_configured() and not llm.enabled:
         from llm import KEY_STATUS
-        warnings.append(f"ANTHROPIC_API_KEY is set on the server but {KEY_STATUS.get('error') or 'the API rejected it'}. "
-                        "The filing was processed in extraction-only mode; fix the key in the server variables, redeploy and re-run the pipeline.")
+        warnings.append(f"The analysis service could not be used: ANTHROPIC_API_KEY is set on the server but {KEY_STATUS.get('error') or 'the API rejected it'}. "
+                        "The filing carries statements, notes and cross-references only; fix the key in the server variables, redeploy and run the filing again.")
     try:
         with _stage(fid, "extract") as s:
             pages, docmap, raw_notes = ex.extract(pdf, config.PDFTOTEXT)
@@ -146,7 +146,7 @@ def run(fid: str) -> None:
                     unit, scale, currency = data.get("unit"), data.get("scale"), data.get("currency")
                     s.info(f"model transcribed {len(statements)} statements, {sum(len(x['rows']) for x in statements)} lines")
                 except Exception as e:
-                    warnings.append(f"Model transcription of the statements failed ({str(e)[:140]}); heuristic parse used.")
+                    warnings.append(f"Statement transcription by the analysis service failed ({str(e)[:140]}); the statements were parsed directly from the text instead.")
                     log.exception("statement transcription failed")
             if not statements:
                 hs = []
@@ -227,10 +227,10 @@ def run(fid: str) -> None:
                     warnings.append(f"Analyst brief and investor lens failed ({str(e)[:140]}).")
                     log.exception("analysis failed")
             if not brief:
-                brief = (f"<strong>{company['shortName']}</strong> {company['fy']}: statements and {len(raw_notes)} notes were extracted and cross-referenced "
-                         f"in extraction-only mode. " + ("The server's <strong>ANTHROPIC_API_KEY</strong> was rejected by the API; fix it and re-run the pipeline "
-                         if config.llm_configured() else "Set <strong>ANTHROPIC_API_KEY</strong> on the server ") +
-                         "to add note summaries, flags, the analyst brief and the investor lens.")
+                brief = (f"<strong>{company['shortName']}</strong> {company['fy']}: the primary statements and {len(raw_notes)} notes were extracted and cross-referenced. "
+                         "The analysis layer (note summaries, reviewer flags, the analyst brief and the investor lens) did not run for this filing"
+                         + ("; the analysis service rejected the server's API key" if config.llm_configured() else "; no analysis service is configured on this server")
+                         + ". Run the filing again once it is available.")
 
         with _stage(fid, "build") as s:
             years = company.get("years") or kr.get("years") or ["current", "prior"]

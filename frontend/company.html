@@ -131,9 +131,9 @@
           <div class="cb">
             <textarea class="rv-ta" id="rv-ta" placeholder="Assessment notes, clarifications to request from the company, escalation rationale…"></textarea>
             <div class="ra">
-              <div class="ar"><button class="ba ba-inv" data-toast="Clarification request drafted with the cited notes attached.">Request clarification</button></div>
-              <div class="ar"><button class="ba ba-apr" data-toast="Filing review marked complete and logged.">Mark reviewed</button><button class="ba ba-rej" data-toast="Filing escalated to the sector review committee.">Escalate</button></div>
-              <div class="ar"><button class="ba ba-mod" data-toast="Watch-list entry created; next check at the H1 interim filing.">Add to watch-list</button></div>
+              <div class="ar"><button class="ba ba-inv" data-action="Clarification requested">Request clarification</button></div>
+              <div class="ar"><button class="ba ba-apr" data-action="Marked reviewed">Mark reviewed</button><button class="ba ba-rej" data-action="Escalated">Escalate</button></div>
+              <div class="ar"><button class="ba ba-mod" data-action="Added to watch-list">Add to watch-list</button></div>
             </div>
             <div class="audit-log" id="audit-log"></div>
           </div>
@@ -171,11 +171,11 @@
   /* ── processing / failed state ── */
   if (F.status !== 'ready') {
     const render = s => {
-      document.getElementById('co-hdr').innerHTML = `<div class="co-left"><div class="co-avatar">${f.esc((s.ticker || '—').slice(0, 5))}<small>TASI</small></div><div><div class="co-nm">${f.esc(s.shortName || s.name)}</div><div class="co-meta"><span class="mono">${f.esc(s.id)}</span><span class="sep">|</span><span>${f.esc(s.mode === 'full' ? 'Full ingestion' : s.mode === 'extraction' ? 'Extraction-only mode' : 'Queued')}</span></div></div></div><div class="co-right"><span class="rb ${s.status === 'failed' ? 'red' : 'blue'}">${f.esc(s.status)}</span>${switchHtml}<a class="btn btn-glass btn-sm" href="portfolio.html">Filings</a></div>`;
+      document.getElementById('co-hdr').innerHTML = `<div class="co-left"><div class="co-avatar">${f.esc((s.ticker || '—').slice(0, 5))}<small>TASI</small></div><div><div class="co-nm">${f.esc(s.shortName || s.name)}</div><div class="co-meta"><span class="mono">${f.esc(s.id)}</span><span class="sep">|</span><span>${f.esc(s.mode === 'full' ? 'Full analysis' : s.mode === 'extraction' ? 'Statements only' : 'Queued')}</span></div></div></div><div class="co-right"><span class="rb ${s.status === 'failed' ? 'red' : 'blue'}">${f.esc(s.status)}</span>${switchHtml}<a class="btn btn-glass btn-sm" href="portfolio.html">Filings</a></div>`;
       wireSwitch();
       const p = document.getElementById('processing'); p.style.display = 'block';
-      p.innerHTML = `<div class="card proc"><div class="ch"><div class="ch-left"><h3>${s.status === 'failed' ? 'Ingestion failed' : 'Ingesting the filing'}</h3></div><span class="ch-badge ${s.status === 'failed' ? 'red' : 'blue'}">${Math.round((s.progress || 0) * 100)}%</span></div><div class="cb">${FSX.pipelineHtml(s)}${s.status === 'failed' && FSX.api.live ? `<div style="margin-top:12px;display:flex;gap:8px"><button class="btn btn-glass btn-sm" id="rerun">Re-run pipeline</button></div>` : ''}</div></div>`;
-      const rr = document.getElementById('rerun'); if (rr) rr.addEventListener('click', async () => { await FSX.api.rerun(s.id); FSX.toast('Pipeline restarted.'); });
+      p.innerHTML = `<div class="card proc"><div class="ch"><div class="ch-left"><h3>${s.status === 'failed' ? 'Processing failed' : 'Processing the filing'}</h3></div><span class="ch-badge ${s.status === 'failed' ? 'red' : 'blue'}">${Math.round((s.progress || 0) * 100)}%</span></div><div class="cb">${FSX.pipelineHtml(s)}${s.status === 'failed' && FSX.api.live ? `<div style="margin-top:12px;display:flex;gap:8px"><button class="btn btn-glass btn-sm" id="rerun">Run again</button></div>` : ''}</div></div>`;
+      const rr = document.getElementById('rerun'); if (rr) rr.addEventListener('click', async () => { await FSX.api.rerun(s.id); FSX.toast('Processing restarted.'); });
     };
     render(F);
     const timer = setInterval(async () => {
@@ -193,20 +193,19 @@
 
   /* ── header ── */
   const opCls = A.opinion === 'Unmodified' ? 'green' : (!A.opinion || A.opinion === 'Unknown') ? 'grey' : 'red';
-  const [mLbl, mCls] = FSX.modeLabel(F);
-  const modeTag = [mLbl === 'Sample' ? 'Sample filing' : mLbl === 'Model' ? 'Model-ingested' : 'Extraction-only', mCls];
+  const modeTag = FSX.modeTag(F);
   document.getElementById('co-hdr').innerHTML = `
     <div class="co-left"><div class="co-avatar">${f.esc((F.ticker || '—').slice(0, 6))}<small>${f.esc(F.exchange ? 'TASI' : 'FILING')}</small></div><div><div class="co-nm">${f.esc(F.name)}</div>
       <div class="co-meta"><span class="mono">${f.esc(F.exchange || F.id)}</span><span class="sep">|</span><span>${f.esc(F.sector || '—')}</span><span class="sep">|</span><span>${f.esc(F.fy || '')} · ${f.esc(F.periodEnd ? 'year ended ' + F.periodEnd : '')}</span><span class="sep">|</span><span>Amounts in ${f.esc(F.unit || '')}</span></div></div></div>
     <div class="co-right">
-      <span class="rb ${modeTag[1]}">${modeTag[0]}</span>
+      ${modeTag}
       <span class="rb ${opCls}">Audit opinion: ${f.esc(A.opinion || 'n/a')}</span>
       ${A.otherMatter ? '<span class="rb amber">Other-matter paragraph</span>' : ''}${A.goingConcern ? '<span class="rb red">Going-concern paragraph</span>' : ''}
       ${switchHtml}
       <a class="btn btn-glass btn-sm" href="${f.esc(F.pdf)}" target="_blank" rel="noopener">Open filing PDF</a>
     </div>`;
   wireSwitch();
-  if ((F.warnings || []).length) document.getElementById('warn').innerHTML = `<div class="warn"><b>Pipeline notes:</b> ${F.warnings.map(w => f.esc(w)).join(' · ')}</div>`;
+  if ((F.warnings || []).length) document.getElementById('warn').innerHTML = `<div class="warn"><b>Processing notes:</b> ${F.warnings.map(w => f.esc(w)).join(' · ')}</div>`;
 
   /* ── sub-tabs & routing ── */
   const TABS = [['overview', 'Overview', ''], ['statements', 'Statements', F.statements.length], ['notes', 'Notes', F.stats.notes], ['map', 'Cross-reference map', F.stats.links], ['lens', 'Investor lens', F.lens.length]];
@@ -297,7 +296,7 @@
 
     const flagged = FSX.flaggedNotes(F);
     document.getElementById('flag-badge').textContent = `${F.stats.flags.alert} alert · ${F.stats.flags.watch} watch`;
-    document.getElementById('flags').innerHTML = flagged.map(n => `<div class="flag-item" data-n="${n.n}"><div class="flag-dot ${n.flag.level}"></div><div><div class="flag-title">Note ${n.n} · ${f.esc(n.title)}</div><div class="flag-desc">${f.esc(n.flag.text)}</div><div class="flag-src">${f.esc(n.flag.level)} · PDF p. ${n.pdfPage}</div></div></div>`).join('') || `<div class="empty">${F.mode === 'extraction' ? 'Flags are raised in full ingestion mode (set ANTHROPIC_API_KEY).' : 'No flagged notes.'}</div>`;
+    document.getElementById('flags').innerHTML = flagged.map(n => `<div class="flag-item" data-n="${n.n}"><div class="flag-dot ${n.flag.level}"></div><div><div class="flag-title">Note ${n.n} · ${f.esc(n.title)}</div><div class="flag-desc">${f.esc(n.flag.text)}</div><div class="flag-src">${f.esc(n.flag.level)} · PDF p. ${n.pdfPage}</div></div></div>`).join('') || `<div class="empty">${F.mode === 'extraction' ? 'No reviewer flags: the analysis layer did not run for this filing.' : 'No flagged notes.'}</div>`;
     document.getElementById('flags').addEventListener('click', e => { const it = e.target.closest('.flag-item'); if (it) FSX.drawer.open(F, it.dataset.n); });
   }
 
@@ -415,13 +414,28 @@
   function renderLens() {
     const s = F.stats.lens || {};
     document.getElementById('lens-sum').innerHTML = F.lens.length ? `<span class="lens-pill"><span class="dot green"></span><b>${s.green || 0}</b> satisfactory</span><span class="lens-pill"><span class="dot amber"></span><b>${s.amber || 0}</b> watch</span><span class="lens-pill"><span class="dot red"></span><b>${s.red || 0}</b> attention required</span><span class="lens-pill">Review areas organised the way an investment-authority analyst reads a filing · every finding cites its notes</span>` : '';
-    document.getElementById('lens-grid').innerHTML = F.lens.map(l => `<div class="lens ${l.status}"><div class="lens-top"><span class="lens-area">${f.esc(l.area)}</span><span class="rb ${l.status}">${l.status === 'green' ? 'Satisfactory' : l.status === 'amber' ? 'Watch' : 'Attention'}</span></div><div class="lens-h">${f.esc(l.headline)}</div><div class="lens-d">${f.esc(l.detail)}</div><div class="lens-notes">${(l.notes || []).map(n => FSX.chip(F, n)).join('')}</div></div>`).join('') || `<div class="card" style="grid-column:1/-1"><div class="cb"><div class="empty">${F.mode === 'extraction' ? 'The investor lens is written in full ingestion mode (set ANTHROPIC_API_KEY on the server and re-run the pipeline).' : 'No investor-lens findings for this filing.'}</div></div></div>`;
-    document.querySelectorAll('[data-toast]').forEach(b => b.addEventListener('click', () => FSX.toast(b.dataset.toast)));
-    const t = ts => new Date((ts || Date.now() / 1000) * 1000).toTimeString().slice(0, 5);
-    const llm = F.llm || {};
-    document.getElementById('audit-log').innerHTML = `
-      <div class="log-entry"><span class="log-time">${t(F.createdAt)}</span><span><span class="log-action">Pipeline:</span> ${f.esc((F.pdf || '').split('/').pop())} parsed — ${F.stats.notes} notes, ${F.stats.links} cross-references indexed (${f.esc(FSX.isSample(F) ? 'sample' : F.mode || 'extraction')} mode${llm.model ? ', ' + f.esc(llm.model) + ', ' + llm.calls + ' calls' : ''}).</span></div>
-      <div class="log-entry"><span class="log-time">${t(F.createdAt)}</span><span><span class="log-action">Pipeline:</span> ${F.stats.flags.alert} alert and ${F.stats.flags.watch} watch flags raised from the notes.</span></div>`;
+    document.getElementById('lens-grid').innerHTML = F.lens.map(l => `<div class="lens ${l.status}"><div class="lens-top"><span class="lens-area">${f.esc(l.area)}</span><span class="rb ${l.status}">${l.status === 'green' ? 'Satisfactory' : l.status === 'amber' ? 'Watch' : 'Attention'}</span></div><div class="lens-h">${f.esc(l.headline)}</div><div class="lens-d">${f.esc(l.detail)}</div><div class="lens-notes">${(l.notes || []).map(n => FSX.chip(F, n)).join('')}</div></div>`).join('') || `<div class="card" style="grid-column:1/-1"><div class="cb"><div class="empty">${F.mode === 'extraction' ? 'The investor lens was not produced because the analysis layer did not run for this filing. Run it again once the analysis service is available.' : 'No investor-lens findings for this filing.'}</div></div></div>`;
+    // reviewer notes and a review log, kept per filing in this browser
+    const RK = 'fsx-review:' + F.id;
+    const load = () => { try { return JSON.parse(localStorage.getItem(RK) || '{}') || {}; } catch (e) { return {}; } };
+    const save = r => { try { localStorage.setItem(RK, JSON.stringify(r)); } catch (e) { } };
+    const t = ts => new Date((ts || Date.now() / 1000) * 1000).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    const ta = document.getElementById('rv-ta');
+    const renderLog = () => {
+      const r = load(), mine = (r.log || []).slice().reverse();
+      document.getElementById('audit-log').innerHTML = mine.map(e => `<div class="log-entry"><span class="log-time">${t(e.t)}</span><span><span class="log-action">${f.esc(e.action)}</span>${e.note ? ' — ' + f.esc(e.note) : ''}</span></div>`).join('') +
+        `<div class="log-entry"><span class="log-time">${t(F.createdAt)}</span><span><span class="log-action">Processed:</span> ${F.stats.notes} notes and ${F.stats.links} cross-references indexed; ${F.stats.flags.alert} alert and ${F.stats.flags.watch} watch flags raised from the notes.</span></div>`;
+    };
+    if (!F._reviewWired) {
+      F._reviewWired = true;
+      ta.value = load().notes || '';
+      ta.addEventListener('input', () => { const r = load(); r.notes = ta.value; save(r); });
+      document.querySelectorAll('[data-action]').forEach(b => b.addEventListener('click', () => {
+        const r = load(); r.log = r.log || []; r.log.push({ t: Date.now() / 1000, action: b.dataset.action, note: ta.value.trim() }); r.notes = ''; save(r); ta.value = '';
+        renderLog(); FSX.toast(`${b.dataset.action} · ${F.shortName} ${F.fy || ''}`);
+      }));
+    }
+    renderLog();
   }
 
   route();

@@ -42,13 +42,13 @@
         </div>
         <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap">
           <span class="muted" id="file-label" style="font-size:11px">No file selected</span>
-          <button class="btn btn-primary" id="go" disabled>Ingest filing</button>
+          <button class="btn btn-primary" id="go" disabled>Process filing</button>
         </div>
         <div id="upload-prog"></div>
       </div>
     </div>
     <div class="card">
-      <div class="ch"><div class="ch-left"><h3>What works best</h3></div><span class="ch-badge green" id="ingest-badge">Pipeline ready</span></div>
+      <div class="ch"><div class="ch-left"><h3>What works best</h3></div><span class="ch-badge green" id="ingest-badge">Ready</span></div>
       <div class="cb">
         <ul class="tips">
           <li>The full annual financial statements as published: auditor's report, the five primary statements and the numbered notes in one PDF.</li>
@@ -56,7 +56,7 @@
           <li>IFRS or SOCPA-endorsed IFRS, any presentation currency and any unit (SAR, SAR thousands, USD millions).</li>
           <li>Standalone or consolidated, listed or private, any financial year.</li>
         </ul>
-        <div class="muted" style="font-size:11px;margin-top:14px;line-height:1.5">Extraction takes seconds. In full ingestion mode the statement transcription, note curation and investor lens add a few minutes, and the page updates live while it builds.</div>
+        <div class="muted" style="font-size:11px;margin-top:14px;line-height:1.5">Text extraction takes seconds; the statement transcription, note reading and investor lens take a few minutes, and the page updates live while it builds.</div>
       </div>
     </div>
   </div>
@@ -75,11 +75,9 @@
   </div>
 
   <div class="card mb">
-    <div class="ch"><div class="ch-left"><h3>Your uploads</h3></div><span class="ch-badge gold" id="n-uploads"></span></div>
-    <div style="overflow:auto"><table class="dt"><thead><tr><th>Filing</th><th>Uploaded</th><th>Status</th><th>Mode</th><th class="r">Notes</th><th class="r">Links</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
+    <div class="ch"><div class="ch-left"><h3>Processed filings</h3></div><span class="ch-badge gold" id="n-uploads"></span></div>
+    <div style="overflow:auto"><table class="dt"><thead><tr><th>Filing</th><th>Added</th><th>Status</th><th class="r">Notes</th><th class="r">Links</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
   </div>
-
-  <div id="samples"></div>
 </div>
 <div id="foot"></div>
 
@@ -91,11 +89,11 @@
   document.getElementById('foot').innerHTML = FSX.footer();
 
   const STAGES = [
-    ['extract', 'Extract text', 'pdftotext per page; repeated headers, footers and page numbers removed'],
+    ['extract', 'Extract text', 'text taken from every page; repeated headers, footers and page numbers removed'],
     ['segment', 'Map the document', "auditor's report, each primary statement and the notes located; notes split by heading"],
     ['statements', 'Transcribe statements', 'every line with its note reference and its values per column'],
     ['company', 'Company & auditor', 'entity, period, unit, audit opinion, key audit matters'],
-    ['notes', 'Curate notes', 'summary, key figures, sub-sections and reviewer flags per note'],
+    ['notes', 'Read the notes', 'summary, key figures, sub-sections and reviewer flags per note'],
     ['analysis', 'Investor analysis', 'KPIs, ratios, charts, analyst brief and the investor lens'],
     ['build', 'Cross-reference', 'statement lines ⟷ notes index and the cross-reference map'],
   ];
@@ -106,10 +104,10 @@
   if (health.maxUploadMb) document.getElementById('cap').textContent = health.maxUploadMb;
   const ks = health.llmStatus || {};
   if (!health.ok) { pill.textContent = 'Static mode'; pill.className = 'rb blue'; badge.textContent = 'Server required'; badge.className = 'ch-badge amber'; }
-  else if (health.llm && ks.ok === false) { pill.textContent = 'API key rejected'; pill.className = 'rb red'; badge.textContent = 'Extraction-only'; badge.className = 'ch-badge amber'; }
-  else if (health.llm && ks.ok) { pill.textContent = 'Full ingestion · ' + health.model; pill.className = 'rb green'; }
-  else if (health.llm) { pill.textContent = 'Checking API key'; pill.className = 'rb amber'; }
-  else { pill.textContent = 'Extraction-only mode'; pill.className = 'rb amber'; badge.textContent = 'Extraction-only'; badge.className = 'ch-badge amber'; }
+  else if (health.llm && ks.ok === false) { pill.textContent = 'API key rejected'; pill.className = 'rb red'; badge.textContent = 'Statements only'; badge.className = 'ch-badge amber'; }
+  else if (health.llm && ks.ok) { pill.textContent = 'Full analysis'; pill.className = 'rb green'; }
+  else if (health.llm) { pill.textContent = 'Connecting to the analysis service'; pill.className = 'rb amber'; }
+  else { pill.textContent = 'Statements only'; pill.className = 'rb amber'; badge.textContent = 'Statements only'; badge.className = 'ch-badge amber'; }
   FSX.modeBanner(banner, health);
 
   // ── live pipeline view for the filing just uploaded ──
@@ -148,34 +146,24 @@
     onDone: (res, file) => { watch(res.id, document.getElementById('f-name').value || file.name); ['f-name', 'f-ticker', 'f-sector'].forEach(i => document.getElementById(i).value = ''); },
   });
 
-  // ── uploads table + samples ──
+  // ── processed filings ──
   let items = [];
   async function refresh() {
     const reg = await FSX.api.registry(); items = reg.items || [];
-    const mine = items.filter(x => !FSX.isSample(x)).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-    const samples = items.filter(FSX.isSample);
+    const mine = items.slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     document.getElementById('n-uploads').textContent = `${mine.length} filing${mine.length === 1 ? '' : 's'}`;
     const when = t => t ? new Date(t * 1000).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : '—';
     document.getElementById('tbody').innerHTML = mine.map(x => {
-      const [ml, mc] = FSX.modeLabel(x);
-      const st = x.status === 'ready' ? '<span class="rb green">ready</span>' : x.status === 'failed' ? `<span class="rb red">failed</span> <small class="muted">${f.esc(x.error || '')}</small>` : `<span class="rb blue">${f.esc(x.status)}</span><div class="prog" style="width:140px"><i style="width:${Math.round((x.progress || 0) * 100)}%"></i></div>`;
-      return `<tr><td><span class="en-strong">${f.esc(x.shortName || x.name)}</span><span class="en-sub mono">${f.esc(x.ticker || '')}${x.ticker ? ' · ' : ''}${f.esc(x.fy || '')} ${f.esc(x.id)}</span></td><td style="white-space:nowrap">${when(x.createdAt)}</td><td>${st}</td><td><span class="rb ${mc}">${ml}</span></td><td class="num">${(x.stats || {}).notes ?? '—'}</td><td class="num">${(x.stats || {}).links ?? '—'}</td>
+      const st = x.status === 'ready' ? '<span class="rb green">ready</span> ' + FSX.modeTag(x) : x.status === 'failed' ? `<span class="rb red">failed</span> <small class="muted">${f.esc(x.error || '')}</small>` : `<span class="rb blue">${f.esc(x.status)}</span><div class="prog" style="width:140px"><i style="width:${Math.round((x.progress || 0) * 100)}%"></i></div>`;
+      return `<tr><td><span class="en-strong">${f.esc(x.shortName || x.name)}</span><span class="en-sub mono">${f.esc(x.ticker || '')}${x.ticker ? ' · ' : ''}${f.esc(x.fy || '')} ${f.esc(x.id)}</span></td><td style="white-space:nowrap">${when(x.createdAt)}</td><td>${st}</td><td class="num">${(x.stats || {}).notes ?? '—'}</td><td class="num">${(x.stats || {}).links ?? '—'}</td>
         <td style="white-space:nowrap"><a class="opn" href="company.html?c=${encodeURIComponent(x.id)}">${x.status === 'ready' ? 'Open' : 'Watch'}</a> ${health.ok && x.status !== 'running' && x.status !== 'queued' ? `<button class="opn" data-rerun="${f.esc(x.id)}">Re-run</button> <button class="opn danger" data-del="${f.esc(x.id)}">Remove</button>` : ''}</td></tr>`;
-    }).join('') || `<tr><td colspan="7" class="empty">Nothing uploaded yet. Drop a PDF above to start${samples.length ? ', or look at the sample filings below to see what the result looks like' : ''}.</td></tr>`;
+    }).join('') || `<tr><td colspan="6" class="empty">Nothing processed yet. Drop a PDF above to start.</td></tr>`;
 
-    const sm = document.getElementById('samples');
-    const one = samples.length === 1;
-    if (!health.ok) sm.innerHTML = '';
-    else if (samples.length) sm.innerHTML = `<div class="sample-strip"><div><b>${one ? 'Sample filing:' : 'Sample filings:'}</b> ${samples.map(s => `<a href="company.html?c=${encodeURIComponent(s.id)}">${f.esc(s.shortName)} ${f.esc(s.fy || '')}</a>`).join(' and ')} ${one ? 'is a reviewed example' : 'are reviewed examples'} shipped with the app to show what the output looks like; ${one ? 'it is' : 'they are'} not needed for your own uploads.</div><div class="acts"><button class="opn danger" id="rm-samples">Remove ${one ? 'sample' : 'samples'}</button></div></div>`;
-    else if (health.samplesAvailable) sm.innerHTML = `<div class="sample-strip"><div>The sample filing${health.samplesAvailable === 1 ? ' is' : 's are'} removed.</div><div class="acts"><button class="opn" id="restore-samples">Restore</button></div></div>`;
-    else sm.innerHTML = '';
-    const rm = document.getElementById('rm-samples'); if (rm) rm.addEventListener('click', async () => { if (!confirm('Remove the sample filing? It can be restored later.')) return; await fetch('api/samples', { method: 'DELETE' }); FSX.toast('Sample removed.'); refresh(); });
-    const rs = document.getElementById('restore-samples'); if (rs) rs.addEventListener('click', async () => { await fetch('api/samples/restore', { method: 'POST' }); FSX.toast('Sample restored.'); refresh(); });
   }
   document.getElementById('tbody').addEventListener('click', async e => {
     const del = e.target.closest('[data-del]'), rr = e.target.closest('[data-rerun]');
     if (del) { if (!confirm('Remove this filing and its data?')) return; try { await FSX.api.del(del.dataset.del); FSX.toast('Filing removed.'); } catch (err) { FSX.toast('Could not remove: ' + err.message); } refresh(); }
-    else if (rr) { try { await FSX.api.rerun(rr.dataset.rerun); FSX.toast('Pipeline restarted.'); const it = items.find(x => x.id === rr.dataset.rerun); watch(rr.dataset.rerun, it ? (it.shortName || it.name) : rr.dataset.rerun); } catch (err) { FSX.toast('Could not re-run: ' + err.message); } }
+    else if (rr) { try { await FSX.api.rerun(rr.dataset.rerun); FSX.toast('Processing restarted.'); const it = items.find(x => x.id === rr.dataset.rerun); watch(rr.dataset.rerun, it ? (it.shortName || it.name) : rr.dataset.rerun); } catch (err) { FSX.toast('Could not re-run: ' + err.message); } }
   });
   await refresh();
   setInterval(() => { if (!watching && items.some(x => x.status === 'queued' || x.status === 'running')) refresh(); }, 3000);

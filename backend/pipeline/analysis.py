@@ -13,15 +13,21 @@ KEYS = ["revenue", "costOfSales", "grossProfit", "operatingIncome", "profitBefor
 
 KEYROWS_SCHEMA = {
     "type": "object",
-    "properties": {k: {"type": ["object", "null"], "properties": {"stmt": {"type": "string"}, "row": {"type": "integer"}, "note": {"type": ["string", "null"]}},
-                       "required": ["stmt", "row", "note"], "additionalProperties": False} for k in KEYS}
-    | {"years": {"type": "array", "items": {"type": "string"}, "description": "the two fiscal-year labels in order [current, prior]"}},
-    "required": KEYS + ["years"],
+    "properties": {
+        "years": {"type": "array", "items": {"type": "string"}, "description": "the two fiscal-year labels in order [current, prior]"},
+        "rows": {"type": "array", "description": "one entry per concept that the statements carry; omit concepts with no line",
+                 "items": {"type": "object", "properties": {
+                     "key": {"type": "string", "enum": KEYS},
+                     "stmt": {"type": "string", "description": "statement id"},
+                     "row": {"type": "integer", "description": "0-based row index within that statement"}},
+                     "required": ["key", "stmt", "row"], "additionalProperties": False}},
+    },
+    "required": ["years", "rows"],
     "additionalProperties": False,
 }
 
 KEYROWS_SYSTEM = """You map the transcribed primary financial statements of a company to standard concepts.
-For each concept return the statement id and the 0-based row index of the line that carries it (choose the consolidated figure, not a component), or null when the statement has no such line. Use the first two value columns as [current year, prior year]. Do not invent rows."""
+For each concept that the statements carry, return the statement id and the 0-based row index of the line (choose the consolidated figure, not a component); leave out concepts with no such line. Use the first two value columns as [current year, prior year]. Do not invent rows."""
 
 
 def compact_statements(statements: list[dict]) -> str:

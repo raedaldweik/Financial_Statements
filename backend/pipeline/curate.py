@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import config
 from llm import LLM
-from pipeline.analysis import KEYROWS_SCHEMA, KEYROWS_SYSTEM, compact_statements
+from pipeline.analysis import KEYROWS_SCHEMA, KEYROWS_SYSTEM, KEYS, compact_statements
 
 # ───────────────────────── company & auditor ─────────────────────────
 COMPANY_SCHEMA = {
@@ -141,15 +141,18 @@ def curate_notes(llm: LLM, raw_notes: list[dict], unit: str, company_name: str, 
 # ───────────────────────── key rows ─────────────────────────
 def key_rows(llm: LLM, statements: list[dict]) -> dict:
     content = [{"type": "text", "text": compact_statements(statements)}]
-    data = llm.json(system=KEYROWS_SYSTEM, content=content, schema=KEYROWS_SCHEMA, effort="medium", max_tokens=4000, label="keyrows")
-    # validate indices
+    raw = llm.json(system=KEYROWS_SYSTEM, content=content, schema=KEYROWS_SCHEMA, effort="medium", max_tokens=4000, label="keyrows")
+    # back to {key: {stmt, row, note} | None}, validating every index against the transcribed rows
     by_id = {s["id"]: s for s in statements}
-    for k, ref in list(data.items()):
-        if k == "years" or ref is None:
+    data: dict = {k: None for k in KEYS}
+    data["years"] = raw.get("years") or []
+    for ref in raw.get("rows") or []:
+        k, st = ref.get("key"), by_id.get(ref.get("stmt"))
+        if k not in KEYS or data.get(k) is not None or not st:
             continue
-        st = by_id.get(ref.get("stmt"))
-        if not st or not (0 <= ref.get("row", -1) < len(st["rows"])) or "v" not in st["rows"][ref["row"]]:
-            data[k] = None
+        i = ref.get("row", -1)
+        if 0 <= i < len(st["rows"]) and "v" in st["rows"][i]:
+            data[k] = {"stmt": ref["stmt"], "row": i, "note": st["rows"][i].get("n")}
     return data
 
 

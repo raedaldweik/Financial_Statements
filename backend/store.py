@@ -26,13 +26,13 @@ import config
 _lock = threading.RLock()
 
 STAGES = [
-    ("extract", "Extract text", "pdftotext per page, page furniture removed"),
-    ("segment", "Map document", "auditor's report, primary statements and notes located; notes split by heading"),
-    ("statements", "Transcribe statements", "every line with its note reference, values per column"),
-    ("company", "Company & auditor", "entity, period, unit, opinion, key audit matters"),
-    ("notes", "Curate notes", "summary, key figures, sub-sections, flags per note"),
-    ("analysis", "Investor analysis", "KPIs, ratios, charts, analyst brief, investor lens"),
-    ("build", "Cross-reference", "statement lines ⟷ notes index"),
+    ("extract", "Extract text", "text taken from every page; repeated headers, footers and page numbers removed"),
+    ("segment", "Map the document", "auditor's report, each primary statement and the notes located; notes split by heading"),
+    ("statements", "Transcribe statements", "every line with its note reference and its values per column"),
+    ("company", "Company & auditor", "entity, period, unit, audit opinion, key audit matters"),
+    ("notes", "Read the notes", "summary, key figures, sub-sections and reviewer flags per note"),
+    ("analysis", "Investor analysis", "KPIs, ratios, charts, analyst brief and the investor lens"),
+    ("build", "Cross-reference", "statement lines ⟷ notes index and the cross-reference map"),
 ]
 
 

@@ -88,6 +88,7 @@ def health():
     return {"ok": True, "llm": config.llm_configured(), "model": config.MODEL if config.llm_configured() else None,
             "mode": "full" if llm_mod.llm_ready() else "extraction-only", "filings": len(ids),
             "llmStatus": {k: llm_mod.KEY_STATUS.get(k) for k in ("ok", "error", "checkedAt", "keyHint")},
+            "logo": next((f"assets/{n}" for n in ("misa-logo.svg", "misa-logo.png", "misa-logo.jpg", "misa-logo.webp") if (config.FRONTEND_DIR / "assets" / n).exists()), None),
             "samples": len(samples), "uploads": len(ids) - len(samples), "samplesAvailable": len(store.sample_ids(config.SEED_DIR)),
             "maxUploadMb": config.MAX_UPLOAD_MB}
 

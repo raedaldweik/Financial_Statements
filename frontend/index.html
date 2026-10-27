@@ -33,7 +33,7 @@ h1 em{font-style:italic;color:#E2BC68;font-weight:500}
 .stats{display:flex;gap:30px;margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.12);flex-wrap:wrap}
 .stat b{font-family:var(--serif);font-size:24px;font-weight:500;color:#fff;display:block;line-height:1.1;font-variant-numeric:tabular-nums}
 .stat span{font-size:11px;color:rgba(255,255,255,0.5);display:block;margin-top:4px}
-/* product excerpt: real lines from the sample filing, the way the explorer shows them */
+/* product excerpt: lines from a processed filing, the way the explorer shows them */
 .mock{position:relative;display:block;text-decoration:none;color:var(--text);max-width:700px;margin-left:auto;margin-bottom:40px}
 .mock-doc{background:#fff;border-radius:4px;box-shadow:0 30px 70px rgba(0,0,0,0.45);padding:22px 24px 12px;transition:transform .25s}
 .mock:hover .mock-doc{transform:translateY(-2px)}
@@ -116,7 +116,7 @@ h1 em{font-style:italic;color:#E2BC68;font-weight:500}
       <div class="mock-kf"><span>Net book value, 31 Dec 2024</span><b>1,546,358</b><span>Additions in the year</span><b>203,034</b><span>Depreciation charge</span><b>117,142</b></div>
       <div class="mock-flag">Alert · impairment and pledged assets</div>
     </div>
-    <div class="mock-cap">Lines from the sample filing, as the explorer shows them. Click a note reference and the note opens beside the statement.</div>
+    <div class="mock-cap">Saudi Ceramic FY2024 as the explorer shows it. Click a note reference and the note opens beside the statement.</div>
   </a>
 </section>
 
@@ -136,18 +136,17 @@ h1 em{font-style:italic;color:#E2BC68;font-weight:500}
   const health = await FSX.api.health(); FSX.setMode(health);
   const drop = document.getElementById('hero-drop'), sub = document.getElementById('hero-drop-sub');
   if (!health.ok) sub.textContent = 'uploads need the server: open the app through its URL, not as a file';
-  else if (!health.llm) sub.textContent = 'or click to choose a file · extraction-only mode (no ANTHROPIC_API_KEY on the server)';
-  else if (health.llmStatus && health.llmStatus.ok === false) sub.textContent = 'or click to choose a file · the server\'s API key was rejected, so uploads run in extraction-only mode';
+  else if (!health.llm) sub.textContent = 'or click to choose a file · analysis is off on this server: statements, notes and cross-references only';
+  else if (health.llmStatus && health.llmStatus.ok === false) sub.textContent = 'or click to choose a file · the analysis service rejected the server\'s API key: statements and notes only';
   FSX.uploader({ drop, input: document.getElementById('hero-file'), prog: document.getElementById('hero-prog'), health,
     onDone: res => { setTimeout(() => { location.href = `company.html?c=${encodeURIComponent(res.id)}`; }, 600); } });
   try {
-    const reg = await FSX.api.registry(); const I = (reg.items || []).filter(x => x.status === 'ready'); const S = I.filter(FSX.isSample);
-    const b = document.querySelectorAll('#stats .stat b'), l = document.querySelectorAll('#stats .stat span');
+    const reg = await FSX.api.registry(); const I = (reg.items || []).filter(x => x.status === 'ready');
+    const b = document.querySelectorAll('#stats .stat b');
     b[0].textContent = I.length; b[1].textContent = I.reduce((a, x) => a + ((x.stats || {}).notes || 0), 0); b[2].textContent = I.reduce((a, x) => a + ((x.stats || {}).linesWithNotes || 0), 0);
-    l[0].textContent = I.length && I.length === S.length ? (S.length === 1 ? 'Sample filing loaded' : 'Sample filings loaded') : S.length ? `Filings ready · ${S.length} sample` : 'Filings ready';
-    const sample = I.find(x => x.id === 'ceramic') || I[0];
+    const first = I.find(x => x.id === 'ceramic') || I[0];
     const mock = document.getElementById('mock');
-    if (sample) mock.href = `company.html?c=${encodeURIComponent(sample.id)}#statements/income`; else { mock.removeAttribute('href'); mock.removeAttribute('title'); }
+    if (first) mock.href = `company.html?c=${encodeURIComponent(first.id)}#statements/income`; else { mock.removeAttribute('href'); mock.removeAttribute('title'); }
     if (!I.length) document.getElementById('btn-browse').style.display = 'none';
   } catch (e) { }
 })();
