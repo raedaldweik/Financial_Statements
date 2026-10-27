@@ -1,4 +1,4 @@
-# Investor Financial Intelligence — single-container deploy (FastAPI + static frontend).
+# Investor Financial Intelligence - single-container deploy (FastAPI + static frontend).
 # poppler-utils provides pdftotext / pdfseparate / pdfunite used by the ingestion pipeline.
 FROM python:3.12-slim
 
@@ -20,8 +20,9 @@ ENV PYTHONUNBUFFERED=1 \
     PORT=8000 \
     STORAGE_DIR=/app/storage
 
+# Uploaded filings live in /app/storage. On Railway, mount a volume there (Settings > Volumes)
+# so uploads survive redeploys; Railway rejects the Dockerfile VOLUME instruction, so none here.
 RUN mkdir -p /app/storage
-VOLUME ["/app/storage"]
 
 WORKDIR /app/backend
 EXPOSE 8000
