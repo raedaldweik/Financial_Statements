@@ -34,9 +34,43 @@ def text_block(text: str) -> dict:
     return {"type": "text", "text": text}
 
 
+# Result of the last key check: {"ok": bool|None, "error": str, "checkedAt": float, "keyHint": str}
+KEY_STATUS: dict = {"ok": None, "error": "", "checkedAt": None, "keyHint": config.key_hint(), "models": []}
+
+
+def check_key() -> dict:
+    """Ask the API whether the configured key is accepted (a models listing: no tokens spent)."""
+    KEY_STATUS["keyHint"] = config.key_hint()
+    if not config.llm_configured():
+        KEY_STATUS.update({"ok": None, "error": "ANTHROPIC_API_KEY is not set", "checkedAt": time.time(), "models": []})
+        return KEY_STATUS
+    import anthropic
+    try:
+        client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY, max_retries=1, timeout=30)
+        page = client.models.list(limit=20)
+        ids = [m.id for m in page.data]
+        err = ""
+        if config.MODEL not in ids and not any(i.startswith(config.MODEL) for i in ids):
+            err = f"the key works but model '{config.MODEL}' is not available to it"
+        KEY_STATUS.update({"ok": not err, "error": err, "checkedAt": time.time(), "models": ids})
+    except anthropic.AuthenticationError as e:
+        KEY_STATUS.update({"ok": False, "error": f"the API rejected the key (401 invalid x-api-key). Key seen by the server: {config.key_hint()}", "checkedAt": time.time(), "models": []})
+    except anthropic.PermissionDeniedError as e:
+        KEY_STATUS.update({"ok": False, "error": f"the API refused the key (403): {str(e)[:160]}", "checkedAt": time.time(), "models": []})
+    except Exception as e:
+        KEY_STATUS.update({"ok": False, "error": f"could not reach the API: {type(e).__name__}: {str(e)[:160]}", "checkedAt": time.time(), "models": []})
+    log.info("key check: %s %s", "ok" if KEY_STATUS["ok"] else "FAILED", KEY_STATUS["error"])
+    return KEY_STATUS
+
+
+def llm_ready() -> bool:
+    """Key configured and not known to be rejected."""
+    return config.llm_configured() and KEY_STATUS.get("ok") is not False
+
+
 class LLM:
     def __init__(self):
-        self.enabled = config.llm_configured()
+        self.enabled = llm_ready()
         self._client = None
         self.calls = 0
         self.input_tokens = 0

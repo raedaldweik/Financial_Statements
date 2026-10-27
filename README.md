@@ -73,7 +73,8 @@ Requires `pdftotext`, `pdfseparate` and `pdfunite` (poppler-utils) on the PATH a
 
 | Method | Path | |
 |---|---|---|
-| `GET` | `/api/health` | mode (`full` / `extraction-only`), model, filing / sample / upload counts, upload cap |
+| `GET` | `/api/health` | mode (`full` / `extraction-only`), model, key status (`llmStatus`), filing / sample / upload counts, upload cap |
+| `POST` | `/api/llm/check` | re-test `ANTHROPIC_API_KEY` against the API (a models listing; no tokens spent) |
 | `GET` | `/api/filings` | registry: ready filings (summary) and filings in progress (stages, log) |
 | `POST` | `/api/filings` | multipart: `file` (PDF), optional `name`, `ticker`, `sector` → `{id}`; the pipeline runs in the background |
 | `GET` | `/api/filings/{id}` | the full bundle once ready, otherwise the processing status |
@@ -111,15 +112,22 @@ Model calls use structured outputs (JSON schema), adaptive thinking with `LLM_EF
 caching on the system prompt, and the server-side refusal fallback. A typical 60-page filing
 takes 2–5 minutes in full mode and well under a minute in extraction-only mode.
 
+## API key problems
+
+The key is checked at startup (and from the **Re-check key** button on the upload and filings
+pages). If the API rejects it, the nav shows *API key rejected*, uploads run in
+extraction-only mode and each filing carries one warning saying so, with the key as the
+server sees it (prefix, last four characters, length) so a truncated or quoted value is easy
+to spot. The key must be an API key from console.anthropic.com (`sk-ant-api03-…`), pasted
+without quotes, from an organisation with API credit. After changing it, redeploy.
+
 ## Branding
 
 Saudi green with gold accents (tokens at the top of `frontend/assets/theme.css`). The
 Ministry lockup (national emblem + "وزارة الاستثمار / Ministry of Investment") is drawn
-inline in `frontend/assets/app.js`. To use the official artwork set, before `FSX.nav()` runs:
-
-```js
-FSX.LOGO_IMG = 'assets/misa-logo.svg';
-```
+inline in `frontend/assets/app.js`. To use the official artwork, save it as
+`frontend/assets/misa-logo.svg` (or `.png`, `.jpg`, `.webp`): it is picked up automatically
+and shown on a white plate in the nav. No code change is needed.
 
 ## Sample filings
 

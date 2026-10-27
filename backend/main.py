@@ -1,6 +1,7 @@
 """Investor Financial Intelligence — API + static frontend.
 
-  GET  /api/health                     server mode (llm on/off), model, filing count
+  GET  /api/health                     server mode (llm on/off), model, key status, filing count
+  POST /api/llm/check                  re-test the ANTHROPIC_API_KEY against the API
   GET  /api/filings                    registry: ready filings (summary) and filings in progress
   POST /api/filings                    multipart upload (file=PDF, name?, ticker?, sector?) → starts the pipeline
   GET  /api/filings/{id}               the dashboard bundle (or the processing status while it runs)
@@ -24,6 +25,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 import config
+import llm as llm_mod
 import store
 from pipeline.build import registry_entry
 from pipeline.run import run as run_pipeline
@@ -57,6 +59,8 @@ def _startup():
         if st.get("state") in ("queued", "running") and (store.filing_dir(fid) / "source.pdf").exists():
             _launch(fid)
     log.info("mode: %s · model: %s · storage: %s", "full" if config.llm_configured() else "extraction-only", config.MODEL, config.STORAGE_DIR)
+    if config.llm_configured():
+        threading.Thread(target=llm_mod.check_key, name="key-check", daemon=True).start()
 
 
 def _launch(fid: str):
@@ -82,7 +86,8 @@ def health():
     ids = store.list_ids()
     samples = [i for i in ids if store.is_sample(i)]
     return {"ok": True, "llm": config.llm_configured(), "model": config.MODEL if config.llm_configured() else None,
-            "mode": "full" if config.llm_configured() else "extraction-only", "filings": len(ids),
+            "mode": "full" if llm_mod.llm_ready() else "extraction-only", "filings": len(ids),
+            "llmStatus": {k: llm_mod.KEY_STATUS.get(k) for k in ("ok", "error", "checkedAt", "keyHint")},
             "samples": len(samples), "uploads": len(ids) - len(samples), "samplesAvailable": len(store.sample_ids(config.SEED_DIR)),
             "maxUploadMb": config.MAX_UPLOAD_MB}
 
@@ -113,7 +118,7 @@ async def upload(file: UploadFile = File(...), name: str | None = Form(None), ti
         raise HTTPException(413, f"PDF larger than {config.MAX_UPLOAD_MB} MB.")
     fid = store.create(file.filename or "filing.pdf", data, {"name": (name or "").strip() or None, "ticker": (ticker or "").strip() or None, "sector": (sector or "").strip() or None})
     _launch(fid)
-    return {"id": fid, "status": "queued", "mode": "full" if config.llm_configured() else "extraction-only"}
+    return {"id": fid, "status": "queued", "mode": "full" if llm_mod.llm_ready() else "extraction-only"}
 
 
 @app.get("/api/filings/{fid}")
@@ -148,6 +153,13 @@ def delete(fid: str):
     if not store.delete(fid):
         raise HTTPException(404, "Unknown filing")
     return {"deleted": fid}
+
+
+@app.post("/api/llm/check")
+def llm_check():
+    """Re-check the API key (after changing it in the environment, redeploy; this re-tests the running value)."""
+    st = llm_mod.check_key()
+    return {k: st.get(k) for k in ("ok", "error", "checkedAt", "keyHint")} | {"model": config.MODEL, "models": st.get("models", [])[:20]}
 
 
 @app.post("/api/samples/restore")

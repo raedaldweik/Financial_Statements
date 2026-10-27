@@ -104,9 +104,13 @@
   const health = await FSX.api.health(); FSX.setMode(health);
   const pill = document.getElementById('mode-pill'), banner = document.getElementById('mode-banner'), badge = document.getElementById('ingest-badge');
   if (health.maxUploadMb) document.getElementById('cap').textContent = health.maxUploadMb;
-  if (!health.ok) { pill.textContent = 'Static mode'; pill.className = 'rb blue'; badge.textContent = 'Server required'; badge.className = 'ch-badge amber'; banner.innerHTML = `<div class="mode-banner static">This page was opened without the server, so nothing can be uploaded. Run <code>uvicorn main:app</code> in <code>backend/</code> (or deploy the Dockerfile) and open the app through its URL.</div>`; }
-  else if (health.llm) { pill.textContent = 'Full ingestion · ' + health.model; pill.className = 'rb green'; }
-  else { pill.textContent = 'Extraction-only mode'; pill.className = 'rb amber'; badge.textContent = 'Extraction-only'; badge.className = 'ch-badge amber'; banner.innerHTML = `<div class="mode-banner extraction">The server has no <code>ANTHROPIC_API_KEY</code>: uploads are parsed deterministically (statements, notes, cross-references) without note summaries, flags, the analyst brief or the investor lens. Set the key in <code>backend/.env</code> to enable full ingestion.</div>`; }
+  const ks = health.llmStatus || {};
+  if (!health.ok) { pill.textContent = 'Static mode'; pill.className = 'rb blue'; badge.textContent = 'Server required'; badge.className = 'ch-badge amber'; }
+  else if (health.llm && ks.ok === false) { pill.textContent = 'API key rejected'; pill.className = 'rb red'; badge.textContent = 'Extraction-only'; badge.className = 'ch-badge amber'; }
+  else if (health.llm && ks.ok) { pill.textContent = 'Full ingestion · ' + health.model; pill.className = 'rb green'; }
+  else if (health.llm) { pill.textContent = 'Checking API key'; pill.className = 'rb amber'; }
+  else { pill.textContent = 'Extraction-only mode'; pill.className = 'rb amber'; badge.textContent = 'Extraction-only'; badge.className = 'ch-badge amber'; }
+  FSX.modeBanner(banner, health);
 
   // ── live pipeline view for the filing just uploaded ──
   let watching = null, timer = null;

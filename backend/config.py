@@ -19,7 +19,7 @@ SEED_DIR = BASE_DIR / "seed"
 SEED_FILINGS_DIR = ROOT_DIR / "filings"
 STORAGE_DIR = Path(os.getenv("STORAGE_DIR", ROOT_DIR / "storage")).resolve()
 
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "").strip()
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "").strip().strip("'\"").strip()
 MODEL = os.getenv("MODEL", "claude-opus-5-5")             # statements, auditor, lens, brief
 MODEL_NOTES = os.getenv("MODEL_NOTES", MODEL)              # per-note curation batches
 LLM_EFFORT = os.getenv("LLM_EFFORT", "medium")             # low | medium | high | xhigh | max
@@ -39,3 +39,11 @@ SAMPLES = [x.strip() for x in os.getenv("SAMPLES", "ceramic").split(",") if x.st
 
 def llm_configured() -> bool:
     return bool(ANTHROPIC_API_KEY)
+
+
+def key_hint() -> str:
+    """The key as the server sees it, safe to display: prefix, last 4 characters and length."""
+    k = ANTHROPIC_API_KEY
+    if not k:
+        return ""
+    return f"{k[:12]}…{k[-4:]} ({len(k)} characters)" if len(k) > 20 else f"{k[:3]}… ({len(k)} characters)"

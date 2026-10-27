@@ -77,9 +77,7 @@
   window.FILINGS = window.FILINGS || {};
 
   const health = await FSX.api.health(); FSX.setMode(health);
-  const banner = document.getElementById('mode-banner');
-  if (!health.ok) banner.innerHTML = `<div class="mode-banner static">Opened without the server: showing the pre-built sample bundles. Run <code>uvicorn main:app</code> in <code>backend/</code> (or deploy the Dockerfile) to upload filings.</div>`;
-  else if (!health.llm) banner.innerHTML = `<div class="mode-banner extraction">The server has no <code>ANTHROPIC_API_KEY</code>: uploads are parsed deterministically (statements, notes, cross-references) without note summaries, flags, the analyst brief or the investor lens. Set the key to enable full ingestion.</div>`;
+  FSX.modeBanner(document.getElementById('mode-banner'), health);
   const canUpload = !!health.ok;
   if (!canUpload) document.getElementById('drop-right').textContent = 'Uploads need the server.';
 

@@ -228,6 +228,20 @@
      To use the official artwork, set FSX.LOGO_IMG = 'assets/misa-logo.svg' (or .png)
      before FSX.nav() runs and the lockup is replaced by that image. */
   FSX.LOGO_IMG = null;
+  /* Official artwork is picked up automatically when a file named misa-logo.(svg|png|jpg|webp)
+     sits in frontend/assets/. It is shown on a white plate so it reads on the dark nav. */
+  FSX.LOGO_CANDIDATES = ['assets/misa-logo.svg', 'assets/misa-logo.png', 'assets/misa-logo.jpg', 'assets/misa-logo.webp'];
+  FSX.detectLogo = function () {
+    if (FSX.LOGO_IMG || FSX._logoChecked) return; FSX._logoChecked = true;
+    const tryNext = i => {
+      if (i >= FSX.LOGO_CANDIDATES.length) return;
+      const im = new Image();
+      im.onload = () => { FSX.LOGO_IMG = FSX.LOGO_CANDIDATES[i]; document.querySelectorAll('.brand').forEach(a => { a.innerHTML = `<span class="brand-plate"><img class="brand-img" src="${FSX.LOGO_IMG}" alt="Ministry of Investment"></span>`; }); };
+      im.onerror = () => tryNext(i + 1);
+      im.src = FSX.LOGO_CANDIDATES[i] + '?v=' + Date.now();
+    };
+    tryNext(0);
+  };
   FSX.emblem = function (fill, accent, cls) {
     return `<svg class="${cls || 'brand-emblem'}" viewBox="0 0 120 120" fill="none" aria-hidden="true"><g fill="${fill}">
       <g transform="translate(60 44)">
@@ -254,7 +268,8 @@
     </g></svg>`;
   };
   FSX.logo = function () {
-    if (FSX.LOGO_IMG) return `<a class="brand" href="index.html"><img class="brand-img" src="${FSX.LOGO_IMG}" alt="Ministry of Investment"></a>`;
+    if (FSX.LOGO_IMG) return `<a class="brand" href="index.html"><span class="brand-plate"><img class="brand-img" src="${FSX.LOGO_IMG}" alt="Ministry of Investment"></span></a>`;
+    setTimeout(FSX.detectLogo, 0);
     return `<a class="brand" href="index.html">${FSX.emblem('#E2BC68', '#0B3A2E')}<span class="brand-txt"><span class="brand-ar">وزارة الاستثمار</span><span class="brand-en">Ministry of Investment</span></span></a>`;
   };
   FSX.nav = function (active) {
@@ -268,7 +283,12 @@
   /* server mode indicator in the nav (call after FSX.api.health()) */
   FSX.setMode = function (h) {
     const el = document.getElementById('nav-mode'); if (!el) return;
-    el.innerHTML = !h || !h.ok ? '<i class="md grey"></i>Static copy · uploads off' : h.llm ? `<i class="md green"></i>Full ingestion · ${FSX.fmt.esc(h.model || '')}` : '<i class="md amber"></i>Extraction-only · no API key';
+    const ks = (h && h.llmStatus) || {};
+    el.innerHTML = !h || !h.ok ? '<i class="md grey"></i>Static copy · uploads off'
+      : !h.llm ? '<i class="md amber"></i>Extraction-only · no API key'
+      : ks.ok === false ? '<i class="md red"></i>API key rejected · extraction-only'
+      : ks.ok === null || ks.ok === undefined ? `<i class="md amber"></i>Checking API key · ${FSX.fmt.esc(h.model || '')}`
+      : `<i class="md green"></i>Full ingestion · ${FSX.fmt.esc(h.model || '')}`;
   };
   FSX.footer = () => `<div class="foot"><span><b>Ministry of Investment</b> · Investor Financial Intelligence</span><span>Works on any audited annual financial statements PDF · IFRS as endorsed in KSA</span><span>Pipeline: pdftotext → statements → notes → cross-reference map</span></div>`;
   /* how a filing was produced: sample (reviewed bundle shipped with the app), model (ingested with
@@ -400,6 +420,19 @@
     },
     async del(id) { const r = await fetch('api/filings/' + encodeURIComponent(id), { method: 'DELETE' }); if (!r.ok) throw new Error(r.status); return r.json(); },
     async rerun(id) { const r = await fetch('api/filings/' + encodeURIComponent(id) + '/rerun', { method: 'POST' }); if (!r.ok) throw new Error(r.status); return r.json(); },
+  };
+  /* Mode banner shared by the upload and filings pages: explains extraction-only mode and, when the
+     key is configured but rejected, shows what the server sees and offers a re-check. */
+  FSX.modeBanner = function (el, h) {
+    const f = FSX.fmt, ks = (h && h.llmStatus) || {};
+    if (!el) return;
+    if (!h || !h.ok) el.innerHTML = `<div class="mode-banner static">Opened without the server: uploads are off. Run <code>uvicorn main:app</code> in <code>backend/</code> (or deploy the Dockerfile) and open the app through its URL.</div>`;
+    else if (!h.llm) el.innerHTML = `<div class="mode-banner extraction">The server has no <code>ANTHROPIC_API_KEY</code>: uploads are parsed deterministically (statements, notes, cross-references) without note summaries, flags, the analyst brief or the investor lens. Set the key to enable full ingestion.</div>`;
+    else if (ks.ok === false) el.innerHTML = `<div class="mode-banner rejected"><div><b>ANTHROPIC_API_KEY is set but ${f.esc(ks.error || 'the API rejected it')}.</b> Uploads run in extraction-only mode until it is fixed. Check the value in the server's variables: it must be an API key from console.anthropic.com (it starts with <code>sk-ant-api03-</code>), pasted without quotes or spaces, from an organisation with API credit. After changing it, redeploy.</div><button class="opn" id="llm-recheck">Re-check key</button></div>`;
+    else if (ks.ok === null || ks.ok === undefined) el.innerHTML = `<div class="mode-banner extraction">Checking the API key… <button class="opn" id="llm-recheck" style="margin-left:8px">Check now</button></div>`;
+    else el.innerHTML = '';
+    const b = document.getElementById('llm-recheck');
+    if (b) b.addEventListener('click', async () => { b.disabled = true; b.textContent = 'Checking…'; try { const r = await fetch('api/llm/check', { method: 'POST' }); const j = await r.json(); FSX.toast(j.ok ? 'Key accepted: full ingestion is on.' : 'Still rejected: ' + (j.error || '')); } catch (e) { FSX.toast('Check failed: ' + e.message); } location.reload(); });
   };
   /* Drop-zone uploader shared by the landing page, the upload page and the portfolio.
      opts: { drop, input, button?, label?, prog?, fields?: {name,ticker,sector} (elements), health,

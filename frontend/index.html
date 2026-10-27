@@ -137,6 +137,7 @@ h1 em{font-style:italic;color:#E2BC68;font-weight:500}
   const drop = document.getElementById('hero-drop'), sub = document.getElementById('hero-drop-sub');
   if (!health.ok) sub.textContent = 'uploads need the server: open the app through its URL, not as a file';
   else if (!health.llm) sub.textContent = 'or click to choose a file · extraction-only mode (no ANTHROPIC_API_KEY on the server)';
+  else if (health.llmStatus && health.llmStatus.ok === false) sub.textContent = 'or click to choose a file · the server\'s API key was rejected, so uploads run in extraction-only mode';
   FSX.uploader({ drop, input: document.getElementById('hero-file'), prog: document.getElementById('hero-prog'), health,
     onDone: res => { setTimeout(() => { location.href = `company.html?c=${encodeURIComponent(res.id)}`; }, 600); } });
   try {
